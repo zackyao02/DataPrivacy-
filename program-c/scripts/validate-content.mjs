@@ -65,6 +65,10 @@ assertUniqueIds(protocolTerms, "protocol_terms");
 assertUniqueIds(recipes, "package_recipes");
 assertUniqueIds(dayChallenges, "day_challenges");
 
+assert(cardTemplates.length >= 10, "card_templates needs at least 10 templates for Program C Day 2");
+assert(users.length >= 20, "users needs at least 20 profiles for Program C Day 2");
+assert(newsTemplates.length >= 10, "news_templates needs at least 10 templates for Program C Day 3");
+
 for (const key of variableKeys) {
   assert(Array.isArray(variables[key]), `variables missing array: ${key}`);
   assert(variables[key].length > 0, `variables empty array: ${key}`);
@@ -113,6 +117,13 @@ for (const card of cardTemplates) {
 
 const packageTypes = new Set(recipes.map((recipe) => recipe.packageType));
 const protocolTermIds = new Set(protocolTerms.map((term) => term.id));
+
+for (const packageType of packageTypes) {
+  assert(
+    newsTemplates.filter((news) => news.relatedPackageType === packageType).length >= 2,
+    `news_templates needs at least 2 templates for package: ${packageType}`,
+  );
+}
 
 for (const recipe of recipes) {
   assert(

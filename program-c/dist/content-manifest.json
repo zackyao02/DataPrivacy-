@@ -12,10 +12,10 @@
     "day_challenges.json"
   ],
   "counts": {
-    "cardTemplates": 6,
-    "users": 5,
+    "cardTemplates": 10,
+    "users": 20,
     "buyers": 3,
-    "newsTemplates": 5,
+    "newsTemplates": 10,
     "protocolTerms": 10,
     "packageRecipes": 5,
     "dayChallenges": 2
@@ -60,17 +60,25 @@
     "createPackagePreview",
     "findPackagePreviews",
     "findBuyersForPackage",
-    "findNewsForPackage"
+    "findNewsForPackage",
+    "pickNewsForPackage"
   ],
   "soundEvents": [
+    "dataFlowIn",
     "cardGenerated",
     "cardMovedToSlot",
     "packageCreated",
+    "packageSealed",
+    "neonCharged",
     "wasteCreated",
     "transactionSuccess",
+    "transactionSealed",
     "riskChanged",
     "newsGenerated",
     "emotionSelected",
+    "emotionEmpathySelected",
+    "emotionAngerSelected",
+    "emotionNumbnessSelected",
     "conscienceChanged",
     "endingTriggered"
   ],

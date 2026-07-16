@@ -65,6 +65,11 @@ export class AudioManager {
         this.tone({ frequency: 220, duration: 0.08, type: "sawtooth", startTime: now });
         this.tone({ frequency: 660, duration: 0.12, type: "triangle", startTime: now + 0.08 });
         break;
+      case "neon-charge":
+        this.tone({ frequency: 330, duration: 0.06, type: "sine", startTime: now });
+        this.tone({ frequency: 660, duration: 0.08, type: "sine", startTime: now + 0.04 });
+        this.tone({ frequency: 990, duration: 0.1, type: "triangle", startTime: now + 0.09 });
+        break;
       case "glitch-fail":
         this.noise({ duration: 0.16, gain: 0.12 });
         this.tone({ frequency: 90, duration: 0.14, type: "sawtooth", startTime: now });
@@ -73,6 +78,11 @@ export class AudioManager {
         [523, 659, 784].forEach((frequency, index) => {
           this.tone({ frequency, duration: 0.07, type: "triangle", startTime: now + index * 0.045 });
         });
+        break;
+      case "transaction-seal":
+        this.tone({ frequency: 494, duration: 0.07, type: "triangle", startTime: now });
+        this.tone({ frequency: 247, duration: 0.12, type: "square", startTime: now + 0.06 });
+        this.noise({ duration: 0.04, gain: 0.035 });
         break;
       case "risk-ping":
         this.tone({ frequency: 1046, duration: 0.06, type: "square", startTime: now });
@@ -85,6 +95,19 @@ export class AudioManager {
       case "emotion-select":
         this.tone({ frequency: 330, duration: 0.05, type: "sine", startTime: now });
         this.tone({ frequency: 495, duration: 0.09, type: "sine", startTime: now + 0.04 });
+        break;
+      case "emotion-empathy":
+        this.tone({ frequency: 392, duration: 0.08, type: "sine", startTime: now });
+        this.tone({ frequency: 523, duration: 0.12, type: "triangle", startTime: now + 0.05 });
+        break;
+      case "emotion-anger":
+        this.noise({ duration: 0.06, gain: 0.07 });
+        this.tone({ frequency: 196, duration: 0.08, type: "sawtooth", startTime: now });
+        this.tone({ frequency: 784, duration: 0.05, type: "square", startTime: now + 0.06 });
+        break;
+      case "emotion-numbness":
+        this.tone({ frequency: 294, duration: 0.13, type: "sine", startTime: now });
+        this.tone({ frequency: 247, duration: 0.16, type: "sine", startTime: now + 0.08 });
         break;
       case "conscience-shift":
         this.tone({ frequency: 260, duration: 0.12, type: "triangle", startTime: now });

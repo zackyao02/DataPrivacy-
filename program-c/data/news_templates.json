@@ -53,5 +53,60 @@
       "anger": "你开始怀疑自己是不是正在帮犯罪补全拼图。",
       "numbness": "黑盒评价：客户关系维护合格。"
     }
+  },
+  {
+    "id": "news-location-ad-targeting",
+    "relatedPackageType": "精准画像包",
+    "headline": "{城市} 多家门店被曝按通勤轨迹精准投放高压广告",
+    "body": "消费者称，自己刚经过医院、招聘中心和借贷网点，就连续收到相关推送。",
+    "emotionResponses": {
+      "empathy": "你意识到推送不是巧合，而是有人把一整天的移动路线卖成了标签。",
+      "anger": "你开始厌烦黑盒把这种行为称为增长。",
+      "numbness": "系统提示：精准触达转化率提升。"
+    }
+  },
+  {
+    "id": "news-health-workplace-risk",
+    "relatedPackageType": "健康风险评估包",
+    "headline": "员工健康风险标签疑似流入企业管理系统",
+    "body": "知情人称，部分企业在排班和晋升前会查看外部平台提供的健康趋势分级。",
+    "emotionResponses": {
+      "empathy": "你想起那些睡眠和心率记录，突然觉得它们不该出现在任何绩效表里。",
+      "anger": "你觉得这不是管理工具，而是一次无声的筛选。",
+      "numbness": "黑盒评价：风险前置能力稳定。"
+    }
+  },
+  {
+    "id": "news-credit-rent-denial",
+    "relatedPackageType": "信用评分包",
+    "headline": "租房审核引用隐形信用分，年轻租客被拒",
+    "body": "多名租客表示，平台未说明评分来源，只提示其联系人风险和消费稳定性不足。",
+    "emotionResponses": {
+      "empathy": "你忽然想到，某个联系人也可能把一个人拖进看不见的黑名单。",
+      "anger": "你对“仅供参考”四个字产生强烈反感。",
+      "numbness": "你把这条新闻归档，继续等待下一笔交易记录。"
+    }
+  },
+  {
+    "id": "news-workplace-night-activity",
+    "relatedPackageType": "职场竞争力包",
+    "headline": "招聘系统根据夜间活跃度推断候选人稳定性",
+    "body": "内部演示材料显示，夜间定位、匿名发帖和消费压力会影响候选人排序。",
+    "emotionResponses": {
+      "empathy": "你发现所谓稳定性，其实是把疲惫的人继续往下压。",
+      "anger": "你想把那份排序规则从系统里拖出去删除。",
+      "numbness": "黑盒提示：候选人筛选效率达标。"
+    }
+  },
+  {
+    "id": "news-contact-family-scam",
+    "relatedPackageType": "关系图谱包",
+    "headline": "亲属关系链被滥用，诈骗话术精准命中家庭压力",
+    "body": "受害者称，对方准确说出家庭成员、就医地点和近期通话频率，因此误以为是真实熟人。",
+    "emotionResponses": {
+      "empathy": "你看见关系图谱的线条，第一次觉得它们像勒紧的绳子。",
+      "anger": "你无法再把这些关系称为普通数据。",
+      "numbness": "系统记录：关系链商业价值上升。"
+    }
   }
 ]

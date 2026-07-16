@@ -52,5 +52,41 @@
     "description": "{姓名} 的通讯录中出现多个高频借贷联系人。",
     "userProfileTags": ["contact_graph", "credit"],
     "variables": ["姓名"]
+  },
+  {
+    "id": "card-location-hospital-visit",
+    "title": "{姓名} 的医院周边停留记录",
+    "dataType": "location",
+    "sensitivity": "high",
+    "description": "{姓名} 近 30 天多次在 {城市} 三甲医院周边停留，停留时间集中在工作日清晨。",
+    "userProfileTags": ["location", "health_hint", "hospital"],
+    "variables": ["姓名", "城市"]
+  },
+  {
+    "id": "card-consumption-loan-app",
+    "title": "{姓名} 的借贷平台消费线索",
+    "dataType": "consumption",
+    "sensitivity": "high",
+    "description": "{姓名} 在 {平台} 上频繁浏览分期、借款和逾期协商内容，近月关联金额约 {金额}。",
+    "userProfileTags": ["consumption", "credit", "loan"],
+    "variables": ["姓名", "平台", "金额"]
+  },
+  {
+    "id": "card-health-heart-rate-alert",
+    "title": "{姓名} 的异常心率提醒",
+    "dataType": "health",
+    "sensitivity": "high",
+    "description": "{姓名} 的穿戴设备在夜间多次记录异常心率，系统推断其压力水平持续升高。",
+    "userProfileTags": ["health", "wearable", "stress"],
+    "variables": ["姓名"]
+  },
+  {
+    "id": "card-contact-family-emergency",
+    "title": "{姓名} 的家庭紧急联系人链",
+    "dataType": "contact_graph",
+    "sensitivity": "medium",
+    "description": "{姓名} 与多名家庭联系人在短时间内高频通话，可被推断出照护压力和家庭结构。",
+    "userProfileTags": ["contact_graph", "family", "caregiving"],
+    "variables": ["姓名"]
   }
 ]

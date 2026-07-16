@@ -146,6 +146,16 @@ export class ContentRepository {
     );
   }
 
+  pickNewsForPackage(packageType: string): NewsTemplate | undefined {
+    const newsTemplates = this.findNewsForPackage(packageType);
+
+    if (newsTemplates.length === 0) {
+      return undefined;
+    }
+
+    return this.pick(newsTemplates);
+  }
+
   createPackagePreview(
     packageType: string,
     cardIds: readonly string[],

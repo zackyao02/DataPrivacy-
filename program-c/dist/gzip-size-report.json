@@ -1,14 +1,19 @@
 {
   "budgetBytes": 8388608,
-  "totalRawBytes": 35063,
-  "totalGzipBytes": 12919,
-  "remainingRawBytes": 8353545,
-  "remainingGzipBytes": 8375689,
+  "totalRawBytes": 45916,
+  "totalGzipBytes": 15945,
+  "remainingRawBytes": 8342692,
+  "remainingGzipBytes": 8372663,
   "files": [
     {
+      "file": "data\\news_templates.json",
+      "rawBytes": 5545,
+      "gzipBytes": 2376
+    },
+    {
       "file": "src\\content\\ContentRepository.ts",
-      "rawBytes": 6982,
-      "gzipBytes": 1799
+      "rawBytes": 7228,
+      "gzipBytes": 1829
     },
     {
       "file": "data\\day_challenges.json",
@@ -16,14 +21,19 @@
       "gzipBytes": 1712
     },
     {
-      "file": "src\\audio\\AudioManager.ts",
-      "rawBytes": 5416,
-      "gzipBytes": 1444
+      "file": "data\\users.json",
+      "rawBytes": 4743,
+      "gzipBytes": 1686
     },
     {
-      "file": "data\\news_templates.json",
-      "rawBytes": 2689,
-      "gzipBytes": 1417
+      "file": "src\\audio\\AudioManager.ts",
+      "rawBytes": 6738,
+      "gzipBytes": 1595
+    },
+    {
+      "file": "data\\card_templates.json",
+      "rawBytes": 3541,
+      "gzipBytes": 1179
     },
     {
       "file": "src\\content\\schema.ts",
@@ -36,19 +46,14 @@
       "gzipBytes": 848
     },
     {
-      "file": "data\\card_templates.json",
-      "rawBytes": 2003,
-      "gzipBytes": 775
-    },
-    {
       "file": "dist\\content-manifest.json",
-      "rawBytes": 1632,
-      "gzipBytes": 770
+      "rawBytes": 1833,
+      "gzipBytes": 821
     },
     {
-      "file": "data\\users.json",
-      "rawBytes": 1088,
-      "gzipBytes": 567
+      "file": "dist\\offline-assets.json",
+      "rawBytes": 1211,
+      "gzipBytes": 528
     },
     {
       "file": "data\\package_recipes.json",
@@ -61,24 +66,19 @@
       "gzipBytes": 494
     },
     {
-      "file": "dist\\offline-assets.json",
-      "rawBytes": 1025,
-      "gzipBytes": 484
-    },
-    {
       "file": "src\\content\\defaultContentBundle.ts",
       "rawBytes": 1408,
       "gzipBytes": 447
     },
     {
-      "file": "src\\audio\\soundMap.ts",
-      "rawBytes": 515,
-      "gzipBytes": 300
+      "file": "data\\variables.json",
+      "rawBytes": 880,
+      "gzipBytes": 438
     },
     {
-      "file": "data\\variables.json",
-      "rawBytes": 296,
-      "gzipBytes": 232
+      "file": "src\\audio\\soundMap.ts",
+      "rawBytes": 780,
+      "gzipBytes": 362
     },
     {
       "file": "src\\content\\index.ts",

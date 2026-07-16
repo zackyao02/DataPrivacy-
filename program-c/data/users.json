@@ -38,5 +38,125 @@
     "ageRange": "31-38",
     "background": "长期佩戴智能手环，健康数据记录完整。",
     "tags": ["health", "biometric"]
+  },
+  {
+    "id": "user-wu-xia",
+    "name": "吴夏",
+    "city": "广州",
+    "ageRange": "26-32",
+    "background": "互联网客服主管，常在深夜处理投诉工单。",
+    "tags": ["workplace", "night", "social"]
+  },
+  {
+    "id": "user-he-yuan",
+    "name": "何远",
+    "city": "深圳",
+    "ageRange": "30-36",
+    "background": "外卖站点调度员，路线记录和收入波动非常频繁。",
+    "tags": ["location", "platform", "consumption"]
+  },
+  {
+    "id": "user-liang-sen",
+    "name": "梁森",
+    "city": "成都",
+    "ageRange": "40-46",
+    "background": "小店经营者，近期多次申请短期周转资金。",
+    "tags": ["credit", "consumption", "loan"]
+  },
+  {
+    "id": "user-zhou-min",
+    "name": "周敏",
+    "city": "武汉",
+    "ageRange": "23-28",
+    "background": "护理专业毕业生，社交平台上记录了求职和轮班压力。",
+    "tags": ["health", "workplace", "social"]
+  },
+  {
+    "id": "user-ma-ke",
+    "name": "马克",
+    "city": "南京",
+    "ageRange": "33-39",
+    "background": "跨城项目经理，常在机场、酒店和客户园区之间移动。",
+    "tags": ["location", "commute", "workplace"]
+  },
+  {
+    "id": "user-song-yan",
+    "name": "宋妍",
+    "city": "西安",
+    "ageRange": "27-33",
+    "background": "在线教育讲师，直播时段和平台收入高度规律。",
+    "tags": ["platform", "consumption", "social"]
+  },
+  {
+    "id": "user-gao-yu",
+    "name": "高宇",
+    "city": "青岛",
+    "ageRange": "45-52",
+    "background": "制造业班组长，长期佩戴健康手环记录睡眠和心率。",
+    "tags": ["health", "wearable", "biometric"]
+  },
+  {
+    "id": "user-luo-cheng",
+    "name": "罗程",
+    "city": "天津",
+    "ageRange": "21-26",
+    "background": "应届毕业生，频繁投递岗位并加入多个求职社群。",
+    "tags": ["workplace", "social", "contact_graph"]
+  },
+  {
+    "id": "user-qian-mo",
+    "name": "钱默",
+    "city": "合肥",
+    "ageRange": "34-41",
+    "background": "网约车司机，夜间接单路线与家庭住址高度重合。",
+    "tags": ["location", "night", "family"]
+  },
+  {
+    "id": "user-jiang-yi",
+    "name": "蒋一",
+    "city": "厦门",
+    "ageRange": "29-35",
+    "background": "自由摄影师，常在社交平台发布客户现场和行程片段。",
+    "tags": ["social", "location", "platform"]
+  },
+  {
+    "id": "user-fang-ning",
+    "name": "方宁",
+    "city": "长沙",
+    "ageRange": "38-44",
+    "background": "全职照护者，家庭联系人和医院周边定位非常密集。",
+    "tags": ["family", "health_hint", "contact_graph"]
+  },
+  {
+    "id": "user-han-xue",
+    "name": "韩雪",
+    "city": "苏州",
+    "ageRange": "25-31",
+    "background": "电商运营，消费、退货和平台聊天记录高度活跃。",
+    "tags": ["consumption", "platform", "social"]
+  },
+  {
+    "id": "user-yu-hao",
+    "name": "余浩",
+    "city": "杭州",
+    "ageRange": "42-48",
+    "background": "保险代理人，经常搜索客户健康和家庭关系相关话题。",
+    "tags": ["health_hint", "contact_graph", "workplace"]
+  },
+  {
+    "id": "user-deng-lan",
+    "name": "邓岚",
+    "city": "重庆",
+    "ageRange": "31-37",
+    "background": "连锁餐饮店长，排班记录和员工沟通群非常集中。",
+    "tags": ["workplace", "social", "contact_graph"]
+  },
+  {
+    "id": "user-bai-shu",
+    "name": "白术",
+    "city": "北京",
+    "ageRange": "36-43",
+    "background": "运动康复师，既产生健康数据，也频繁接触客户个人信息。",
+    "tags": ["health", "biometric", "contact_graph"]
   }
 ]

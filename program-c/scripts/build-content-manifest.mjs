@@ -66,6 +66,7 @@ const manifest = {
     "findPackagePreviews",
     "findBuyersForPackage",
     "findNewsForPackage",
+    "pickNewsForPackage",
   ],
   soundEvents: readSoundEvents(),
   sharedState: {

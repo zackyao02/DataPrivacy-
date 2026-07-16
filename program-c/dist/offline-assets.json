@@ -22,14 +22,21 @@
     "mode": "web-audio-procedural",
     "externalFiles": [],
     "events": [
+      "dataFlowIn",
       "cardGenerated",
       "cardMovedToSlot",
       "packageCreated",
+      "packageSealed",
+      "neonCharged",
       "wasteCreated",
       "transactionSuccess",
+      "transactionSealed",
       "riskChanged",
       "newsGenerated",
       "emotionSelected",
+      "emotionEmpathySelected",
+      "emotionAngerSelected",
+      "emotionNumbnessSelected",
       "conscienceChanged",
       "endingTriggered"
     ]
