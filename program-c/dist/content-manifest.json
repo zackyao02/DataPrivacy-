@@ -1,0 +1,80 @@
+{
+  "role": "Program C - content tools, audio, build and performance",
+  "budgetBytes": 8388608,
+  "contentFiles": [
+    "card_templates.json",
+    "users.json",
+    "buyers.json",
+    "variables.json",
+    "news_templates.json",
+    "protocol_terms.json",
+    "package_recipes.json",
+    "day_challenges.json"
+  ],
+  "counts": {
+    "cardTemplates": 6,
+    "users": 5,
+    "buyers": 3,
+    "newsTemplates": 5,
+    "protocolTerms": 10,
+    "packageRecipes": 5,
+    "dayChallenges": 2
+  },
+  "dataTypes": [
+    "biometric",
+    "consumption",
+    "contact_graph",
+    "health",
+    "location",
+    "social"
+  ],
+  "sensitivityLevels": [
+    "high",
+    "medium"
+  ],
+  "packageTypes": [
+    "信用评分包",
+    "健康风险评估包",
+    "关系图谱包",
+    "精准画像包",
+    "职场竞争力包"
+  ],
+  "playableDays": [
+    1,
+    2
+  ],
+  "dayChallengeTypes": [
+    "data_cleaning",
+    "protocol_match"
+  ],
+  "repositoryCapabilities": [
+    "pickUser",
+    "pickCard",
+    "fillVariables",
+    "getDayChallenges",
+    "findChallengeByDay",
+    "findChallengesByType",
+    "findCardsByDataType",
+    "findCardsByIds",
+    "findRecipesForDataTypes",
+    "createPackagePreview",
+    "findPackagePreviews",
+    "findBuyersForPackage",
+    "findNewsForPackage"
+  ],
+  "soundEvents": [
+    "cardGenerated",
+    "cardMovedToSlot",
+    "packageCreated",
+    "wasteCreated",
+    "transactionSuccess",
+    "riskChanged",
+    "newsGenerated",
+    "emotionSelected",
+    "conscienceChanged",
+    "endingTriggered"
+  ],
+  "sharedState": {
+    "conscience": "清醒值 / 良知值，内部统一变量名使用 conscience"
+  }
+}
