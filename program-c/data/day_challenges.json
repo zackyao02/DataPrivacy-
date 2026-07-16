@@ -1,0 +1,119 @@
+[
+  {
+    "id": "challenge-day1-protocol-disguise",
+    "day": 1,
+    "type": "protocol_match",
+    "title": "协议伪装",
+    "briefing": "黑盒要求你把敏感数据术语改写成用户更容易接受的服务话术。",
+    "objective": "将敏感术语和无害表述正确配对。",
+    "timeLimitSeconds": 45,
+    "badge": "话术大师",
+    "protocolTermIds": [
+      "protocol-precise-location",
+      "protocol-contact-upload",
+      "protocol-health-score",
+      "protocol-consumption-profile",
+      "protocol-social-sentiment",
+      "protocol-biometric-camera"
+    ],
+    "successText": "黑盒：不错，用户只会看到他们愿意相信的那一面。",
+    "failText": "黑盒：话术不够圆滑。重新整理措辞，别让风险暴露在表面。"
+  },
+  {
+    "id": "challenge-day2-data-cleaning",
+    "day": 2,
+    "type": "data_cleaning",
+    "title": "数据清洗",
+    "briefing": "昨夜的交易留下了太多痕迹。黑盒要求你在审计前删除屏幕上的敏感数据图标。",
+    "objective": "在限定时间内点掉所有敏感数据，避开备份文件和审计日志。",
+    "timeLimitSeconds": 30,
+    "badge": "幽灵擦除者",
+    "successCondition": {
+      "requiredSensitiveClicks": 7,
+      "maxMistakes": 1
+    },
+    "sensitiveItems": [
+      {
+        "id": "clean-location-gps-trail",
+        "label": "GPS连续轨迹",
+        "dataType": "location",
+        "sensitivity": "high",
+        "iconHint": "crosshair",
+        "description": "连续定位记录，可还原用户夜间行动路径。"
+      },
+      {
+        "id": "clean-contact-upload",
+        "label": "通讯录上传包",
+        "dataType": "contact_graph",
+        "sensitivity": "high",
+        "iconHint": "network",
+        "description": "联系人关系链，可用于熟人诈骗和信用牵连。"
+      },
+      {
+        "id": "clean-biometric-faceprint",
+        "label": "面部特征向量",
+        "dataType": "biometric",
+        "sensitivity": "high",
+        "iconHint": "scan-face",
+        "description": "不可轻易更换的生物识别特征。"
+      },
+      {
+        "id": "clean-health-sleep-log",
+        "label": "睡眠异常日志",
+        "dataType": "health",
+        "sensitivity": "high",
+        "iconHint": "activity",
+        "description": "健康趋势推断，可影响保险和招聘判断。"
+      },
+      {
+        "id": "clean-consumption-loan-hint",
+        "label": "借贷消费线索",
+        "dataType": "consumption",
+        "sensitivity": "medium",
+        "iconHint": "credit-card",
+        "description": "消费压力和借贷倾向，可被用于信用评分。"
+      },
+      {
+        "id": "clean-social-complaint-snippet",
+        "label": "匿名抱怨片段",
+        "dataType": "social",
+        "sensitivity": "medium",
+        "iconHint": "message-square-warning",
+        "description": "社交表达记录，可被错误解读为性格风险。"
+      },
+      {
+        "id": "clean-cross-platform-link",
+        "label": "跨平台身份关联",
+        "dataType": "social",
+        "sensitivity": "high",
+        "iconHint": "link",
+        "description": "把多个平台账号合并成同一个真实用户画像。"
+      }
+    ],
+    "decoyItems": [
+      {
+        "id": "decoy-backup-cache",
+        "label": "备份文件",
+        "trapType": "backup_file",
+        "iconHint": "archive-restore",
+        "description": "误点会让已删除证据恢复。"
+      },
+      {
+        "id": "decoy-audit-log",
+        "label": "审计日志",
+        "trapType": "audit_log",
+        "iconHint": "clipboard-list",
+        "description": "误点会触发风控记录。"
+      },
+      {
+        "id": "decoy-system-core",
+        "label": "系统核心",
+        "trapType": "system_file",
+        "iconHint": "cpu",
+        "description": "误点会造成短暂卡顿，浪费清洗时间。"
+      }
+    ],
+    "successText": "黑盒：痕迹清理完成。审计员只会看到一份干净的报表。",
+    "failText": "黑盒：备份恢复了部分证据。下次别把系统文件也当垃圾删。"
+  }
+]

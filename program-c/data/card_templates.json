@@ -1,0 +1,56 @@
+[
+  {
+    "id": "card-location-night-commute",
+    "title": "{姓名} 的夜间通勤轨迹",
+    "dataType": "location",
+    "sensitivity": "high",
+    "description": "{姓名} 最近 14 天在 {城市} 的夜间停留点和通勤路线。",
+    "userProfileTags": ["commute", "night", "location"],
+    "variables": ["姓名", "城市"]
+  },
+  {
+    "id": "card-consumption-medical-store",
+    "title": "{姓名} 的药店消费记录",
+    "dataType": "consumption",
+    "sensitivity": "medium",
+    "description": "{姓名} 在 {平台} 上多次购买慢性病相关用品，累计金额约 {金额}。",
+    "userProfileTags": ["consumption", "health_hint"],
+    "variables": ["姓名", "平台", "金额"]
+  },
+  {
+    "id": "card-social-work-complaint",
+    "title": "{姓名} 的职场社交片段",
+    "dataType": "social",
+    "sensitivity": "medium",
+    "description": "{姓名} 在匿名社区中多次提到加班、绩效和部门矛盾。",
+    "userProfileTags": ["workplace", "social"],
+    "variables": ["姓名"]
+  },
+  {
+    "id": "card-biometric-gait",
+    "title": "{姓名} 的步态识别记录",
+    "dataType": "biometric",
+    "sensitivity": "high",
+    "description": "摄像头模型记录了 {姓名} 在 {城市} 商圈的步态特征。",
+    "userProfileTags": ["biometric", "camera"],
+    "variables": ["姓名", "城市"]
+  },
+  {
+    "id": "card-health-sleep-risk",
+    "title": "{姓名} 的睡眠健康趋势",
+    "dataType": "health",
+    "sensitivity": "high",
+    "description": "{姓名} 连续多周睡眠不足，健康风险标签被系统自动上调。",
+    "userProfileTags": ["health", "sleep"],
+    "variables": ["姓名"]
+  },
+  {
+    "id": "card-contact-debt-circle",
+    "title": "{姓名} 的联系人风险图谱",
+    "dataType": "contact_graph",
+    "sensitivity": "high",
+    "description": "{姓名} 的通讯录中出现多个高频借贷联系人。",
+    "userProfileTags": ["contact_graph", "credit"],
+    "variables": ["姓名"]
+  }
+]

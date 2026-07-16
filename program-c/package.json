@@ -1,0 +1,16 @@
+{
+  "name": "program-c-content-audio-build",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:manifest && npm run build:offline",
+    "build:manifest": "node scripts/build-content-manifest.mjs",
+    "build:offline": "node scripts/build-offline-manifest.mjs",
+    "validate:content": "node scripts/validate-content.mjs",
+    "verify:offline": "node scripts/verify-offline-readiness.mjs",
+    "report:size": "node scripts/bundle-size-report.mjs",
+    "report:gzip": "node scripts/gzip-size-report.mjs",
+    "check": "npm run validate:content && npm run build && npm run verify:offline && npm run report:size && npm run report:gzip"
+  }
+}

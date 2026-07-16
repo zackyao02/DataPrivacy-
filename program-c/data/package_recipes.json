@@ -1,0 +1,32 @@
+[
+  {
+    "id": "recipe-precision-profile",
+    "packageType": "精准画像包",
+    "requiredDataTypes": ["location", "consumption", "social"],
+    "description": "用于广告投放和行为预测的综合用户画像。"
+  },
+  {
+    "id": "recipe-health-risk",
+    "packageType": "健康风险评估包",
+    "requiredDataTypes": ["health", "biometric", "consumption"],
+    "description": "用于保险和风险定价的健康趋势推断。"
+  },
+  {
+    "id": "recipe-workplace-score",
+    "packageType": "职场竞争力包",
+    "requiredDataTypes": ["location", "consumption", "social"],
+    "description": "用于招聘筛选的工作稳定性和行为偏好判断。"
+  },
+  {
+    "id": "recipe-credit-score",
+    "packageType": "信用评分包",
+    "requiredDataTypes": ["consumption", "contact_graph", "location"],
+    "description": "用于信贷审核的消费、关系和活动范围评分。"
+  },
+  {
+    "id": "recipe-contact-graph",
+    "packageType": "关系图谱包",
+    "requiredDataTypes": ["contact_graph", "social", "location"],
+    "description": "用于识别熟人关系、影响链和潜在操控路径。"
+  }
+]

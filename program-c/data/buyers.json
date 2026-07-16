@@ -1,0 +1,23 @@
+[
+  {
+    "id": "buyer-ad-neon",
+    "name": "霓虹广告投放公司",
+    "buyerType": "广告公司",
+    "acceptedPackageTypes": ["精准画像包", "关系图谱包"],
+    "demandText": "急需更细的兴趣标签和夜间活动范围，用于提高广告点击率。"
+  },
+  {
+    "id": "buyer-insurance-grey",
+    "name": "灰塔保险风控部",
+    "buyerType": "保险公司",
+    "acceptedPackageTypes": ["健康风险评估包", "信用评分包"],
+    "demandText": "需要睡眠、消费和健康异常趋势，用于调整保费模型。"
+  },
+  {
+    "id": "buyer-credit-lattice",
+    "name": "格点信贷审核中心",
+    "buyerType": "信贷机构",
+    "acceptedPackageTypes": ["信用评分包", "职场竞争力包"],
+    "demandText": "收购联系人风险、消费波动和工作稳定性线索。"
+  }
+]

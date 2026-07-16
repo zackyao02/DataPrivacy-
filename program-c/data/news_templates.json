@@ -1,0 +1,57 @@
+[
+  {
+    "id": "news-location-stalking",
+    "relatedPackageType": "精准画像包",
+    "headline": "{城市} 一名用户遭遇精准尾随，行动轨迹疑似被出售",
+    "body": "警方称，受害者近期多个夜间停留点被陌生账号反复提及，信息来源仍在调查。",
+    "emotionResponses": {
+      "empathy": "你突然意识到，那些坐标并不是地图上的点，而是一个人的生活。",
+      "anger": "你盯着屏幕，第一次对黑盒的任务说明产生抵触。",
+      "numbness": "新闻很快滑走，下一批数据已经抵达传送带。"
+    }
+  },
+  {
+    "id": "news-health-insurance",
+    "relatedPackageType": "健康风险评估包",
+    "headline": "用户投保被拒，平台称其健康风险异常",
+    "body": "当事人表示从未主动提交相关健康报告，但保险报价在一夜之间大幅变化。",
+    "emotionResponses": {
+      "empathy": "你想起那张睡眠趋势卡，心口短暂地发紧。",
+      "anger": "你觉得这不像评估，更像偷来的审判。",
+      "numbness": "黑盒提示：风险识别效率提升。"
+    }
+  },
+  {
+    "id": "news-credit-contact",
+    "relatedPackageType": "信用评分包",
+    "headline": "联系人关系图谱影响贷款审核，用户申诉无门",
+    "body": "多名用户称自己被陌生人的借贷行为牵连，审核方拒绝公开评分依据。",
+    "emotionResponses": {
+      "empathy": "你第一次想删掉某条操作日志。",
+      "anger": "你把鼠标停在黑盒窗口上，却没有新的选项出现。",
+      "numbness": "系统记录：情绪波动未影响工作效率。"
+    }
+  },
+  {
+    "id": "news-job-profile",
+    "relatedPackageType": "职场竞争力包",
+    "headline": "招聘平台被曝利用隐私画像筛掉求职者",
+    "body": "内部规则显示，夜间活跃、健康异常和社交抱怨被纳入候选人排序。",
+    "emotionResponses": {
+      "empathy": "你看见屏幕上的名字，像看见某个真实的人被折叠成标签。",
+      "anger": "你对黑盒说：这不该叫优化。",
+      "numbness": "你继续整理下一份画像，动作比昨天更熟练。"
+    }
+  },
+  {
+    "id": "news-scam-graph",
+    "relatedPackageType": "关系图谱包",
+    "headline": "诈骗团伙利用关系链伪装熟人实施诱导",
+    "body": "受害者称对方准确说出朋友、地点和消费习惯，因此放松警惕。",
+    "emotionResponses": {
+      "empathy": "你忽然不想再看右侧买家的报价。",
+      "anger": "你开始怀疑自己是不是正在帮犯罪补全拼图。",
+      "numbness": "黑盒评价：客户关系维护合格。"
+    }
+  }
+]

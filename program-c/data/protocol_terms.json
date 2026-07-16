@@ -1,0 +1,62 @@
+[
+  {
+    "id": "protocol-precise-location",
+    "riskyTerm": "持续定位",
+    "disguisedTerm": "位置服务优化",
+    "explanation": "将连续轨迹包装成提升服务体验的必要权限。"
+  },
+  {
+    "id": "protocol-contact-upload",
+    "riskyTerm": "上传通讯录",
+    "disguisedTerm": "好友发现",
+    "explanation": "用社交便利掩盖联系人关系采集。"
+  },
+  {
+    "id": "protocol-health-score",
+    "riskyTerm": "健康风险评分",
+    "disguisedTerm": "个性化健康建议",
+    "explanation": "把敏感健康推断包装成建议功能。"
+  },
+  {
+    "id": "protocol-consumption-profile",
+    "riskyTerm": "消费能力画像",
+    "disguisedTerm": "优惠推荐",
+    "explanation": "用折扣推荐掩盖消费水平分层。"
+  },
+  {
+    "id": "protocol-social-sentiment",
+    "riskyTerm": "情绪与社交倾向分析",
+    "disguisedTerm": "内容偏好优化",
+    "explanation": "用内容推荐名义分析用户表达和情绪。"
+  },
+  {
+    "id": "protocol-biometric-camera",
+    "riskyTerm": "生物特征识别",
+    "disguisedTerm": "安全校验",
+    "explanation": "将步态、面部等数据归入安全功能。"
+  },
+  {
+    "id": "protocol-cross-platform",
+    "riskyTerm": "跨平台数据合并",
+    "disguisedTerm": "统一账户体验",
+    "explanation": "把多平台追踪说成账号体验优化。"
+  },
+  {
+    "id": "protocol-third-party",
+    "riskyTerm": "第三方共享",
+    "disguisedTerm": "合作伙伴服务",
+    "explanation": "隐藏数据向外部买家流动的事实。"
+  },
+  {
+    "id": "protocol-retention",
+    "riskyTerm": "长期留存",
+    "disguisedTerm": "历史记录同步",
+    "explanation": "将超长保存周期包装成同步便利。"
+  },
+  {
+    "id": "protocol-risk-model",
+    "riskyTerm": "自动化风险决策",
+    "disguisedTerm": "智能评估",
+    "explanation": "用智能评估淡化算法直接影响权益的风险。"
+  }
+]

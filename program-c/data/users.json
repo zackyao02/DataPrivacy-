@@ -1,0 +1,42 @@
+[
+  {
+    "id": "user-lin-qiao",
+    "name": "林乔",
+    "city": "杭州",
+    "ageRange": "24-29",
+    "background": "刚入职的产品运营，经常深夜通勤。",
+    "tags": ["workplace", "commute"]
+  },
+  {
+    "id": "user-chen-ming",
+    "name": "陈明",
+    "city": "宁波",
+    "ageRange": "35-42",
+    "background": "有房贷压力的销售经理，近期频繁搜索保险。",
+    "tags": ["credit", "health_hint"]
+  },
+  {
+    "id": "user-xu-ran",
+    "name": "许然",
+    "city": "上海",
+    "ageRange": "20-25",
+    "background": "大学生，社交平台活跃，常参加线下活动。",
+    "tags": ["social", "location"]
+  },
+  {
+    "id": "user-tang-yue",
+    "name": "唐悦",
+    "city": "杭州",
+    "ageRange": "28-34",
+    "background": "自由职业者，依赖多个平台接单。",
+    "tags": ["platform", "consumption"]
+  },
+  {
+    "id": "user-zhao-ning",
+    "name": "赵宁",
+    "city": "苏州",
+    "ageRange": "31-38",
+    "background": "长期佩戴智能手环，健康数据记录完整。",
+    "tags": ["health", "biometric"]
+  }
+]
