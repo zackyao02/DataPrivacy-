@@ -1,8 +1,6 @@
 # 程序 C：内容工具与音效 / 构建与性能
 
-本分支是程序 C 的交付分支，分支名保持为 `feature/program-c-day2-content`，文件放在 `program-c/` 目录下。
-
-重要说明：这里的 D1 / D2 / D3 指团队分工表里的开发日安排，不是游戏剧情里的 Day 1 / Day 2 / Day 3。
+本分支是程序 C 的交付分支，分支名为 `feature/program-c-content-audio-build`，文件放在 `program-c/` 目录下。
 
 ## 当前完成
 
