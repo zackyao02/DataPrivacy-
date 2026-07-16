@@ -1,8 +1,6 @@
 # 程序 C 交接说明
 
-本开发包按团队分工表整理，范围只覆盖“程序 C：内容工具与音效 / 构建与性能”。
-
-重要纠偏：D1 / D2 / D3 指分工表里的开发日，不是游戏剧情天数。游戏内小关卡目前只交付 Day 1「协议伪装」和 Day 2「数据清洗」。
+本开发包覆盖“程序 C：内容工具与音效 / 构建与性能”。文档未完全定稿的部分，程序 C 按主线方向和联调需要做了小范围优化。
 
 ## 分工表进度
 
@@ -11,6 +9,7 @@
 | D1 | 工具链、音频框架、性能/离线检查基础 | 已完成 |
 | D2 | 10 套卡片、20 个用户画像、变量填充、数据流入音效、三种情绪音效 | 已完成 |
 | D3 | 10 条新闻模板、新闻匹配算法、打包/交易音效 | 已完成 |
+| D4 | 新闻扩到 20 条、协议伪装配对扩到 20 组、新闻播报音效、BGM 切换 | 已完成 |
 
 ## 内容文件
 
@@ -18,10 +17,10 @@
 | --- | --- |
 | `data/card_templates.json` | 10 套数据卡模板 |
 | `data/users.json` | 20 个用户画像 |
-| `data/buyers.json` | 买家和可接受的包类型 |
+| `data/buyers.json` | 买家和可接受的数据包类型 |
 | `data/variables.json` | `{姓名}`、`{城市}`、`{金额}`、`{平台}` 占位符池 |
-| `data/news_templates.json` | 10 条新闻模板，每种数据包类型至少 2 条 |
-| `data/protocol_terms.json` | 协议伪装用黑话配对数据 |
+| `data/news_templates.json` | 20 条新闻模板，每种数据包类型至少 4 条 |
+| `data/protocol_terms.json` | 20 组协议伪装配对 |
 | `data/package_recipes.json` | 5 种数据包配方 |
 | `data/day_challenges.json` | 游戏内 Day 1 / Day 2 小关卡配置 |
 
@@ -62,7 +61,8 @@ window.addEventListener("pointerdown", () => {
 }, { once: true });
 
 audio.handleGameEvent("dataFlowIn");
-audio.handleGameEvent("emotionEmpathySelected");
+audio.handleGameEvent("newsBroadcast");
+audio.handleGameEvent("bgmPressure");
 ```
 
 推荐事件名：
@@ -78,10 +78,15 @@ audio.handleGameEvent("emotionEmpathySelected");
 | `transactionSuccess` / `transactionSealed` | 交易成功 / 交易封装 |
 | `riskChanged` | 风险值变化 |
 | `newsGenerated` | 新闻出现 |
+| `newsBroadcast` | 新闻播报提示 |
+| `newsTicker` | 新闻滚动短提示 |
 | `emotionSelected` | 通用情绪选择 |
 | `emotionEmpathySelected` | 同情选项 |
 | `emotionAngerSelected` | 愤怒选项 |
 | `emotionNumbnessSelected` | 麻木选项 |
+| `bgmBlackBox` | 切换到黑盒低频 BGM |
+| `bgmPressure` | 切换到压力 BGM |
+| `bgmSilence` | 停止当前 BGM |
 | `conscienceChanged` | 清醒值变化 |
 | `endingTriggered` | 结局触发 |
 
@@ -91,25 +96,21 @@ audio.handleGameEvent("emotionEmpathySelected");
 cmd /c npm run check
 ```
 
-最新结果：
+最新目标：
 
-| 项 | 结果 |
+| 项 | 目标 |
 | --- | --- |
-| 内容校验 | 通过 |
-| 卡牌数量 | 10 |
-| 用户数量 | 20 |
-| 买家数量 | 3 |
+| 卡牌模板 | 10 |
+| 用户画像 | 20 |
+| 买家 | 3 |
 | 打包配方 | 5 |
-| 新闻模板 | 10 |
-| 协议词 | 10 |
+| 新闻模板 | 20 |
+| 协议词 | 20 |
 | 游戏内小关卡配置 | 2 |
-| 离线检查 | 通过，`externalNetworkRequired=false` |
-| raw 体积 | 45916 bytes |
-| gzip 体积 | 15945 bytes |
-| 8MB 预算 | 通过 |
+| 离线检查 | `externalNetworkRequired=false` |
+| 包体预算 | 8MB 内 |
 
 ## 后续
 
-- 分工表 D4：补剩余新闻到最终 20 条、补 20 组协议伪装配对、新闻播报音效和 BGM 切换。
-- 分工表 D5：补数据清洗图标配置、舆论操控话术模板、小关卡通用成功/失败音效。
+- 分工表 D5：数据清洗图标配置、舆论操控话术模板、小关卡通用成功/失败音效、黑盒评价台词音频绑定。
 - 真实音频素材接入后继续跑 `cmd /c npm run check` 控制包体。

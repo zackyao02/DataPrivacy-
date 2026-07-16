@@ -58,5 +58,65 @@
     "riskyTerm": "自动化风险决策",
     "disguisedTerm": "智能评估",
     "explanation": "用智能评估淡化算法直接影响权益的风险。"
+  },
+  {
+    "id": "protocol-minor-location",
+    "riskyTerm": "未成年人轨迹采集",
+    "disguisedTerm": "家庭安全提醒",
+    "explanation": "用安全名义包装对儿童活动路线的持续记录。"
+  },
+  {
+    "id": "protocol-night-pattern",
+    "riskyTerm": "夜间活动模式分析",
+    "disguisedTerm": "作息体验优化",
+    "explanation": "把深夜行动和停留点推断包装成作息建议。"
+  },
+  {
+    "id": "protocol-pharmacy-purchase",
+    "riskyTerm": "药品消费记录关联",
+    "disguisedTerm": "健康服务推荐",
+    "explanation": "用服务推荐掩盖药品消费被用于健康推断。"
+  },
+  {
+    "id": "protocol-emotion-inference",
+    "riskyTerm": "心理压力推断",
+    "disguisedTerm": "情绪关怀提示",
+    "explanation": "把社交表达、睡眠和消费波动组合成压力标签。"
+  },
+  {
+    "id": "protocol-gig-income",
+    "riskyTerm": "收入稳定性推断",
+    "disguisedTerm": "额度动态管理",
+    "explanation": "用额度管理淡化对非固定收入人群的风险分层。"
+  },
+  {
+    "id": "protocol-association-risk",
+    "riskyTerm": "联系人风险牵连",
+    "disguisedTerm": "社交信用参考",
+    "explanation": "将他人的风险转移到用户评分中。"
+  },
+  {
+    "id": "protocol-pregnancy-inference",
+    "riskyTerm": "生育计划推断",
+    "disguisedTerm": "职业稳定性参考",
+    "explanation": "用稳定性名义隐藏对敏感生活状态的推断。"
+  },
+  {
+    "id": "protocol-union-signal",
+    "riskyTerm": "组织倾向识别",
+    "disguisedTerm": "团队协作分析",
+    "explanation": "把线下关系和群体互动包装成协作效率数据。"
+  },
+  {
+    "id": "protocol-elder-targeting",
+    "riskyTerm": "老人脆弱性画像",
+    "disguisedTerm": "适老化服务推荐",
+    "explanation": "用适老服务包装对独居、就医和消费弱点的识别。"
+  },
+  {
+    "id": "protocol-school-social",
+    "riskyTerm": "学生关系链暴露",
+    "disguisedTerm": "校园社交体验",
+    "explanation": "用社交体验掩盖对学生好友和冲突关系的分析。"
   }
 ]

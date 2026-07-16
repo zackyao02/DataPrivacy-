@@ -67,7 +67,8 @@ assertUniqueIds(dayChallenges, "day_challenges");
 
 assert(cardTemplates.length >= 10, "card_templates needs at least 10 templates for Program C Day 2");
 assert(users.length >= 20, "users needs at least 20 profiles for Program C Day 2");
-assert(newsTemplates.length >= 10, "news_templates needs at least 10 templates for Program C Day 3");
+assert(newsTemplates.length >= 20, "news_templates needs at least 20 templates for Program C D4");
+assert(protocolTerms.length >= 20, "protocol_terms needs at least 20 pairs for Program C D4");
 
 for (const key of variableKeys) {
   assert(Array.isArray(variables[key]), `variables missing array: ${key}`);

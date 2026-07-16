@@ -33,10 +33,15 @@
       "transactionSealed",
       "riskChanged",
       "newsGenerated",
+      "newsBroadcast",
+      "newsTicker",
       "emotionSelected",
       "emotionEmpathySelected",
       "emotionAngerSelected",
       "emotionNumbnessSelected",
+      "bgmBlackBox",
+      "bgmPressure",
+      "bgmSilence",
       "conscienceChanged",
       "endingTriggered"
     ]

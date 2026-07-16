@@ -1,14 +1,24 @@
 {
   "budgetBytes": 8388608,
-  "totalRawBytes": 45916,
-  "totalGzipBytes": 15945,
-  "remainingRawBytes": 8342692,
-  "remainingGzipBytes": 8372663,
+  "totalRawBytes": 56861,
+  "totalGzipBytes": 19007,
+  "remainingRawBytes": 8331747,
+  "remainingGzipBytes": 8369601,
   "files": [
     {
       "file": "data\\news_templates.json",
-      "rawBytes": 5545,
-      "gzipBytes": 2376
+      "rawBytes": 11143,
+      "gzipBytes": 4042
+    },
+    {
+      "file": "src\\audio\\AudioManager.ts",
+      "rawBytes": 9141,
+      "gzipBytes": 2060
+    },
+    {
+      "file": "data\\day_challenges.json",
+      "rawBytes": 4602,
+      "gzipBytes": 1849
     },
     {
       "file": "src\\content\\ContentRepository.ts",
@@ -16,19 +26,14 @@
       "gzipBytes": 1829
     },
     {
-      "file": "data\\day_challenges.json",
-      "rawBytes": 4146,
-      "gzipBytes": 1712
-    },
-    {
       "file": "data\\users.json",
       "rawBytes": 4743,
       "gzipBytes": 1686
     },
     {
-      "file": "src\\audio\\AudioManager.ts",
-      "rawBytes": 6738,
-      "gzipBytes": 1595
+      "file": "data\\protocol_terms.json",
+      "rawBytes": 4092,
+      "gzipBytes": 1499
     },
     {
       "file": "data\\card_templates.json",
@@ -41,19 +46,14 @@
       "gzipBytes": 956
     },
     {
-      "file": "data\\protocol_terms.json",
-      "rawBytes": 1959,
-      "gzipBytes": 848
-    },
-    {
       "file": "dist\\content-manifest.json",
-      "rawBytes": 1833,
-      "gzipBytes": 821
+      "rawBytes": 1928,
+      "gzipBytes": 859
     },
     {
       "file": "dist\\offline-assets.json",
-      "rawBytes": 1211,
-      "gzipBytes": 528
+      "rawBytes": 1316,
+      "gzipBytes": 567
     },
     {
       "file": "data\\package_recipes.json",
@@ -77,8 +77,8 @@
     },
     {
       "file": "src\\audio\\soundMap.ts",
-      "rawBytes": 780,
-      "gzipBytes": 362
+      "rawBytes": 935,
+      "gzipBytes": 428
     },
     {
       "file": "src\\content\\index.ts",

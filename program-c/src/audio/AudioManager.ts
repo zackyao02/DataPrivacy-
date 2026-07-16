@@ -8,6 +8,8 @@ export interface AudioManagerOptions {
 export class AudioManager {
   private context: AudioContext | null = null;
   private masterGain: GainNode | null = null;
+  private bgmOscillators: OscillatorNode[] = [];
+  private bgmGain: GainNode | null = null;
   private enabled: boolean;
   private masterVolume: number;
 
@@ -18,6 +20,10 @@ export class AudioManager {
 
   setEnabled(enabled: boolean): void {
     this.enabled = enabled;
+
+    if (!enabled) {
+      this.stopBgm();
+    }
   }
 
   setMasterVolume(volume: number): void {
@@ -92,6 +98,17 @@ export class AudioManager {
         this.noise({ duration: 0.08, gain: 0.06 });
         this.tone({ frequency: 180, duration: 0.18, type: "triangle", startTime: now + 0.04 });
         break;
+      case "news-broadcast":
+        this.noise({ duration: 0.05, gain: 0.045 });
+        this.tone({ frequency: 262, duration: 0.08, type: "triangle", startTime: now + 0.02 });
+        this.tone({ frequency: 392, duration: 0.1, type: "triangle", startTime: now + 0.09 });
+        this.tone({ frequency: 196, duration: 0.16, type: "sine", startTime: now + 0.18 });
+        break;
+      case "news-ticker":
+        [880, 740, 660, 740].forEach((frequency, index) => {
+          this.tone({ frequency, duration: 0.035, type: "square", startTime: now + index * 0.045 });
+        });
+        break;
       case "emotion-select":
         this.tone({ frequency: 330, duration: 0.05, type: "sine", startTime: now });
         this.tone({ frequency: 495, duration: 0.09, type: "sine", startTime: now + 0.04 });
@@ -109,6 +126,15 @@ export class AudioManager {
         this.tone({ frequency: 294, duration: 0.13, type: "sine", startTime: now });
         this.tone({ frequency: 247, duration: 0.16, type: "sine", startTime: now + 0.08 });
         break;
+      case "bgm-blackbox":
+        this.switchBgm([110, 165, 220], 0.032);
+        break;
+      case "bgm-pressure":
+        this.switchBgm([92, 138, 277], 0.04);
+        break;
+      case "bgm-silence":
+        this.stopBgm();
+        break;
       case "conscience-shift":
         this.tone({ frequency: 260, duration: 0.12, type: "triangle", startTime: now });
         break;
@@ -117,6 +143,59 @@ export class AudioManager {
         this.noise({ duration: 0.2, gain: 0.05 });
         break;
     }
+  }
+
+  private switchBgm(frequencies: readonly number[], gainValue: number): void {
+    if (!this.enabled) {
+      return;
+    }
+
+    const context = this.ensureContext();
+    const output = this.masterGain;
+
+    if (!output) {
+      return;
+    }
+
+    this.stopBgm();
+
+    const now = context.currentTime;
+    const gain = context.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.4);
+    gain.connect(output);
+
+    this.bgmGain = gain;
+    this.bgmOscillators = frequencies.map((frequency, index) => {
+      const oscillator = context.createOscillator();
+      oscillator.type = index === 0 ? "sine" : "triangle";
+      oscillator.frequency.value = frequency;
+      oscillator.detune.value = index * 4;
+      oscillator.connect(gain);
+      oscillator.start(now);
+      return oscillator;
+    });
+  }
+
+  private stopBgm(): void {
+    const context = this.context;
+    const now = context?.currentTime ?? 0;
+
+    if (context && this.bgmGain) {
+      this.bgmGain.gain.cancelScheduledValues(now);
+      this.bgmGain.gain.setTargetAtTime(0.0001, now, 0.08);
+    }
+
+    for (const oscillator of this.bgmOscillators) {
+      try {
+        oscillator.stop(context ? now + 0.18 : undefined);
+      } catch {
+        // Oscillators may already be stopped when the BGM mode switches quickly.
+      }
+    }
+
+    this.bgmOscillators = [];
+    this.bgmGain = null;
   }
 
   private ensureContext(): AudioContext {

@@ -14,7 +14,21 @@
       "protocol-health-score",
       "protocol-consumption-profile",
       "protocol-social-sentiment",
-      "protocol-biometric-camera"
+      "protocol-biometric-camera",
+      "protocol-cross-platform",
+      "protocol-third-party",
+      "protocol-retention",
+      "protocol-risk-model",
+      "protocol-minor-location",
+      "protocol-night-pattern",
+      "protocol-pharmacy-purchase",
+      "protocol-emotion-inference",
+      "protocol-gig-income",
+      "protocol-association-risk",
+      "protocol-pregnancy-inference",
+      "protocol-union-signal",
+      "protocol-elder-targeting",
+      "protocol-school-social"
     ],
     "successText": "黑盒：不错，用户只会看到他们愿意相信的那一面。",
     "failText": "黑盒：话术不够圆滑。重新整理措辞，别让风险暴露在表面。"
