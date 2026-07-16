@@ -1,0 +1,6 @@
+{
+  "name": "Data Privacy Irony Game",
+  "description": "A satirical H5 data privacy simulator where players pack and sell user privacy data cards while balancing corporate suspicion and regulatory risk.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
