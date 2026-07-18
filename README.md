@@ -2,15 +2,6 @@
 
 本分支是程序 C 的交付分支：`feature/program-c-content-audio-build`。核心文件放在 `program-c/` 目录下。
 
-## 开发依据
-
-开发前先刷新飞书里的动态文档，不把方案内容当成一次性静态资料：
-
-- [方案V3_数据隐私游戏_反派黑客主线版](https://dcn3xxseaise.feishu.cn/wiki/TEgrwDj1ZifTvmkuxszcMpXFnzb)：主玩法、叙事、数值、每日流程、音效与小关卡口径。
-- [团队分工表](https://dcn3xxseaise.feishu.cn/wiki/CD5qwZfNNinomRk7X7ZcHNeHn5d)：A/B/C 职责边界、排期和嵌入表格任务。
-- [视觉风格与交互参考文档](https://dcn3xxseaise.feishu.cn/wiki/MWRzwSDWbiyN32kBpNqcMuuwn6f)：CRT、赛博朋克、布局、动效和美术参考。
-- [共享对接文档](https://dcn3xxseaise.feishu.cn/wiki/F76ows05GivrtNkRutrcEdZUnIf)：只放各程序之间需要共享的接口、问题和联调提醒；项目进度和验收数字放 GitHub README。
-
 ## 当前完成
 
 - D1：本地工具链、内容校验、离线资源清单、包体检查、Web Audio 音频管理器框架。
