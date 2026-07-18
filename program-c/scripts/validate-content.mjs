@@ -12,10 +12,37 @@ const dataTypes = new Set([
   "contact_graph",
 ]);
 const sensitivities = new Set(["low", "medium", "high"]);
-const dayChallengeTypes = new Set(["protocol_match", "data_cleaning"]);
+const dayChallengeTypes = new Set([
+  "protocol_match",
+  "data_cleaning",
+  "profile_puzzle",
+  "buyer_negotiation",
+]);
 const dataCleaningTrapTypes = new Set(["backup_file", "audit_log", "system_file"]);
 const dataCleaningIconRoles = new Set(["sensitive", "decoy"]);
 const dataCleaningIconRiskColors = new Set(["red", "orange", "blue"]);
+const profilePuzzleSlots = new Set([
+  "routine",
+  "pressure",
+  "relation",
+  "risk_hint",
+  "cover_story",
+  "decoy",
+]);
+const buyerNegotiationTones = new Set(["aggressive", "cooperative", "neutral"]);
+const forbiddenNegotiationKeys = new Set([
+  "price",
+  "risk",
+  "score",
+  "pricedelta",
+  "riskdelta",
+  "scoredelta",
+  "consciencedelta",
+  "effect",
+  "effects",
+  "priceeffect",
+  "riskeffect",
+]);
 const blackBoxLineStages = new Set([
   "challenge_intro",
   "challenge_success",
@@ -59,6 +86,27 @@ function assertKnownPlaceholders(text, label, variables) {
   }
 }
 
+function assertNoForbiddenNegotiationKeys(value, label) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => {
+      assertNoForbiddenNegotiationKeys(item, `${label}[${index}]`);
+    });
+    return;
+  }
+
+  if (!value || typeof value !== "object") {
+    return;
+  }
+
+  for (const [key, child] of Object.entries(value)) {
+    assert(
+      !forbiddenNegotiationKeys.has(key.toLowerCase()),
+      `${label} contains forbidden numeric linkage field: ${key}`,
+    );
+    assertNoForbiddenNegotiationKeys(child, `${label}.${key}`);
+  }
+}
+
 function readSoundEvents() {
   const source = readFileSync(new URL("src/audio/soundMap.ts", root), "utf8");
   const objectBody = source.match(/SOUND_EVENT_MAP\s*=\s*\{([\s\S]*?)\}\s*as const/)?.[1] ?? "";
@@ -69,12 +117,15 @@ function readSoundEvents() {
 const cardTemplates = readJson("card_templates.json");
 const users = readJson("users.json");
 const buyers = readJson("buyers.json");
+const buyerNegotiationScripts = readJson("buyer_negotiation_scripts.json");
 const variables = readJson("variables.json");
 const newsTemplates = readJson("news_templates.json");
 const protocolTerms = readJson("protocol_terms.json");
 const recipes = readJson("package_recipes.json");
 const dayChallenges = readJson("day_challenges.json");
 const dataCleaningIcons = readJson("data_cleaning_icons.json");
+const dailyMonologues = readJson("daily_monologues.json");
+const profilePuzzles = readJson("profile_puzzles.json");
 const publicOpinionScripts = readJson("public_opinion_scripts.json");
 const blackBoxLines = readJson("black_box_lines.json");
 const soundEvents = new Set(readSoundEvents());
@@ -82,11 +133,14 @@ const soundEvents = new Set(readSoundEvents());
 assertUniqueIds(cardTemplates, "card_templates");
 assertUniqueIds(users, "users");
 assertUniqueIds(buyers, "buyers");
+assertUniqueIds(buyerNegotiationScripts, "buyer_negotiation_scripts");
 assertUniqueIds(newsTemplates, "news_templates");
 assertUniqueIds(protocolTerms, "protocol_terms");
 assertUniqueIds(recipes, "package_recipes");
 assertUniqueIds(dayChallenges, "day_challenges");
 assertUniqueIds(dataCleaningIcons, "data_cleaning_icons");
+assertUniqueIds(dailyMonologues, "daily_monologues");
+assertUniqueIds(profilePuzzles, "profile_puzzles");
 assertUniqueIds(publicOpinionScripts, "public_opinion_scripts");
 assertUniqueIds(blackBoxLines, "black_box_lines");
 
@@ -94,8 +148,12 @@ assert(cardTemplates.length >= 10, "card_templates needs at least 10 templates f
 assert(users.length >= 20, "users needs at least 20 profiles for Program C Day 2");
 assert(newsTemplates.length >= 20, "news_templates needs at least 20 templates for Program C D4");
 assert(protocolTerms.length >= 20, "protocol_terms needs at least 20 pairs for Program C D4");
+assert(dayChallenges.length >= 4, "day_challenges needs Day 1/2/4/5 entries for Program C D6");
 assert(dataCleaningIcons.length >= 10, "data_cleaning_icons needs icon coverage for Program C D5");
 assert(publicOpinionScripts.length >= 5, "public_opinion_scripts needs at least 5 templates for Program C D5");
+assert(profilePuzzles.length >= 4, "profile_puzzles needs at least 4 puzzles for Program C D6");
+assert(buyerNegotiationScripts.length >= 6, "buyer_negotiation_scripts needs 6 scripts for Program C D6");
+assert(dailyMonologues.length >= 7, "daily_monologues needs 7 daily monologues for Program C D6");
 assert(blackBoxLines.length >= 10, "black_box_lines needs at least 10 voice lines for Program C D5");
 
 for (const key of variableKeys) {
@@ -146,6 +204,11 @@ for (const card of cardTemplates) {
 
 const packageTypes = new Set(recipes.map((recipe) => recipe.packageType));
 const protocolTermIds = new Set(protocolTerms.map((term) => term.id));
+const cardIds = new Set(cardTemplates.map((card) => card.id));
+const profilePuzzleIds = new Set(profilePuzzles.map((puzzle) => puzzle.id));
+const buyerNegotiationScriptIds = new Set(
+  buyerNegotiationScripts.map((script) => script.id),
+);
 const dataCleaningIconHints = new Set(dataCleaningIcons.map((icon) => icon.iconHint));
 const challengeDays = new Set(dayChallenges.map((challenge) => challenge.day));
 
@@ -252,6 +315,153 @@ for (const script of publicOpinionScripts) {
   }
 }
 
+for (const puzzle of profilePuzzles) {
+  assert(
+    Number.isInteger(puzzle.day) && puzzle.day >= 1 && puzzle.day <= 7,
+    `profile_puzzle ${puzzle.id} invalid day: ${puzzle.day}`,
+  );
+  assert(puzzle.title, `profile_puzzle ${puzzle.id} missing title`);
+  assert(puzzle.userAlias, `profile_puzzle ${puzzle.id} missing userAlias`);
+  assert(puzzle.briefing, `profile_puzzle ${puzzle.id} missing briefing`);
+  assert(puzzle.objective, `profile_puzzle ${puzzle.id} missing objective`);
+  assert(puzzle.targetProfile, `profile_puzzle ${puzzle.id} missing targetProfile`);
+  assert(puzzle.badge, `profile_puzzle ${puzzle.id} missing badge`);
+  assert(puzzle.successText, `profile_puzzle ${puzzle.id} missing successText`);
+  assert(puzzle.failText, `profile_puzzle ${puzzle.id} missing failText`);
+  assert(
+    Array.isArray(puzzle.fragments) && puzzle.fragments.length >= 4,
+    `profile_puzzle ${puzzle.id} needs at least 4 fragments`,
+  );
+  assertUniqueIds(puzzle.fragments, `${puzzle.id} fragments`);
+
+  const activeFragments = puzzle.fragments.filter((fragment) => !fragment.decoy);
+  const activeOrders = new Set(activeFragments.map((fragment) => fragment.correctOrder));
+  assert(
+    activeFragments.length >= 4,
+    `profile_puzzle ${puzzle.id} needs at least 4 non-decoy fragments`,
+  );
+  assert(
+    activeOrders.size === activeFragments.length,
+    `profile_puzzle ${puzzle.id} has duplicate active fragment order`,
+  );
+
+  for (const fragment of puzzle.fragments) {
+    assert(fragment.label, `profile_puzzle ${puzzle.id} fragment ${fragment.id} missing label`);
+    assert(fragment.text, `profile_puzzle ${puzzle.id} fragment ${fragment.id} missing text`);
+    assert(
+      dataTypes.has(fragment.dataType),
+      `profile_puzzle ${puzzle.id} fragment ${fragment.id} invalid dataType: ${fragment.dataType}`,
+    );
+    assert(
+      profilePuzzleSlots.has(fragment.slot),
+      `profile_puzzle ${puzzle.id} fragment ${fragment.id} invalid slot: ${fragment.slot}`,
+    );
+    assert(
+      typeof fragment.decoy === "boolean",
+      `profile_puzzle ${puzzle.id} fragment ${fragment.id} missing decoy boolean`,
+    );
+
+    if (fragment.decoy) {
+      assert(
+        fragment.correctOrder === 0,
+        `profile_puzzle ${puzzle.id} decoy ${fragment.id} should use correctOrder 0`,
+      );
+      assert(
+        fragment.slot === "decoy",
+        `profile_puzzle ${puzzle.id} decoy ${fragment.id} should use decoy slot`,
+      );
+    } else {
+      assert(
+        Number.isInteger(fragment.correctOrder) && fragment.correctOrder > 0,
+        `profile_puzzle ${puzzle.id} fragment ${fragment.id} invalid correctOrder`,
+      );
+      assert(
+        fragment.slot !== "decoy",
+        `profile_puzzle ${puzzle.id} active fragment ${fragment.id} cannot use decoy slot`,
+      );
+    }
+
+    if (fragment.sourceCardId !== undefined) {
+      assert(
+        cardIds.has(fragment.sourceCardId),
+        `profile_puzzle ${puzzle.id} fragment ${fragment.id} references unknown card: ${fragment.sourceCardId}`,
+      );
+    }
+  }
+}
+
+for (const script of buyerNegotiationScripts) {
+  assert(
+    Number.isInteger(script.day) && script.day >= 1 && script.day <= 7,
+    `buyer_negotiation_script ${script.id} invalid day: ${script.day}`,
+  );
+  assert(
+    packageTypes.has(script.packageType),
+    `buyer_negotiation_script ${script.id} references unknown package: ${script.packageType}`,
+  );
+  assert(script.buyerType, `buyer_negotiation_script ${script.id} missing buyerType`);
+  assert(script.scenario, `buyer_negotiation_script ${script.id} missing scenario`);
+  assert(script.briefing, `buyer_negotiation_script ${script.id} missing briefing`);
+  assert(script.successText, `buyer_negotiation_script ${script.id} missing successText`);
+  assert(
+    script.resolutionRule === "both_options_succeed_narrative_only",
+    `buyer_negotiation_script ${script.id} must stay narrative-only with both options succeeding`,
+  );
+  assert(
+    Array.isArray(script.options) && script.options.length === 2,
+    `buyer_negotiation_script ${script.id} needs exactly 2 options`,
+  );
+  assertUniqueIds(script.options, `${script.id} options`);
+  assertNoForbiddenNegotiationKeys(script, `buyer_negotiation_script ${script.id}`);
+
+  for (const option of script.options) {
+    assert(option.label, `buyer_negotiation_script ${script.id} option ${option.id} missing label`);
+    assert(
+      buyerNegotiationTones.has(option.tone),
+      `buyer_negotiation_script ${script.id} option ${option.id} invalid tone: ${option.tone}`,
+    );
+    assert(
+      option.playerLine,
+      `buyer_negotiation_script ${script.id} option ${option.id} missing playerLine`,
+    );
+    assert(
+      option.buyerReply,
+      `buyer_negotiation_script ${script.id} option ${option.id} missing buyerReply`,
+    );
+    assert(
+      option.blackBoxResponse,
+      `buyer_negotiation_script ${script.id} option ${option.id} missing blackBoxResponse`,
+    );
+    assert(
+      option.outcomeText,
+      `buyer_negotiation_script ${script.id} option ${option.id} missing outcomeText`,
+    );
+  }
+}
+
+for (const monologue of dailyMonologues) {
+  assert(
+    Number.isInteger(monologue.day) && monologue.day >= 1 && monologue.day <= 7,
+    `daily_monologue ${monologue.id} invalid day: ${monologue.day}`,
+  );
+  assert(monologue.trigger === "after_news", `daily_monologue ${monologue.id} invalid trigger`);
+  assert(monologue.title, `daily_monologue ${monologue.id} missing title`);
+  assert(monologue.speaker, `daily_monologue ${monologue.id} missing speaker`);
+  assert(
+    soundEvents.has(monologue.typewriterSoundEvent),
+    `daily_monologue ${monologue.id} references unknown sound event: ${monologue.typewriterSoundEvent}`,
+  );
+  assert(monologue.closingCue, `daily_monologue ${monologue.id} missing closingCue`);
+  assert(
+    Array.isArray(monologue.textSegments) && monologue.textSegments.length >= 2,
+    `daily_monologue ${monologue.id} needs at least 2 textSegments`,
+  );
+
+  for (const [index, segment] of monologue.textSegments.entries()) {
+    assert(segment, `daily_monologue ${monologue.id} segment ${index} is empty`);
+  }
+}
+
 for (const line of blackBoxLines) {
   assert(
     blackBoxLineStages.has(line.stage),
@@ -281,6 +491,14 @@ for (const line of blackBoxLines) {
 
 assert(challengeDays.has(1), "day_challenges missing Day 1 challenge");
 assert(challengeDays.has(2), "day_challenges missing Day 2 challenge");
+assert(challengeDays.has(4), "day_challenges missing Day 4 profile puzzle challenge");
+assert(challengeDays.has(5), "day_challenges missing Day 5 buyer negotiation challenge");
+
+const monologueDays = new Set(dailyMonologues.map((monologue) => monologue.day));
+
+for (let day = 1; day <= 7; day += 1) {
+  assert(monologueDays.has(day), `daily_monologues missing Day ${day}`);
+}
 
 for (const challenge of dayChallenges) {
   assert(
@@ -370,6 +588,45 @@ for (const challenge of dayChallenges) {
       assert(item.description, `challenge ${challenge.id} decoy ${item.id} missing description`);
     }
   }
+
+  if (challenge.type === "profile_puzzle") {
+    assert(
+      Array.isArray(challenge.profilePuzzleIds) && challenge.profilePuzzleIds.length > 0,
+      `challenge ${challenge.id} missing profilePuzzleIds`,
+    );
+
+    for (const puzzleId of challenge.profilePuzzleIds) {
+      const puzzle = profilePuzzles.find((item) => item.id === puzzleId);
+      assert(
+        profilePuzzleIds.has(puzzleId),
+        `challenge ${challenge.id} references unknown profile puzzle: ${puzzleId}`,
+      );
+      assert(
+        puzzle?.day === challenge.day,
+        `challenge ${challenge.id} references profile puzzle from another day: ${puzzleId}`,
+      );
+    }
+  }
+
+  if (challenge.type === "buyer_negotiation") {
+    assert(
+      Array.isArray(challenge.negotiationScriptIds) &&
+        challenge.negotiationScriptIds.length >= 6,
+      `challenge ${challenge.id} needs at least 6 negotiationScriptIds`,
+    );
+
+    for (const scriptId of challenge.negotiationScriptIds) {
+      const script = buyerNegotiationScripts.find((item) => item.id === scriptId);
+      assert(
+        buyerNegotiationScriptIds.has(scriptId),
+        `challenge ${challenge.id} references unknown negotiation script: ${scriptId}`,
+      );
+      assert(
+        script?.day === challenge.day,
+        `challenge ${challenge.id} references negotiation script from another day: ${scriptId}`,
+      );
+    }
+  }
 }
 
 console.log("Content validation passed.");
@@ -382,4 +639,7 @@ console.log(`protocolTerms=${protocolTerms.length}`);
 console.log(`dayChallenges=${dayChallenges.length}`);
 console.log(`dataCleaningIcons=${dataCleaningIcons.length}`);
 console.log(`publicOpinionScripts=${publicOpinionScripts.length}`);
+console.log(`profilePuzzles=${profilePuzzles.length}`);
+console.log(`buyerNegotiationScripts=${buyerNegotiationScripts.length}`);
+console.log(`dailyMonologues=${dailyMonologues.length}`);
 console.log(`blackBoxLines=${blackBoxLines.length}`);

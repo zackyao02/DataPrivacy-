@@ -1,0 +1,182 @@
+[
+  {
+    "id": "negotiation-precise-ad-network",
+    "day": 5,
+    "packageType": "precise_profile",
+    "buyerType": "广告投放平台",
+    "scenario": "买家想要一批可立刻用于夜间消费投放的人群画像。",
+    "briefing": "对方关心画像是否足够完整，也担心舆论风险被追到平台。",
+    "resolutionRule": "both_options_succeed_narrative_only",
+    "options": [
+      {
+        "id": "precise-ad-scarcity",
+        "label": "这批数据很抢手",
+        "tone": "aggressive",
+        "playerLine": "这不是普通标签，是连续路径、消费压力和匿名情绪拼出来的完整画像。今晚不收，明天就会被别的平台拿走。",
+        "buyerReply": "我们要速度。把素材接到投放系统，先跑一组灰度。",
+        "blackBoxResponse": "黑盒：稀缺感生效。买家会把犹豫理解成机会成本。",
+        "outcomeText": "交易成立，买家选择快速接入。"
+      },
+      {
+        "id": "precise-ad-relationship",
+        "label": "长期合作",
+        "tone": "cooperative",
+        "playerLine": "这批画像只是开始。我们可以按每日新闻反馈继续补标签，让投放越跑越准。",
+        "buyerReply": "稳定更新比一次性爆量更有价值。先签合作口径。",
+        "blackBoxResponse": "黑盒：关系被绑定。买家买下的不只是数据，还有后续依赖。",
+        "outcomeText": "交易成立，买家选择长期接入。"
+      }
+    ],
+    "successText": "黑盒：谈判完成。两条路都通向成交，只是留下的影子不同。"
+  },
+  {
+    "id": "negotiation-health-insurance",
+    "day": 5,
+    "packageType": "health_risk",
+    "buyerType": "保险风控团队",
+    "scenario": "买家需要把健康风险推断包装成更容易被内部审批接受的材料。",
+    "briefing": "对方不想听隐私细节，只想知道这些线索能否解释保费差异。",
+    "resolutionRule": "both_options_succeed_narrative_only",
+    "options": [
+      {
+        "id": "health-insurance-objective",
+        "label": "强调模型客观",
+        "tone": "neutral",
+        "playerLine": "我们不碰诊断结论，只提供持续行为信号。医院停留、药店消费和穿戴设备趋势会自己说话。",
+        "buyerReply": "这样更适合写进风控说明，不会显得过度冒进。",
+        "blackBoxResponse": "黑盒：客观两个字很好用，它能让推断看起来像事实。",
+        "outcomeText": "交易成立，买家采用模型客观口径。"
+      },
+      {
+        "id": "health-insurance-cost",
+        "label": "强调成本共担",
+        "tone": "cooperative",
+        "playerLine": "如果不区分风险，低风险用户会替高风险波动买单。你们需要的是更细的成本共担依据。",
+        "buyerReply": "这套说法能说服业务线。我们按这个方向推进。",
+        "blackBoxResponse": "黑盒：成本被搬到台前，隐私就退到了阴影里。",
+        "outcomeText": "交易成立，买家采用成本共担口径。"
+      }
+    ],
+    "successText": "黑盒：健康风险已经完成商业翻译。"
+  },
+  {
+    "id": "negotiation-career-outsourcing",
+    "day": 5,
+    "packageType": "career_competitiveness",
+    "buyerType": "招聘外包服务商",
+    "scenario": "买家希望用稳定性画像帮企业筛掉可能频繁离职的人。",
+    "briefing": "对方需要一套不显得歧视的解释方式。",
+    "resolutionRule": "both_options_succeed_narrative_only",
+    "options": [
+      {
+        "id": "career-outsourcing-efficiency",
+        "label": "强调招聘效率",
+        "tone": "cooperative",
+        "playerLine": "这些不是人格评判，只是减少无效面试。通勤、消费压力和公开表达能帮助岗位匹配。",
+        "buyerReply": "岗位匹配这个词不错，客户更容易接受。",
+        "blackBoxResponse": "黑盒：把筛选说成匹配，门槛就有了温度。",
+        "outcomeText": "交易成立，买家采用岗位匹配话术。"
+      },
+      {
+        "id": "career-outsourcing-risk",
+        "label": "强调用工风险",
+        "tone": "aggressive",
+        "playerLine": "企业不是在窥探生活，而是在提前识别用工波动。你们卖的是减少试错。",
+        "buyerReply": "客户确实怕试错成本。我们会把它放进风控说明。",
+        "blackBoxResponse": "黑盒：风险被说出口，人的复杂性就被压成一行备注。",
+        "outcomeText": "交易成立，买家采用用工风险话术。"
+      }
+    ],
+    "successText": "黑盒：职业画像完成交付。筛选不会写在门上，只会写进排序里。"
+  },
+  {
+    "id": "negotiation-credit-lender",
+    "day": 5,
+    "packageType": "credit_score",
+    "buyerType": "小额信贷平台",
+    "scenario": "买家想知道联系人风险和消费压力是否能帮助解释授信收紧。",
+    "briefing": "对方需要黑箱可用，但又不能让用户看见完整依据。",
+    "resolutionRule": "both_options_succeed_narrative_only",
+    "options": [
+      {
+        "id": "credit-lender-safety",
+        "label": "强调资金安全",
+        "tone": "neutral",
+        "playerLine": "联系人和消费压力只是辅助风控，目的是保护资金池，避免恶意借贷扩散。",
+        "buyerReply": "安全口径稳妥。我们可以对外只说综合评估。",
+        "blackBoxResponse": "黑盒：综合评估是最好的门帘，里面放什么都不必解释。",
+        "outcomeText": "交易成立，买家采用资金安全口径。"
+      },
+      {
+        "id": "credit-lender-opacity",
+        "label": "强调反作弊",
+        "tone": "aggressive",
+        "playerLine": "风控逻辑不能完全公开。越透明，越容易被人绕过。",
+        "buyerReply": "这个理由足够挡住追问。把样本给我们。",
+        "blackBoxResponse": "黑盒：不透明被说成保护，门就会自己关上。",
+        "outcomeText": "交易成立，买家采用反作弊口径。"
+      }
+    ],
+    "successText": "黑盒：信用交易完成。用户只会收到一个没有细节的结果。"
+  },
+  {
+    "id": "negotiation-relationship-local",
+    "day": 5,
+    "packageType": "relationship_infiltration",
+    "buyerType": "本地生活服务商",
+    "scenario": "买家想用家庭联系人和地点线索做熟人式服务触达。",
+    "briefing": "对方担心用户会觉得被冒犯，需要更柔软的解释。",
+    "resolutionRule": "both_options_succeed_narrative_only",
+    "options": [
+      {
+        "id": "relationship-local-care",
+        "label": "强调社区关怀",
+        "tone": "cooperative",
+        "playerLine": "这不是打扰，是更及时的帮助。家庭关系和医院停留能让服务触达到真正需要的人。",
+        "buyerReply": "关怀这个词能降低戒备。我们先做本地试点。",
+        "blackBoxResponse": "黑盒：关怀是最安静的钥匙，它能打开很多不该开的门。",
+        "outcomeText": "交易成立，买家采用社区关怀口径。"
+      },
+      {
+        "id": "relationship-local-trust",
+        "label": "强调熟人信任",
+        "tone": "neutral",
+        "playerLine": "陌生广告难转化，关系路径能降低信任成本。你们需要的是合适的触达顺序。",
+        "buyerReply": "我们会把它交给运营团队排触达链路。",
+        "blackBoxResponse": "黑盒：信任被借走时，通常不会发出声音。",
+        "outcomeText": "交易成立，买家采用熟人信任口径。"
+      }
+    ],
+    "successText": "黑盒：关系链完成出售。越像帮助，越难被拒绝。"
+  },
+  {
+    "id": "negotiation-cross-platform-broker",
+    "day": 5,
+    "packageType": "precise_profile",
+    "buyerType": "数据中间商",
+    "scenario": "买家准备把画像转手给多个渠道，但希望上游不要留下明显痕迹。",
+    "briefing": "对方看重可复用标签和叙事包装，不要求价格或风险参数。",
+    "resolutionRule": "both_options_succeed_narrative_only",
+    "options": [
+      {
+        "id": "cross-broker-resale",
+        "label": "强调可复用",
+        "tone": "aggressive",
+        "playerLine": "这些标签可以拆给广告、招聘和金融三条线。你买到的是一组可复用的人群故事。",
+        "buyerReply": "能拆分转手就够了。我们要这批样本。",
+        "blackBoxResponse": "黑盒：可复用意味着可扩散。扩散之后，来源就会变得模糊。",
+        "outcomeText": "交易成立，买家采用转手分发方案。"
+      },
+      {
+        "id": "cross-broker-clean",
+        "label": "强调链路干净",
+        "tone": "cooperative",
+        "playerLine": "我们只交付标签和叙事，不暴露原始采集路径。你们拿到的是干净的业务材料。",
+        "buyerReply": "干净链路正是我们需要的。把文案一起打包。",
+        "blackBoxResponse": "黑盒：干净不是没有痕迹，只是痕迹被重新命名。",
+        "outcomeText": "交易成立，买家采用干净链路方案。"
+      }
+    ],
+    "successText": "黑盒：中间商已经接手。数据离用户又远了一层。"
+  }
+]

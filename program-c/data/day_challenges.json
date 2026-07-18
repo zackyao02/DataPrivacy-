@@ -129,5 +129,43 @@
     ],
     "successText": "黑盒：痕迹清理完成。审计员只会看到一份干净的报表。",
     "failText": "黑盒：备份恢复了部分证据。下次别把系统文件也当垃圾删。"
+  },
+  {
+    "id": "challenge-day4-profile-puzzle",
+    "day": 4,
+    "type": "profile_puzzle",
+    "title": "用户画像拼图",
+    "briefing": "黑盒把同一名用户的数据碎片散落在屏幕上，要求你拼成可出售的完整画像。",
+    "objective": "找出关键碎片，按正确顺序还原用户画像，并避开无效线索。",
+    "timeLimitSeconds": 60,
+    "badge": "人格重构师",
+    "profilePuzzleIds": [
+      "profile-puzzle-night-commuter",
+      "profile-puzzle-health-signal",
+      "profile-puzzle-credit-shadow",
+      "profile-puzzle-family-chain"
+    ],
+    "successText": "黑盒：画像重构完成。碎片已经变成买家能读懂的人。",
+    "failText": "黑盒：画像仍然松散。重新确认哪些线索真的指向同一个人。"
+  },
+  {
+    "id": "challenge-day5-buyer-negotiation",
+    "day": 5,
+    "type": "buyer_negotiation",
+    "title": "买家谈判",
+    "briefing": "买家坐到了桌前。黑盒提醒你：这一次没有价格和风险联动，只有叙事选择。",
+    "objective": "从两种谈判话术中选择一种推进交易，两种选择都会成交，但黑盒反馈不同。",
+    "timeLimitSeconds": 50,
+    "badge": "价格操盘手",
+    "negotiationScriptIds": [
+      "negotiation-precise-ad-network",
+      "negotiation-health-insurance",
+      "negotiation-career-outsourcing",
+      "negotiation-credit-lender",
+      "negotiation-relationship-local",
+      "negotiation-cross-platform-broker"
+    ],
+    "successText": "黑盒：谈判完成。买家收下了你的故事。",
+    "failText": "黑盒：话术还不够稳定。成交不难，难的是让成交看起来合理。"
   }
 ]

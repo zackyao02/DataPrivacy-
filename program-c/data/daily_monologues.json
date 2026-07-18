@@ -1,0 +1,100 @@
+[
+  {
+    "id": "monologue-day-1",
+    "day": 1,
+    "trigger": "after_news",
+    "title": "第一天的回声",
+    "speaker": "player_inner_voice",
+    "typewriterSoundEvent": "monologueType",
+    "textSegments": [
+      "第一笔交易像一次普通点击，屏幕亮了一下，然后什么都没有发生。",
+      "可新闻里的那个人，正在用自己的生活解释一组她从未见过的标签。",
+      "黑盒说这只是开始。它的语气平稳得像天气预报。"
+    ],
+    "closingCue": "news_to_workbench"
+  },
+  {
+    "id": "monologue-day-2",
+    "day": 2,
+    "trigger": "after_news",
+    "title": "清理之后",
+    "speaker": "player_inner_voice",
+    "typewriterSoundEvent": "monologueType",
+    "textSegments": [
+      "我删掉的是图标，不是事实。",
+      "黑盒把审计日志叫作噪音，把人的痕迹叫作成本。",
+      "如果一份报表看起来干净，是不是就代表没人受伤。"
+    ],
+    "closingCue": "return_to_blackbox"
+  },
+  {
+    "id": "monologue-day-3",
+    "day": 3,
+    "trigger": "after_news",
+    "title": "热搜背面",
+    "speaker": "player_inner_voice",
+    "typewriterSoundEvent": "monologueType",
+    "textSegments": [
+      "新闻开始变得熟悉：先是便利，然后是公平，最后是安全。",
+      "每个词都像一块干净的布，盖住下面越来越清楚的轮廓。",
+      "我发现自己已经能猜到黑盒下一句会怎么说。"
+    ],
+    "closingCue": "emotion_choice"
+  },
+  {
+    "id": "monologue-day-4",
+    "day": 4,
+    "trigger": "after_news",
+    "title": "拼图",
+    "speaker": "player_inner_voice",
+    "typewriterSoundEvent": "monologueType",
+    "textSegments": [
+      "碎片排成一行以后，用户就不再像一个人。",
+      "他变成路线、压力、关系和风险提示，变成买家能读懂的故事。",
+      "最可怕的是，这个故事看起来很完整。"
+    ],
+    "closingCue": "profile_puzzle"
+  },
+  {
+    "id": "monologue-day-5",
+    "day": 5,
+    "trigger": "after_news",
+    "title": "谈判桌",
+    "speaker": "player_inner_voice",
+    "typewriterSoundEvent": "monologueType",
+    "textSegments": [
+      "今天的选择没有失败分支。",
+      "我说稀缺，买家点头；我说长期合作，买家也点头。",
+      "黑盒让我明白，成交有时候不是答案，而是问题被提前写好了。"
+    ],
+    "closingCue": "buyer_negotiation"
+  },
+  {
+    "id": "monologue-day-6",
+    "day": 6,
+    "trigger": "after_news",
+    "title": "公开说明",
+    "speaker": "player_inner_voice",
+    "typewriterSoundEvent": "monologueType",
+    "textSegments": [
+      "我开始替系统写解释，像替一堵墙写道歉信。",
+      "每句话都必须听起来真诚，又不能承认真正发生过什么。",
+      "黑盒说公众需要的是稳定，不是真相。"
+    ],
+    "closingCue": "public_response"
+  },
+  {
+    "id": "monologue-day-7",
+    "day": 7,
+    "trigger": "after_news",
+    "title": "黑盒之前",
+    "speaker": "player_inner_voice",
+    "typewriterSoundEvent": "monologueType",
+    "textSegments": [
+      "到最后，我已经分不清自己是在操作黑盒，还是黑盒在训练我。",
+      "每一次点击都留下一个理由，每一次沉默都让理由更像规则。",
+      "如果我现在停下，至少还能知道是哪一刻开始不对。"
+    ],
+    "closingCue": "ending_gate"
+  }
+]

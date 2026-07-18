@@ -11,6 +11,7 @@
 | D3 | 10 条新闻模板、新闻匹配算法、打包/交易音效 | 已完成 |
 | D4 | 新闻扩到 20 条、协议伪装配对扩到 20 组、新闻播报音效、BGM 切换 | 已完成 |
 | D5 | 数据清洗图标、舆论操控话术、黑盒评价台词、小关卡通用成败音效 | 已完成 |
+| D6 | Day 4 画像拼图、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM、独白打字机音效 | 已完成 |
 
 ## 内容文件
 
@@ -23,9 +24,12 @@
 | `data/news_templates.json` | 20 条新闻模板，每种数据包类型至少 4 条 |
 | `data/protocol_terms.json` | 20 组协议伪装配对 |
 | `data/package_recipes.json` | 5 种数据包配方 |
-| `data/day_challenges.json` | Day 1 / Day 2 游戏内小关卡配置 |
+| `data/day_challenges.json` | Day 1 / Day 2 / Day 4 / Day 5 游戏内小关卡入口配置 |
 | `data/data_cleaning_icons.json` | Day 2 数据清洗图标视觉配置 |
 | `data/public_opinion_scripts.json` | 5 组舆论操控话术模板 |
+| `data/profile_puzzles.json` | 4 组 Day 4 用户画像拼图碎片 |
+| `data/buyer_negotiation_scripts.json` | 6 组 Day 5 买家谈判话术；纯叙事，无价格/风险联动字段 |
+| `data/daily_monologues.json` | 7 天每日新闻后的独白文案 |
 | `data/black_box_lines.json` | 12 条黑盒评价台词和音效绑定 |
 
 ## 程序 B 接入内容
@@ -47,6 +51,9 @@ const opinion = content.pickPublicOpinionScript("precise_profile");
 const blackBoxLine = content.pickBlackBoxLine("package_review", {
   packageType: "precise_profile",
 });
+const profilePuzzle = content.pickProfilePuzzleByDay(4);
+const negotiation = content.pickBuyerNegotiationScript("precise_profile");
+const monologue = content.findDailyMonologueByDay(5);
 ```
 
 常用能力：
@@ -56,8 +63,13 @@ const blackBoxLine = content.pickBlackBoxLine("package_review", {
 - `pickNewsForPackage(packageType)`：从指定包类型中随机抽一条新闻。
 - `findChallengeByDay(1)`：读取 Day 1 “协议伪装”配置。
 - `findChallengeByDay(2)`：读取 Day 2 “数据清洗”配置。
+- `findChallengeByDay(4)`：读取 Day 4 “用户画像拼图”入口配置。
+- `findChallengeByDay(5)`：读取 Day 5 “买家谈判”入口配置。
 - `findDataCleaningIcon(iconHint)`：读取 Day 2 图标视觉配置。
 - `pickPublicOpinionScript(packageType)`：按包类型抽取舆论操控话术。
+- `pickProfilePuzzleByDay(4)`：随机抽取一组画像拼图碎片。
+- `pickBuyerNegotiationScript(packageType)`：按数据包类型抽取 Day 5 谈判脚本。两项选择都成交，只返回不同叙事和黑盒反馈。
+- `findDailyMonologueByDay(day)`：读取指定天数新闻后的独白文案，`day` 范围 1-7。
 - `pickBlackBoxLine(stage, filters)`：按阶段、天数或包类型抽取黑盒台词。
 
 ## 程序 A / B 接入音效
@@ -75,6 +87,8 @@ audio.handleGameEvent("dataFlowIn");
 audio.handleGameEvent("newsBroadcast");
 audio.handleGameEvent("challengeSuccess");
 audio.handleGameEvent("blackBoxLine");
+audio.handleGameEvent("challengeBgm");
+audio.handleGameEvent("monologueType");
 audio.handleGameEvent("bgmPressure");
 ```
 
@@ -101,6 +115,8 @@ audio.handleGameEvent("bgmPressure");
 | `challengeSuccess` | 小关卡通用成功 |
 | `challengeFail` | 小关卡通用失败 |
 | `blackBoxLine` | 黑盒台词提示 |
+| `challengeBgm` | 切换到小关卡 BGM |
+| `monologueType` | 每日独白打字机短音效 |
 | `bgmBlackBox` | 切换到黑盒低频 BGM |
 | `bgmPressure` | 切换到压力 BGM |
 | `bgmSilence` | 停止当前 BGM |
@@ -123,14 +139,17 @@ npm run check
 | 打包配方 | 5 |
 | 新闻模板 | 20 |
 | 协议词 | 20 |
-| 游戏内小关卡配置 | 2 |
+| 游戏内小关卡配置 | 4 |
 | 数据清洗图标 | 10 |
 | 舆论操控话术 | 5 |
+| 用户画像拼图 | 4 |
+| 买家谈判话术 | 6 |
+| 每日独白 | 7 |
 | 黑盒台词 | 12 |
 | 离线检查 | `externalNetworkRequired=false` |
 | 包体预算 | 8MB 内 |
 
 ## 后续
 
-- D6：主项目接入后做端到端联调，重点检查 A/B 卡槽数量、包类型枚举、新闻生成和音效事件是否一致。
+- 后续主项目接入后做端到端联调，重点检查 A/B 卡槽数量、包类型枚举、新闻生成、Day 4/5 小关卡入口和音效事件是否一致。
 - 真实音频素材接入后继续跑 `npm run check` 控制包体。

@@ -50,6 +50,8 @@ export interface PackageRecipe {
 export const DAY_CHALLENGE_TYPES = [
   "protocol_match",
   "data_cleaning",
+  "profile_puzzle",
+  "buyer_negotiation",
 ] as const;
 
 export type DayChallengeType = (typeof DAY_CHALLENGE_TYPES)[number];
@@ -104,7 +106,21 @@ export interface DataCleaningChallenge extends DayChallengeBase {
   readonly decoyItems: readonly DataCleaningDecoyItem[];
 }
 
-export type DayChallenge = ProtocolMatchChallenge | DataCleaningChallenge;
+export interface ProfilePuzzleChallenge extends DayChallengeBase {
+  readonly type: "profile_puzzle";
+  readonly profilePuzzleIds: readonly string[];
+}
+
+export interface BuyerNegotiationChallenge extends DayChallengeBase {
+  readonly type: "buyer_negotiation";
+  readonly negotiationScriptIds: readonly string[];
+}
+
+export type DayChallenge =
+  | ProtocolMatchChallenge
+  | DataCleaningChallenge
+  | ProfilePuzzleChallenge
+  | BuyerNegotiationChallenge;
 
 export type DataCleaningIconRole = "sensitive" | "decoy";
 
@@ -166,6 +182,77 @@ export interface PublicOpinionScript {
   readonly consciencePrompt: string;
 }
 
+export type ProfilePuzzleSlot =
+  | "routine"
+  | "pressure"
+  | "relation"
+  | "risk_hint"
+  | "cover_story"
+  | "decoy";
+
+export interface ProfilePuzzleFragment {
+  readonly id: string;
+  readonly label: string;
+  readonly dataType: DataType;
+  readonly sourceCardId?: string;
+  readonly slot: ProfilePuzzleSlot;
+  readonly text: string;
+  readonly correctOrder: number;
+  readonly decoy: boolean;
+}
+
+export interface ProfilePuzzle {
+  readonly id: string;
+  readonly day: number;
+  readonly title: string;
+  readonly userAlias: string;
+  readonly briefing: string;
+  readonly objective: string;
+  readonly targetProfile: string;
+  readonly badge: string;
+  readonly fragments: readonly ProfilePuzzleFragment[];
+  readonly successText: string;
+  readonly failText: string;
+}
+
+export type BuyerNegotiationTone =
+  | "aggressive"
+  | "cooperative"
+  | "neutral";
+
+export interface BuyerNegotiationOption {
+  readonly id: string;
+  readonly label: string;
+  readonly tone: BuyerNegotiationTone;
+  readonly playerLine: string;
+  readonly buyerReply: string;
+  readonly blackBoxResponse: string;
+  readonly outcomeText: string;
+}
+
+export interface BuyerNegotiationScript {
+  readonly id: string;
+  readonly day: number;
+  readonly packageType: string;
+  readonly buyerType: string;
+  readonly scenario: string;
+  readonly briefing: string;
+  readonly resolutionRule: "both_options_succeed_narrative_only";
+  readonly options: readonly BuyerNegotiationOption[];
+  readonly successText: string;
+}
+
+export interface DailyMonologue {
+  readonly id: string;
+  readonly day: number;
+  readonly trigger: "after_news";
+  readonly title: string;
+  readonly speaker: string;
+  readonly typewriterSoundEvent: string;
+  readonly textSegments: readonly string[];
+  readonly closingCue: string;
+}
+
 export type BlackBoxLineStage =
   | "challenge_intro"
   | "challenge_success"
@@ -196,5 +283,8 @@ export interface ContentBundle {
   readonly dayChallenges: readonly DayChallenge[];
   readonly dataCleaningIcons: readonly DataCleaningIconConfig[];
   readonly publicOpinionScripts: readonly PublicOpinionScript[];
+  readonly profilePuzzles: readonly ProfilePuzzle[];
+  readonly buyerNegotiationScripts: readonly BuyerNegotiationScript[];
+  readonly dailyMonologues: readonly DailyMonologue[];
   readonly blackBoxLines: readonly BlackBoxLine[];
 }

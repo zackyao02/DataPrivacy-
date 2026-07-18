@@ -155,6 +155,8 @@
       challengeSuccess: "challenge-success",
       challengeFail: "challenge-fail",
       blackBoxLine: "blackbox-voice",
+      challengeBgm: "bgm-challenge",
+      monologueType: "typewriter-key",
       bgmBlackBox: "bgm-blackbox",
       bgmPressure: "bgm-pressure",
       bgmSilence: "bgm-silence",
@@ -273,6 +275,12 @@
             this.tone({ frequency: 146.83, duration: 0.12, type: "triangle", startTime: now + 0.05, gain: 0.028 });
             this.noise({ duration: 0.045, gain: 0.012 });
             break;
+          case "bgm-challenge":
+            this.switchBgm([73.42, 146.83, 220], 0.03, "challenge");
+            break;
+          case "typewriter-key":
+            this.typewriterKey(now);
+            break;
           case "bgm-blackbox":
             this.switchBgm([55, 110, 165], 0.026, "blackbox");
             break;
@@ -322,6 +330,25 @@
         });
       }
 
+      typewriterKey(startTime) {
+        const highClick = 1180 + Math.random() * 240;
+        this.tone({
+          frequency: highClick,
+          duration: 0.018,
+          type: "square",
+          startTime,
+          gain: 0.026,
+        });
+        this.tone({
+          frequency: highClick / 2,
+          duration: 0.028,
+          type: "triangle",
+          startTime: startTime + 0.012,
+          gain: 0.016,
+        });
+        this.noise({ duration: 0.012, gain: 0.012 });
+      }
+
       switchBgm(frequencies, gainValue, pattern) {
         const context = this.ensureContext();
         this.stopBgm();
@@ -337,7 +364,8 @@
           const oscillator = context.createOscillator();
           oscillator.type = index === 0 ? "sine" : "sawtooth";
           oscillator.frequency.value = frequency;
-          oscillator.detune.value = pattern === "pressure" ? index * 9 : index * 3;
+          oscillator.detune.value =
+            pattern === "pressure" ? index * 9 : pattern === "challenge" ? index * 5 : index * 3;
           oscillator.connect(gain);
           oscillator.start(now);
           return oscillator;
@@ -360,6 +388,27 @@
               }
               this.noise({ duration: 0.075, gain: 0.018 });
             }, 3100),
+          );
+          return;
+        }
+
+        if (pattern === "challenge") {
+          this.bgmTimers.push(
+            window.setInterval(() => {
+              if (!this.context) {
+                return;
+              }
+              const startTime = this.context.currentTime;
+              this.arpeggio([293.66, 349.23, 440, 349.23], startTime, 0.1, 0.14, "triangle", 0.028);
+            }, 940),
+          );
+          this.bgmTimers.push(
+            window.setInterval(() => {
+              if (!this.context) {
+                return;
+              }
+              this.typewriterKey(this.context.currentTime);
+            }, 2300),
           );
           return;
         }
@@ -487,6 +536,7 @@
           ["newsBroadcast", "新闻播报"],
           ["newsTicker", "新闻滚动"],
           ["publicOpinionPulse", "舆论脉冲"],
+          ["monologueType", "独白打字机"],
           ["emotionSelected", "通用情绪"],
           ["emotionEmpathySelected", "同情"],
           ["emotionAngerSelected", "愤怒"],
@@ -504,6 +554,7 @@
       {
         title: "BGM 与结局",
         events: [
+          ["challengeBgm", "小关卡 BGM"],
           ["bgmBlackBox", "黑盒 BGM"],
           ["bgmPressure", "压力 BGM"],
           ["bgmSilence", "停止 BGM"],

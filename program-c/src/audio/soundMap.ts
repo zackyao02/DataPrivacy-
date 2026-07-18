@@ -20,6 +20,8 @@ export const SOUND_EVENT_MAP = {
   challengeSuccess: "challenge-success",
   challengeFail: "challenge-fail",
   blackBoxLine: "blackbox-voice",
+  challengeBgm: "bgm-challenge",
+  monologueType: "typewriter-key",
   bgmBlackBox: "bgm-blackbox",
   bgmPressure: "bgm-pressure",
   bgmSilence: "bgm-silence",

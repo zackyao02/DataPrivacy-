@@ -2,14 +2,17 @@ import type {
   BlackBoxLine,
   BlackBoxLineStage,
   Buyer,
+  BuyerNegotiationScript,
   CardTemplate,
   ContentBundle,
   DataCleaningIconConfig,
+  DailyMonologue,
   DayChallenge,
   DayChallengeType,
   DataType,
   NewsTemplate,
   PackageRecipe,
+  ProfilePuzzle,
   ProtocolTerm,
   PublicOpinionScript,
   SensitivityLevel,
@@ -88,6 +91,18 @@ export class ContentRepository {
     return this.bundle.publicOpinionScripts;
   }
 
+  getProfilePuzzles(): readonly ProfilePuzzle[] {
+    return this.bundle.profilePuzzles;
+  }
+
+  getBuyerNegotiationScripts(): readonly BuyerNegotiationScript[] {
+    return this.bundle.buyerNegotiationScripts;
+  }
+
+  getDailyMonologues(): readonly DailyMonologue[] {
+    return this.bundle.dailyMonologues;
+  }
+
   getBlackBoxLines(): readonly BlackBoxLine[] {
     return this.bundle.blackBoxLines;
   }
@@ -122,6 +137,52 @@ export class ContentRepository {
     }
 
     return this.pick(scripts);
+  }
+
+  findProfilePuzzlesByDay(day: number): readonly ProfilePuzzle[] {
+    return this.bundle.profilePuzzles.filter((puzzle) => puzzle.day === day);
+  }
+
+  findProfilePuzzleByDay(day: number): ProfilePuzzle | undefined {
+    return this.findProfilePuzzlesByDay(day)[0];
+  }
+
+  pickProfilePuzzleByDay(day: number): ProfilePuzzle | undefined {
+    const puzzles = this.findProfilePuzzlesByDay(day);
+
+    if (puzzles.length === 0) {
+      return undefined;
+    }
+
+    return this.pick(puzzles);
+  }
+
+  findBuyerNegotiationsByDay(day: number): readonly BuyerNegotiationScript[] {
+    return this.bundle.buyerNegotiationScripts.filter((script) => script.day === day);
+  }
+
+  findBuyerNegotiationsForPackage(
+    packageType: string,
+  ): readonly BuyerNegotiationScript[] {
+    return this.bundle.buyerNegotiationScripts.filter(
+      (script) => script.packageType === packageType,
+    );
+  }
+
+  pickBuyerNegotiationScript(
+    packageType: string,
+  ): BuyerNegotiationScript | undefined {
+    const scripts = this.findBuyerNegotiationsForPackage(packageType);
+
+    if (scripts.length === 0) {
+      return undefined;
+    }
+
+    return this.pick(scripts);
+  }
+
+  findDailyMonologueByDay(day: number): DailyMonologue | undefined {
+    return this.bundle.dailyMonologues.find((monologue) => monologue.day === day);
   }
 
   findBlackBoxLinesByStage(stage: BlackBoxLineStage): readonly BlackBoxLine[] {

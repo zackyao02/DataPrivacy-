@@ -1,9 +1,9 @@
 {
   "budgetBytes": 8388608,
-  "totalRawBytes": 77302,
-  "totalGzipBytes": 25268,
-  "remainingRawBytes": 8311306,
-  "remainingGzipBytes": 8363340,
+  "totalRawBytes": 107666,
+  "totalGzipBytes": 34404,
+  "remainingRawBytes": 8280942,
+  "remainingGzipBytes": 8354204,
   "files": [
     {
       "file": "data\\news_templates.json",
@@ -11,9 +11,29 @@
       "gzipBytes": 4298
     },
     {
+      "file": "data\\buyer_negotiation_scripts.json",
+      "rawBytes": 9283,
+      "gzipBytes": 3293
+    },
+    {
       "file": "src\\audio\\AudioManager.ts",
-      "rawBytes": 12039,
-      "gzipBytes": 2850
+      "rawBytes": 13333,
+      "gzipBytes": 3036
+    },
+    {
+      "file": "data\\profile_puzzles.json",
+      "rawBytes": 9275,
+      "gzipBytes": 2720
+    },
+    {
+      "file": "data\\day_challenges.json",
+      "rawBytes": 6285,
+      "gzipBytes": 2473
+    },
+    {
+      "file": "src\\content\\ContentRepository.ts",
+      "rawBytes": 11373,
+      "gzipBytes": 2435
     },
     {
       "file": "data\\public_opinion_scripts.json",
@@ -21,14 +41,9 @@
       "gzipBytes": 2324
     },
     {
-      "file": "src\\content\\ContentRepository.ts",
-      "rawBytes": 9689,
-      "gzipBytes": 2242
-    },
-    {
-      "file": "data\\day_challenges.json",
-      "rawBytes": 4603,
-      "gzipBytes": 1850
+      "file": "src\\content\\schema.ts",
+      "rawBytes": 7702,
+      "gzipBytes": 1722
     },
     {
       "file": "data\\users.json",
@@ -41,9 +56,9 @@
       "gzipBytes": 1499
     },
     {
-      "file": "src\\content\\schema.ts",
-      "rawBytes": 5320,
-      "gzipBytes": 1290
+      "file": "data\\daily_monologues.json",
+      "rawBytes": 3437,
+      "gzipBytes": 1405
     },
     {
       "file": "data\\card_templates.json",
@@ -51,14 +66,14 @@
       "gzipBytes": 1179
     },
     {
+      "file": "dist\\content-manifest.json",
+      "rawBytes": 3108,
+      "gzipBytes": 1073
+    },
+    {
       "file": "data\\black_box_lines.json",
       "rawBytes": 2986,
       "gzipBytes": 1039
-    },
-    {
-      "file": "dist\\content-manifest.json",
-      "rawBytes": 2512,
-      "gzipBytes": 951
     },
     {
       "file": "data\\data_cleaning_icons.json",
@@ -67,13 +82,13 @@
     },
     {
       "file": "dist\\offline-assets.json",
-      "rawBytes": 1525,
-      "gzipBytes": 633
+      "rawBytes": 1680,
+      "gzipBytes": 673
     },
     {
       "file": "src\\content\\defaultContentBundle.ts",
-      "rawBytes": 1918,
-      "gzipBytes": 570
+      "rawBytes": 2426,
+      "gzipBytes": 662
     },
     {
       "file": "data\\package_recipes.json",
@@ -81,14 +96,14 @@
       "gzipBytes": 516
     },
     {
+      "file": "src\\audio\\soundMap.ts",
+      "rawBytes": 1152,
+      "gzipBytes": 509
+    },
+    {
       "file": "data\\buyers.json",
       "rawBytes": 831,
       "gzipBytes": 501
-    },
-    {
-      "file": "src\\audio\\soundMap.ts",
-      "rawBytes": 1084,
-      "gzipBytes": 479
     },
     {
       "file": "data\\variables.json",

@@ -20,11 +20,14 @@ function readSoundEvents() {
 const cardTemplates = readJson("card_templates.json");
 const users = readJson("users.json");
 const buyers = readJson("buyers.json");
+const buyerNegotiationScripts = readJson("buyer_negotiation_scripts.json");
 const newsTemplates = readJson("news_templates.json");
 const protocolTerms = readJson("protocol_terms.json");
 const packageRecipes = readJson("package_recipes.json");
 const dayChallenges = readJson("day_challenges.json");
 const dataCleaningIcons = readJson("data_cleaning_icons.json");
+const dailyMonologues = readJson("daily_monologues.json");
+const profilePuzzles = readJson("profile_puzzles.json");
 const publicOpinionScripts = readJson("public_opinion_scripts.json");
 const blackBoxLines = readJson("black_box_lines.json");
 
@@ -35,12 +38,15 @@ const manifest = {
     "card_templates.json",
     "users.json",
     "buyers.json",
+    "buyer_negotiation_scripts.json",
     "variables.json",
     "news_templates.json",
     "protocol_terms.json",
     "package_recipes.json",
     "day_challenges.json",
     "data_cleaning_icons.json",
+    "daily_monologues.json",
+    "profile_puzzles.json",
     "public_opinion_scripts.json",
     "black_box_lines.json",
   ],
@@ -48,11 +54,14 @@ const manifest = {
     cardTemplates: cardTemplates.length,
     users: users.length,
     buyers: buyers.length,
+    buyerNegotiationScripts: buyerNegotiationScripts.length,
     newsTemplates: newsTemplates.length,
     protocolTerms: protocolTerms.length,
     packageRecipes: packageRecipes.length,
     dayChallenges: dayChallenges.length,
     dataCleaningIcons: dataCleaningIcons.length,
+    dailyMonologues: dailyMonologues.length,
+    profilePuzzles: profilePuzzles.length,
     publicOpinionScripts: publicOpinionScripts.length,
     blackBoxLines: blackBoxLines.length,
   },
@@ -68,12 +77,22 @@ const manifest = {
     "getDayChallenges",
     "getDataCleaningIcons",
     "getPublicOpinionScripts",
+    "getProfilePuzzles",
+    "getBuyerNegotiationScripts",
+    "getDailyMonologues",
     "getBlackBoxLines",
     "findChallengeByDay",
     "findChallengesByType",
     "findDataCleaningIcon",
     "findPublicOpinionScriptsForPackage",
     "pickPublicOpinionScript",
+    "findProfilePuzzlesByDay",
+    "findProfilePuzzleByDay",
+    "pickProfilePuzzleByDay",
+    "findBuyerNegotiationsByDay",
+    "findBuyerNegotiationsForPackage",
+    "pickBuyerNegotiationScript",
+    "findDailyMonologueByDay",
     "findBlackBoxLinesByStage",
     "findBlackBoxLinesForChallenge",
     "findBlackBoxLinesForPackage",

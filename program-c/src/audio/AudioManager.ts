@@ -135,6 +135,12 @@ export class AudioManager {
         this.tone({ frequency: 146.83, duration: 0.12, type: "triangle", startTime: now + 0.05, gain: 0.028 });
         this.noise({ duration: 0.045, gain: 0.012 });
         break;
+      case "bgm-challenge":
+        this.switchBgm([73.42, 146.83, 220], 0.03, "challenge");
+        break;
+      case "typewriter-key":
+        this.typewriterKey(now);
+        break;
       case "bgm-blackbox":
         this.switchBgm([55, 110, 165], 0.026, "blackbox");
         break;
@@ -197,10 +203,29 @@ export class AudioManager {
     });
   }
 
+  private typewriterKey(startTime: number): void {
+    const highClick = 1180 + Math.random() * 240;
+    this.tone({
+      frequency: highClick,
+      duration: 0.018,
+      type: "square",
+      startTime,
+      gain: 0.026,
+    });
+    this.tone({
+      frequency: highClick / 2,
+      duration: 0.028,
+      type: "triangle",
+      startTime: startTime + 0.012,
+      gain: 0.016,
+    });
+    this.noise({ duration: 0.012, gain: 0.012 });
+  }
+
   private switchBgm(
     frequencies: readonly number[],
     gainValue: number,
-    pattern: "blackbox" | "pressure",
+    pattern: "blackbox" | "pressure" | "challenge",
   ): void {
     if (!this.enabled) {
       return;
@@ -226,7 +251,8 @@ export class AudioManager {
       const oscillator = context.createOscillator();
       oscillator.type = index === 0 ? "sine" : "sawtooth";
       oscillator.frequency.value = frequency;
-      oscillator.detune.value = pattern === "pressure" ? index * 9 : index * 3;
+      oscillator.detune.value =
+        pattern === "pressure" ? index * 9 : pattern === "challenge" ? index * 5 : index * 3;
       oscillator.connect(gain);
       oscillator.start(now);
       return oscillator;
@@ -251,6 +277,29 @@ export class AudioManager {
 
           this.noise({ duration: 0.075, gain: 0.018 });
         }, 3100),
+      );
+      return;
+    }
+
+    if (pattern === "challenge") {
+      this.bgmTimers.push(
+        window.setInterval(() => {
+          if (!this.enabled || !this.context) {
+            return;
+          }
+
+          const startTime = this.context.currentTime;
+          this.arpeggio([293.66, 349.23, 440, 349.23], startTime, 0.1, 0.14, "triangle", 0.028);
+        }, 940),
+      );
+      this.bgmTimers.push(
+        window.setInterval(() => {
+          if (!this.enabled || !this.context) {
+            return;
+          }
+
+          this.typewriterKey(this.context.currentTime);
+        }, 2300),
       );
       return;
     }
