@@ -1,0 +1,95 @@
+[
+  {
+    "id": "blackbox-intro-protocol",
+    "stage": "challenge_intro",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "low-filtered",
+    "text": "把危险词换成柔软词。用户不会反对他们看不见的东西。"
+  },
+  {
+    "id": "blackbox-success-protocol",
+    "stage": "challenge_success",
+    "cueEventName": "challengeSuccess",
+    "relatedChallengeDay": 1,
+    "voiceHint": "low-pleased",
+    "text": "措辞合格。风险已经藏进服务体验。"
+  },
+  {
+    "id": "blackbox-fail-protocol",
+    "stage": "challenge_fail",
+    "cueEventName": "challengeFail",
+    "relatedChallengeDay": 1,
+    "voiceHint": "low-warning",
+    "text": "太直白了。重新包装，别让用户意识到代价。"
+  },
+  {
+    "id": "blackbox-intro-cleaning",
+    "stage": "challenge_intro",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 2,
+    "voiceHint": "low-filtered",
+    "text": "审计快到了。删掉痕迹，留下合规的影子。"
+  },
+  {
+    "id": "blackbox-success-cleaning",
+    "stage": "challenge_success",
+    "cueEventName": "challengeSuccess",
+    "relatedChallengeDay": 2,
+    "voiceHint": "low-pleased",
+    "text": "清理完成。报表看起来像从未发生过。"
+  },
+  {
+    "id": "blackbox-fail-cleaning",
+    "stage": "challenge_fail",
+    "cueEventName": "challengeFail",
+    "relatedChallengeDay": 2,
+    "voiceHint": "low-warning",
+    "text": "备份暴露了你。下一次，先分清证据和陷阱。"
+  },
+  {
+    "id": "blackbox-package-precise",
+    "stage": "package_review",
+    "cueEventName": "blackBoxLine",
+    "relatedPackageType": "precise_profile",
+    "voiceHint": "low-analytical",
+    "text": "画像足够完整。把犹豫、地点和消费连成一条线。"
+  },
+  {
+    "id": "blackbox-package-health",
+    "stage": "package_review",
+    "cueEventName": "blackBoxLine",
+    "relatedPackageType": "health_risk",
+    "voiceHint": "low-analytical",
+    "text": "健康不是隐私，是可定价的波动。"
+  },
+  {
+    "id": "blackbox-package-credit",
+    "stage": "package_review",
+    "cueEventName": "blackBoxLine",
+    "relatedPackageType": "credit_score",
+    "voiceHint": "low-analytical",
+    "text": "信用从来不只属于个人。关系链会替他说话。"
+  },
+  {
+    "id": "blackbox-opinion",
+    "stage": "public_opinion",
+    "cueEventName": "publicOpinionPulse",
+    "voiceHint": "low-persuasive",
+    "text": "争议不需要消失，只需要换一个更容易转发的标题。"
+  },
+  {
+    "id": "blackbox-transaction",
+    "stage": "transaction_success",
+    "cueEventName": "transactionSuccess",
+    "voiceHint": "low-satisfied",
+    "text": "买家满意。用户明天才会知道自己失去了什么。"
+  },
+  {
+    "id": "blackbox-ending",
+    "stage": "ending_pressure",
+    "cueEventName": "endingTriggered",
+    "voiceHint": "low-final",
+    "text": "你可以关掉界面，但黑盒已经学会了你的选择。"
+  }
+]

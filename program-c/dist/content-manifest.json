@@ -9,7 +9,10 @@
     "news_templates.json",
     "protocol_terms.json",
     "package_recipes.json",
-    "day_challenges.json"
+    "day_challenges.json",
+    "data_cleaning_icons.json",
+    "public_opinion_scripts.json",
+    "black_box_lines.json"
   ],
   "counts": {
     "cardTemplates": 10,
@@ -18,7 +21,10 @@
     "newsTemplates": 20,
     "protocolTerms": 20,
     "packageRecipes": 5,
-    "dayChallenges": 2
+    "dayChallenges": 2,
+    "dataCleaningIcons": 10,
+    "publicOpinionScripts": 5,
+    "blackBoxLines": 12
   },
   "dataTypes": [
     "biometric",
@@ -33,11 +39,11 @@
     "medium"
   ],
   "packageTypes": [
-    "信用评分包",
-    "健康风险评估包",
-    "关系图谱包",
-    "精准画像包",
-    "职场竞争力包"
+    "career_competitiveness",
+    "credit_score",
+    "health_risk",
+    "precise_profile",
+    "relationship_infiltration"
   ],
   "playableDays": [
     1,
@@ -52,8 +58,18 @@
     "pickCard",
     "fillVariables",
     "getDayChallenges",
+    "getDataCleaningIcons",
+    "getPublicOpinionScripts",
+    "getBlackBoxLines",
     "findChallengeByDay",
     "findChallengesByType",
+    "findDataCleaningIcon",
+    "findPublicOpinionScriptsForPackage",
+    "pickPublicOpinionScript",
+    "findBlackBoxLinesByStage",
+    "findBlackBoxLinesForChallenge",
+    "findBlackBoxLinesForPackage",
+    "pickBlackBoxLine",
     "findCardsByDataType",
     "findCardsByIds",
     "findRecipesForDataTypes",
@@ -77,10 +93,14 @@
     "newsGenerated",
     "newsBroadcast",
     "newsTicker",
+    "publicOpinionPulse",
     "emotionSelected",
     "emotionEmpathySelected",
     "emotionAngerSelected",
     "emotionNumbnessSelected",
+    "challengeSuccess",
+    "challengeFail",
+    "blackBoxLine",
     "bgmBlackBox",
     "bgmPressure",
     "bgmSilence",

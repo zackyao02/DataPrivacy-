@@ -106,6 +106,21 @@ export interface DataCleaningChallenge extends DayChallengeBase {
 
 export type DayChallenge = ProtocolMatchChallenge | DataCleaningChallenge;
 
+export type DataCleaningIconRole = "sensitive" | "decoy";
+
+export type DataCleaningIconRiskColor = "red" | "orange" | "blue";
+
+export interface DataCleaningIconConfig {
+  readonly id: string;
+  readonly iconHint: string;
+  readonly lucideIcon: string;
+  readonly role: DataCleaningIconRole;
+  readonly shortLabel: string;
+  readonly riskColor: DataCleaningIconRiskColor;
+  readonly scanText: string;
+  readonly hitText: string;
+}
+
 export interface Variables {
   readonly 姓名: readonly string[];
   readonly 城市: readonly string[];
@@ -132,6 +147,44 @@ export interface ProtocolTerm {
   readonly explanation: string;
 }
 
+export interface PublicOpinionTactic {
+  readonly id: string;
+  readonly label: string;
+  readonly line: string;
+  readonly playerPrompt: string;
+}
+
+export interface PublicOpinionScript {
+  readonly id: string;
+  readonly packageType: string;
+  readonly platform: string;
+  readonly scenario: string;
+  readonly manipulationGoal: string;
+  readonly openingLine: string;
+  readonly tactics: readonly PublicOpinionTactic[];
+  readonly counterCue: string;
+  readonly consciencePrompt: string;
+}
+
+export type BlackBoxLineStage =
+  | "challenge_intro"
+  | "challenge_success"
+  | "challenge_fail"
+  | "package_review"
+  | "public_opinion"
+  | "transaction_success"
+  | "ending_pressure";
+
+export interface BlackBoxLine {
+  readonly id: string;
+  readonly stage: BlackBoxLineStage;
+  readonly cueEventName: string;
+  readonly relatedChallengeDay?: number;
+  readonly relatedPackageType?: string;
+  readonly voiceHint: string;
+  readonly text: string;
+}
+
 export interface ContentBundle {
   readonly cardTemplates: readonly CardTemplate[];
   readonly users: readonly UserProfile[];
@@ -141,4 +194,7 @@ export interface ContentBundle {
   readonly protocolTerms: readonly ProtocolTerm[];
   readonly packageRecipes: readonly PackageRecipe[];
   readonly dayChallenges: readonly DayChallenge[];
+  readonly dataCleaningIcons: readonly DataCleaningIconConfig[];
+  readonly publicOpinionScripts: readonly PublicOpinionScript[];
+  readonly blackBoxLines: readonly BlackBoxLine[];
 }

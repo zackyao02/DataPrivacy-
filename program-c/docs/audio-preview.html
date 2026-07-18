@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>程序 C 音效试听</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      color: #1d2430;
+      background: #f5f7fb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: #5a6475;
+      line-height: 1.7;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin: 20px 0 24px;
+      padding: 14px 0;
+      border-top: 1px solid #d9dee8;
+      border-bottom: 1px solid #d9dee8;
+    }
+
+    label {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      width: 180px;
+    }
+
+    button {
+      min-height: 36px;
+      border: 1px solid #b9c2d0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #172033;
+      background: #ffffff;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #edf3ff;
+      border-color: #7f9fd4;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    section {
+      padding: 16px;
+      border: 1px solid #d7dde8;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 18px;
+      color: #344054;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>程序 C 音效试听</h1>
+    <p>先点“启用音频”，再点下面的事件按钮试听。BGM 会持续播放，点“停止 BGM”可以关闭。</p>
+
+    <div class="toolbar">
+      <button id="unlockButton" type="button">启用音频</button>
+      <button id="stopBgmButton" type="button">停止 BGM</button>
+      <label>
+        音量
+        <input id="volumeControl" type="range" min="0" max="1" step="0.01" value="0.72">
+      </label>
+    </div>
+
+    <div class="groups" id="groups"></div>
+    <div class="status" id="status">等待试听。</div>
+  </main>
+
+  <script>
+    const SOUND_EVENT_MAP = {
+      dataFlowIn: "data-pulse",
+      cardGenerated: "data-pulse",
+      cardMovedToSlot: "slot-click",
+      packageCreated: "package-seal",
+      packageSealed: "package-seal",
+      neonCharged: "neon-charge",
+      wasteCreated: "glitch-fail",
+      transactionSuccess: "coin-burst",
+      transactionSealed: "transaction-seal",
+      riskChanged: "risk-ping",
+      newsGenerated: "crt-news",
+      newsBroadcast: "news-broadcast",
+      newsTicker: "news-ticker",
+      publicOpinionPulse: "opinion-pulse",
+      emotionSelected: "emotion-select",
+      emotionEmpathySelected: "emotion-empathy",
+      emotionAngerSelected: "emotion-anger",
+      emotionNumbnessSelected: "emotion-numbness",
+      challengeSuccess: "challenge-success",
+      challengeFail: "challenge-fail",
+      blackBoxLine: "blackbox-voice",
+      bgmBlackBox: "bgm-blackbox",
+      bgmPressure: "bgm-pressure",
+      bgmSilence: "bgm-silence",
+      conscienceChanged: "conscience-shift",
+      endingTriggered: "ending-stinger",
+    };
+
+    class AudioPreview {
+      constructor() {
+        this.context = null;
+        this.masterGain = null;
+        this.bgmOscillators = [];
+        this.bgmGain = null;
+        this.bgmTimers = [];
+        this.masterVolume = 0.72;
+      }
+
+      setMasterVolume(volume) {
+        this.masterVolume = Math.max(0, Math.min(1, volume));
+        if (this.masterGain) {
+          this.masterGain.gain.value = this.masterVolume;
+        }
+      }
+
+      async unlock() {
+        const context = this.ensureContext();
+        if (context.state === "suspended") {
+          await context.resume();
+        }
+      }
+
+      handleGameEvent(eventName) {
+        const soundId = SOUND_EVENT_MAP[eventName];
+        if (soundId) {
+          this.play(soundId);
+        }
+      }
+
+      play(soundId) {
+        const context = this.ensureContext();
+        const now = context.currentTime;
+
+        switch (soundId) {
+          case "data-pulse":
+            this.arpeggio([261.63, 329.63, 392, 523.25], now, 0.045, 0.09, "triangle", 0.09);
+            break;
+          case "slot-click":
+            this.tone({ frequency: 659.25, duration: 0.045, type: "triangle", startTime: now, gain: 0.08 });
+            this.tone({ frequency: 987.77, duration: 0.07, type: "sine", startTime: now + 0.035, gain: 0.07 });
+            break;
+          case "package-seal":
+            this.arpeggio([196, 261.63, 329.63, 392], now, 0.055, 0.12, "triangle", 0.08);
+            this.chord([196, 293.66, 392], now + 0.22, 0.22, "sine", 0.045);
+            break;
+          case "neon-charge":
+            this.arpeggio([220, 277.18, 329.63, 440, 554.37, 659.25], now, 0.04, 0.1, "sine", 0.075);
+            this.tone({ frequency: 880, duration: 0.18, type: "triangle", startTime: now + 0.2, gain: 0.06 });
+            break;
+          case "glitch-fail":
+            this.chord([174.61, 185, 233.08], now, 0.16, "sawtooth", 0.045);
+            this.tone({ frequency: 87.31, duration: 0.24, type: "triangle", startTime: now + 0.1, gain: 0.08 });
+            this.noise({ duration: 0.08, gain: 0.04 });
+            break;
+          case "coin-burst":
+            this.arpeggio([523.25, 659.25, 783.99, 1046.5], now, 0.05, 0.1, "triangle", 0.08);
+            this.chord([523.25, 659.25, 783.99], now + 0.18, 0.18, "sine", 0.04);
+            break;
+          case "transaction-seal":
+            this.arpeggio([392, 329.63, 261.63], now, 0.075, 0.15, "triangle", 0.075);
+            this.chord([130.81, 196, 261.63], now + 0.24, 0.28, "sine", 0.045);
+            break;
+          case "risk-ping":
+            this.arpeggio([880, 739.99, 698.46], now, 0.055, 0.09, "square", 0.06);
+            break;
+          case "crt-news":
+            this.newsBell(now, 0.85);
+            break;
+          case "news-broadcast":
+            this.newsBell(now, 1);
+            this.chord([196, 246.94, 392], now + 0.24, 0.2, "sine", 0.035);
+            break;
+          case "news-ticker":
+            this.arpeggio([987.77, 783.99, 880, 659.25], now, 0.045, 0.055, "triangle", 0.07);
+            break;
+          case "opinion-pulse":
+            this.arpeggio([392, 466.16, 554.37, 466.16], now, 0.06, 0.11, "square", 0.052);
+            this.noise({ duration: 0.035, gain: 0.018 });
+            break;
+          case "emotion-select":
+            this.arpeggio([329.63, 392, 493.88], now, 0.055, 0.1, "sine", 0.07);
+            break;
+          case "emotion-empathy":
+            this.arpeggio([293.66, 349.23, 440, 587.33], now, 0.07, 0.18, "sine", 0.055);
+            this.chord([293.66, 440, 587.33], now + 0.28, 0.25, "triangle", 0.035);
+            break;
+          case "emotion-anger":
+            this.arpeggio([196, 233.08, 277.18, 466.16], now, 0.045, 0.1, "sawtooth", 0.055);
+            this.noise({ duration: 0.045, gain: 0.035 });
+            break;
+          case "emotion-numbness":
+            this.tone({ frequency: 261.63, duration: 0.24, type: "sine", startTime: now, gain: 0.045 });
+            this.tone({ frequency: 196, duration: 0.32, type: "sine", startTime: now + 0.16, gain: 0.038 });
+            this.tone({ frequency: 164.81, duration: 0.28, type: "triangle", startTime: now + 0.32, gain: 0.032 });
+            break;
+          case "challenge-success":
+            this.arpeggio([261.63, 329.63, 392, 659.25], now, 0.07, 0.15, "triangle", 0.07);
+            this.chord([329.63, 392, 659.25], now + 0.28, 0.22, "sine", 0.04);
+            break;
+          case "challenge-fail":
+            this.chord([196, 207.65, 261.63], now, 0.2, "sawtooth", 0.04);
+            this.arpeggio([261.63, 220, 174.61], now + 0.08, 0.09, 0.16, "triangle", 0.06);
+            this.noise({ duration: 0.09, gain: 0.035 });
+            break;
+          case "blackbox-voice":
+            this.tone({ frequency: 73.42, duration: 0.18, type: "sine", startTime: now, gain: 0.035 });
+            this.tone({ frequency: 146.83, duration: 0.12, type: "triangle", startTime: now + 0.05, gain: 0.028 });
+            this.noise({ duration: 0.045, gain: 0.012 });
+            break;
+          case "bgm-blackbox":
+            this.switchBgm([55, 110, 165], 0.026, "blackbox");
+            break;
+          case "bgm-pressure":
+            this.switchBgm([46, 92, 185], 0.034, "pressure");
+            break;
+          case "bgm-silence":
+            this.stopBgm();
+            break;
+          case "conscience-shift":
+            this.arpeggio([196, 261.63, 329.63, 523.25], now, 0.065, 0.13, "triangle", 0.06);
+            break;
+          case "ending-stinger":
+            this.chord([65.41, 98, 130.81, 196], now, 0.55, "sawtooth", 0.04);
+            this.arpeggio([392, 329.63, 261.63, 196], now + 0.15, 0.12, 0.22, "triangle", 0.055);
+            break;
+        }
+      }
+
+      arpeggio(frequencies, startTime, step, duration, type, gain = 0.08) {
+        frequencies.forEach((frequency, index) => {
+          this.tone({
+            frequency,
+            duration,
+            type,
+            startTime: startTime + index * step,
+            gain,
+          });
+        });
+      }
+
+      chord(frequencies, startTime, duration, type, gain = 0.045) {
+        frequencies.forEach((frequency) => {
+          this.tone({ frequency, duration, type, startTime, gain });
+        });
+      }
+
+      newsBell(startTime, gainScale) {
+        this.noise({ duration: 0.045, gain: 0.018 * gainScale });
+        this.arpeggio([392, 523.25, 659.25, 783.99], startTime + 0.02, 0.052, 0.1, "triangle", 0.065 * gainScale);
+        this.tone({
+          frequency: 523.25,
+          duration: 0.16,
+          type: "sine",
+          startTime: startTime + 0.24,
+          gain: 0.05 * gainScale,
+        });
+      }
+
+      switchBgm(frequencies, gainValue, pattern) {
+        const context = this.ensureContext();
+        this.stopBgm();
+
+        const now = context.currentTime;
+        const gain = context.createGain();
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.4);
+        gain.connect(this.masterGain);
+
+        this.bgmGain = gain;
+        this.bgmOscillators = frequencies.map((frequency, index) => {
+          const oscillator = context.createOscillator();
+          oscillator.type = index === 0 ? "sine" : "sawtooth";
+          oscillator.frequency.value = frequency;
+          oscillator.detune.value = pattern === "pressure" ? index * 9 : index * 3;
+          oscillator.connect(gain);
+          oscillator.start(now);
+          return oscillator;
+        });
+
+        if (pattern === "blackbox") {
+          this.bgmTimers.push(
+            window.setInterval(() => {
+              if (!this.context) {
+                return;
+              }
+              const startTime = this.context.currentTime;
+              this.arpeggio([220, 277.18, 329.63, 277.18], startTime, 0.18, 0.22, "sine", 0.026);
+            }, 1800),
+          );
+          this.bgmTimers.push(
+            window.setInterval(() => {
+              if (!this.context) {
+                return;
+              }
+              this.noise({ duration: 0.075, gain: 0.018 });
+            }, 3100),
+          );
+          return;
+        }
+
+        this.bgmTimers.push(
+          window.setInterval(() => {
+            if (!this.context) {
+              return;
+            }
+            const startTime = this.context.currentTime;
+            this.arpeggio([184.99, 220, 246.94, 277.18], startTime, 0.12, 0.16, "triangle", 0.032);
+          }, 620),
+        );
+        this.bgmTimers.push(
+          window.setInterval(() => {
+            if (!this.context) {
+              return;
+            }
+            const startTime = this.context.currentTime;
+            this.arpeggio([987.77, 739.99, 659.25], startTime, 0.07, 0.08, "sine", 0.035);
+            this.noise({ duration: 0.025, gain: 0.014 });
+          }, 1650),
+        );
+      }
+
+      stopBgm() {
+        const context = this.context;
+        const now = context ? context.currentTime : 0;
+
+        if (context && this.bgmGain) {
+          this.bgmGain.gain.cancelScheduledValues(now);
+          this.bgmGain.gain.setTargetAtTime(0.0001, now, 0.08);
+        }
+
+        for (const oscillator of this.bgmOscillators) {
+          try {
+            oscillator.stop(context ? now + 0.18 : undefined);
+          } catch {}
+        }
+
+        for (const timer of this.bgmTimers) {
+          window.clearInterval(timer);
+        }
+
+        this.bgmOscillators = [];
+        this.bgmGain = null;
+        this.bgmTimers = [];
+      }
+
+      ensureContext() {
+        if (this.context && this.masterGain) {
+          return this.context;
+        }
+
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        this.context = new AudioContextCtor();
+        this.masterGain = this.context.createGain();
+        this.masterGain.gain.value = this.masterVolume;
+        this.masterGain.connect(this.context.destination);
+        return this.context;
+      }
+
+      tone(options) {
+        const context = this.ensureContext();
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+
+        oscillator.type = options.type;
+        oscillator.frequency.value = options.frequency;
+        gain.gain.setValueAtTime(0.0001, options.startTime);
+        gain.gain.exponentialRampToValueAtTime(options.gain ?? 0.12, options.startTime + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, options.startTime + options.duration);
+
+        oscillator.connect(gain);
+        gain.connect(this.masterGain);
+        oscillator.start(options.startTime);
+        oscillator.stop(options.startTime + options.duration + 0.02);
+      }
+
+      noise(options) {
+        const context = this.ensureContext();
+        const sampleCount = Math.max(1, Math.floor(context.sampleRate * options.duration));
+        const buffer = context.createBuffer(1, sampleCount, context.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let index = 0; index < sampleCount; index += 1) {
+          data[index] = Math.random() * 2 - 1;
+        }
+
+        const source = context.createBufferSource();
+        const gain = context.createGain();
+        source.buffer = buffer;
+        gain.gain.value = options.gain;
+        source.connect(gain);
+        gain.connect(this.masterGain);
+        source.start();
+      }
+    }
+
+    const groups = [
+      {
+        title: "数据与卡牌",
+        events: [
+          ["dataFlowIn", "数据流入"],
+          ["cardGenerated", "卡牌生成"],
+          ["cardMovedToSlot", "放入槽位"],
+          ["riskChanged", "风险变化"],
+        ],
+      },
+      {
+        title: "打包与交易",
+        events: [
+          ["packageCreated", "打包完成"],
+          ["packageSealed", "打包封装"],
+          ["neonCharged", "霓虹充能"],
+          ["wasteCreated", "错误/废包"],
+          ["transactionSuccess", "交易成功"],
+          ["transactionSealed", "交易封装"],
+        ],
+      },
+      {
+        title: "新闻与情绪",
+        events: [
+          ["newsGenerated", "新闻出现"],
+          ["newsBroadcast", "新闻播报"],
+          ["newsTicker", "新闻滚动"],
+          ["publicOpinionPulse", "舆论脉冲"],
+          ["emotionSelected", "通用情绪"],
+          ["emotionEmpathySelected", "同情"],
+          ["emotionAngerSelected", "愤怒"],
+          ["emotionNumbnessSelected", "麻木"],
+        ],
+      },
+      {
+        title: "小关卡与黑盒",
+        events: [
+          ["challengeSuccess", "小关卡成功"],
+          ["challengeFail", "小关卡失败"],
+          ["blackBoxLine", "黑盒台词"],
+        ],
+      },
+      {
+        title: "BGM 与结局",
+        events: [
+          ["bgmBlackBox", "黑盒 BGM"],
+          ["bgmPressure", "压力 BGM"],
+          ["bgmSilence", "停止 BGM"],
+          ["conscienceChanged", "清醒值变化"],
+          ["endingTriggered", "结局触发"],
+        ],
+      },
+    ];
+
+    const audio = new AudioPreview();
+    const status = document.querySelector("#status");
+    const groupsRoot = document.querySelector("#groups");
+
+    for (const group of groups) {
+      const section = document.createElement("section");
+      const heading = document.createElement("h2");
+      const grid = document.createElement("div");
+      heading.textContent = group.title;
+      grid.className = "button-grid";
+
+      for (const [eventName, label] of group.events) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = `${label} (${eventName})`;
+        button.addEventListener("click", async () => {
+          await audio.unlock();
+          audio.handleGameEvent(eventName);
+          status.textContent = `正在试听：${label} / ${eventName}`;
+        });
+        grid.append(button);
+      }
+
+      section.append(heading, grid);
+      groupsRoot.append(section);
+    }
+
+    document.querySelector("#unlockButton").addEventListener("click", async () => {
+      await audio.unlock();
+      status.textContent = "音频已启用，可以开始试听。";
+    });
+
+    document.querySelector("#stopBgmButton").addEventListener("click", () => {
+      audio.handleGameEvent("bgmSilence");
+      status.textContent = "BGM 已停止。";
+    });
+
+    document.querySelector("#volumeControl").addEventListener("input", (event) => {
+      audio.setMasterVolume(Number(event.target.value));
+    });
+  </script>
+</body>
+</html>

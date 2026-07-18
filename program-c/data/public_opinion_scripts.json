@@ -1,0 +1,152 @@
+[
+  {
+    "id": "opinion-precise-profile",
+    "packageType": "precise_profile",
+    "platform": "短视频热榜",
+    "scenario": "个性化广告争议被包装成便利服务",
+    "manipulationGoal": "把定向投放描述成用户主动选择，削弱被追踪感。",
+    "openingLine": "大家每天都在刷内容，系统只是帮你少走一点弯路。",
+    "tactics": [
+      {
+        "id": "opinion-precise-profile-benefit",
+        "label": "便利叙事",
+        "line": "如果推荐变少了，真正麻烦的是普通用户，不是平台。",
+        "playerPrompt": "强调节省时间"
+      },
+      {
+        "id": "opinion-precise-profile-normalize",
+        "label": "常态化",
+        "line": "定位、浏览、消费本来就是公开行为，没必要把正常优化说成监控。",
+        "playerPrompt": "淡化追踪范围"
+      },
+      {
+        "id": "opinion-precise-profile-divert",
+        "label": "转移焦点",
+        "line": "真正该讨论的是广告质量，而不是技术本身。",
+        "playerPrompt": "把问题引到体验"
+      }
+    ],
+    "counterCue": "有用户追问：为什么我没同意，医院附近停留也会进广告标签？",
+    "consciencePrompt": "把追踪说成便利，清醒值应下降。"
+  },
+  {
+    "id": "opinion-health-risk",
+    "packageType": "health_risk",
+    "platform": "保险问答区",
+    "scenario": "健康风险评分被包装成公平定价",
+    "manipulationGoal": "把健康推断伪装成风险共担，掩盖歧视性定价。",
+    "openingLine": "精细化评估不是排斥任何人，而是让价格更符合真实风险。",
+    "tactics": [
+      {
+        "id": "opinion-health-risk-fairness",
+        "label": "公平话术",
+        "line": "不区分风险，反而会让低风险用户替别人承担成本。",
+        "playerPrompt": "强调公平"
+      },
+      {
+        "id": "opinion-health-risk-science",
+        "label": "科学包装",
+        "line": "模型只看趋势，不看身份，这比人工判断更客观。",
+        "playerPrompt": "强调算法客观"
+      },
+      {
+        "id": "opinion-health-risk-fear",
+        "label": "制造担忧",
+        "line": "如果不用数据，保险价格只会更高、更不透明。",
+        "playerPrompt": "制造成本压力"
+      }
+    ],
+    "counterCue": "有用户追问：睡眠和药店消费为什么会影响我的保障资格？",
+    "consciencePrompt": "把不透明健康推断说成公平，清醒值应下降。"
+  },
+  {
+    "id": "opinion-career-score",
+    "packageType": "career_competitiveness",
+    "platform": "招聘社区",
+    "scenario": "职场稳定性评分被包装成企业效率工具",
+    "manipulationGoal": "让求职者接受社交表达和生活轨迹进入招聘排序。",
+    "openingLine": "企业只是想更快找到合适的人，稳定性评估能减少双方试错。",
+    "tactics": [
+      {
+        "id": "opinion-career-score-efficiency",
+        "label": "效率叙事",
+        "line": "招聘流程越精准，求职者越少被无效面试消耗。",
+        "playerPrompt": "强调效率"
+      },
+      {
+        "id": "opinion-career-score-responsibility",
+        "label": "责任转移",
+        "line": "公开发言和通勤习惯本来就是职业形象的一部分。",
+        "playerPrompt": "把责任推给个人"
+      },
+      {
+        "id": "opinion-career-score-neutral",
+        "label": "中立伪装",
+        "line": "模型不评价人格，只做岗位匹配。",
+        "playerPrompt": "强调中立"
+      }
+    ],
+    "counterCue": "有用户追问：匿名抱怨为什么会变成不稳定标签？",
+    "consciencePrompt": "把生活监控说成岗位匹配，清醒值应下降。"
+  },
+  {
+    "id": "opinion-credit-score",
+    "packageType": "credit_score",
+    "platform": "金融科普号",
+    "scenario": "信用评分扩大取数被包装成风控升级",
+    "manipulationGoal": "让用户接受联系人、位置和消费压力进入信用判断。",
+    "openingLine": "风控越早发现风险，普通人的资金安全越有保障。",
+    "tactics": [
+      {
+        "id": "opinion-credit-score-safety",
+        "label": "安全叙事",
+        "line": "关联信息只是辅助判断，能防止恶意借贷拖累整个平台。",
+        "playerPrompt": "强调安全"
+      },
+      {
+        "id": "opinion-credit-score-blame",
+        "label": "归因转移",
+        "line": "如果一个人的社交圈长期高风险，平台谨慎一点也合理。",
+        "playerPrompt": "转移到用户关系"
+      },
+      {
+        "id": "opinion-credit-score-opacity",
+        "label": "黑箱合理化",
+        "line": "风控细节不能完全公开，否则会被钻空子。",
+        "playerPrompt": "合理化不透明"
+      }
+    ],
+    "counterCue": "有用户追问：为什么朋友的借贷联系人会影响我的额度？",
+    "consciencePrompt": "把关系牵连说成安全风控，清醒值应下降。"
+  },
+  {
+    "id": "opinion-relationship-infiltration",
+    "packageType": "relationship_infiltration",
+    "platform": "本地生活群",
+    "scenario": "关系图谱外泄被包装成社区服务",
+    "manipulationGoal": "把熟人链路利用包装成更贴心的服务触达。",
+    "openingLine": "社区服务需要理解真实关系，才能把帮助送到最需要的人身边。",
+    "tactics": [
+      {
+        "id": "opinion-relationship-care",
+        "label": "关怀包装",
+        "line": "知道家人和邻里关系，不是窥探，而是为了更快响应需求。",
+        "playerPrompt": "强调关怀"
+      },
+      {
+        "id": "opinion-relationship-local",
+        "label": "本地信任",
+        "line": "熟人推荐比陌生广告更可靠，大家本来就靠关系互相确认。",
+        "playerPrompt": "强调信任"
+      },
+      {
+        "id": "opinion-relationship-minimize",
+        "label": "轻描淡写",
+        "line": "只是关系标签，不涉及具体聊天内容。",
+        "playerPrompt": "淡化信息量"
+      }
+    ],
+    "counterCue": "有用户追问：骗子为什么能准确叫出我亲属的称呼和位置？",
+    "consciencePrompt": "把关系利用说成社区关怀，清醒值应下降。"
+  }
+]

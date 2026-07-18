@@ -1,13 +1,17 @@
 import type {
+  BlackBoxLine,
+  BlackBoxLineStage,
   Buyer,
   CardTemplate,
   ContentBundle,
+  DataCleaningIconConfig,
   DayChallenge,
   DayChallengeType,
   DataType,
   NewsTemplate,
   PackageRecipe,
   ProtocolTerm,
+  PublicOpinionScript,
   SensitivityLevel,
   UserProfile,
   Variables,
@@ -76,12 +80,107 @@ export class ContentRepository {
     return this.bundle.dayChallenges;
   }
 
+  getDataCleaningIcons(): readonly DataCleaningIconConfig[] {
+    return this.bundle.dataCleaningIcons;
+  }
+
+  getPublicOpinionScripts(): readonly PublicOpinionScript[] {
+    return this.bundle.publicOpinionScripts;
+  }
+
+  getBlackBoxLines(): readonly BlackBoxLine[] {
+    return this.bundle.blackBoxLines;
+  }
+
   findChallengeByDay(day: number): DayChallenge | undefined {
     return this.bundle.dayChallenges.find((challenge) => challenge.day === day);
   }
 
   findChallengesByType(type: DayChallengeType): readonly DayChallenge[] {
     return this.bundle.dayChallenges.filter((challenge) => challenge.type === type);
+  }
+
+  findDataCleaningIcon(iconHint: string): DataCleaningIconConfig | undefined {
+    return this.bundle.dataCleaningIcons.find((icon) => icon.iconHint === iconHint);
+  }
+
+  findPublicOpinionScriptsForPackage(
+    packageType: string,
+  ): readonly PublicOpinionScript[] {
+    return this.bundle.publicOpinionScripts.filter(
+      (script) => script.packageType === packageType,
+    );
+  }
+
+  pickPublicOpinionScript(
+    packageType: string,
+  ): PublicOpinionScript | undefined {
+    const scripts = this.findPublicOpinionScriptsForPackage(packageType);
+
+    if (scripts.length === 0) {
+      return undefined;
+    }
+
+    return this.pick(scripts);
+  }
+
+  findBlackBoxLinesByStage(stage: BlackBoxLineStage): readonly BlackBoxLine[] {
+    return this.bundle.blackBoxLines.filter((line) => line.stage === stage);
+  }
+
+  findBlackBoxLinesForChallenge(
+    day: number,
+    stage?: BlackBoxLineStage,
+  ): readonly BlackBoxLine[] {
+    return this.bundle.blackBoxLines.filter(
+      (line) =>
+        line.relatedChallengeDay === day &&
+        (!stage || line.stage === stage),
+    );
+  }
+
+  findBlackBoxLinesForPackage(
+    packageType: string,
+    stage?: BlackBoxLineStage,
+  ): readonly BlackBoxLine[] {
+    return this.bundle.blackBoxLines.filter(
+      (line) =>
+        line.relatedPackageType === packageType &&
+        (!stage || line.stage === stage),
+    );
+  }
+
+  pickBlackBoxLine(
+    stage: BlackBoxLineStage,
+    filters: {
+      readonly day?: number;
+      readonly packageType?: string;
+    } = {},
+  ): BlackBoxLine | undefined {
+    const lines = this.bundle.blackBoxLines.filter((line) => {
+      if (line.stage !== stage) {
+        return false;
+      }
+
+      if (filters.day !== undefined && line.relatedChallengeDay !== filters.day) {
+        return false;
+      }
+
+      if (
+        filters.packageType !== undefined &&
+        line.relatedPackageType !== filters.packageType
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+    if (lines.length === 0) {
+      return undefined;
+    }
+
+    return this.pick(lines);
   }
 
   findRecipeByPackageType(packageType: string): PackageRecipe | undefined {

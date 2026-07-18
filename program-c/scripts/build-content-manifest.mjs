@@ -24,6 +24,9 @@ const newsTemplates = readJson("news_templates.json");
 const protocolTerms = readJson("protocol_terms.json");
 const packageRecipes = readJson("package_recipes.json");
 const dayChallenges = readJson("day_challenges.json");
+const dataCleaningIcons = readJson("data_cleaning_icons.json");
+const publicOpinionScripts = readJson("public_opinion_scripts.json");
+const blackBoxLines = readJson("black_box_lines.json");
 
 const manifest = {
   role: "Program C - content tools, audio, build and performance",
@@ -37,6 +40,9 @@ const manifest = {
     "protocol_terms.json",
     "package_recipes.json",
     "day_challenges.json",
+    "data_cleaning_icons.json",
+    "public_opinion_scripts.json",
+    "black_box_lines.json",
   ],
   counts: {
     cardTemplates: cardTemplates.length,
@@ -46,6 +52,9 @@ const manifest = {
     protocolTerms: protocolTerms.length,
     packageRecipes: packageRecipes.length,
     dayChallenges: dayChallenges.length,
+    dataCleaningIcons: dataCleaningIcons.length,
+    publicOpinionScripts: publicOpinionScripts.length,
+    blackBoxLines: blackBoxLines.length,
   },
   dataTypes: [...new Set(cardTemplates.map((card) => card.dataType))].sort(),
   sensitivityLevels: [...new Set(cardTemplates.map((card) => card.sensitivity))].sort(),
@@ -57,8 +66,18 @@ const manifest = {
     "pickCard",
     "fillVariables",
     "getDayChallenges",
+    "getDataCleaningIcons",
+    "getPublicOpinionScripts",
+    "getBlackBoxLines",
     "findChallengeByDay",
     "findChallengesByType",
+    "findDataCleaningIcon",
+    "findPublicOpinionScriptsForPackage",
+    "pickPublicOpinionScript",
+    "findBlackBoxLinesByStage",
+    "findBlackBoxLinesForChallenge",
+    "findBlackBoxLinesForPackage",
+    "pickBlackBoxLine",
     "findCardsByDataType",
     "findCardsByIds",
     "findRecipesForDataTypes",

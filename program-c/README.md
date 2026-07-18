@@ -4,10 +4,11 @@
 
 ## 当前完成
 
-- 分工表 D1：本地工具链、内容校验、离线清单、包体检查、Web Audio 音频管理器框架。
-- 分工表 D2：10 套数据卡片、20 个用户画像、变量填充系统、数据流入音效、三种情绪选择音效。
-- 分工表 D3：10 条新闻模板、新闻与数据包类型匹配、打包封装/霓虹充能/交易封装音效事件。
-- 分工表 D4：新闻模板扩到 20 条、协议伪装配对扩到 20 组、新闻播报音效、BGM 切换事件。
+- D1：本地工具链、内容校验、离线清单、包体检查、Web Audio 音频管理器框架。
+- D2：10 套数据卡牌、20 个用户画像、变量填充系统、数据流入音效、三种情绪选择音效。
+- D3：10 条新闻模板、新闻与数据包类型匹配、打包封装/霓虹充能/交易封装音效事件。
+- D4：新闻模板扩到 20 条，协议伪装配对扩到 20 组，新增新闻播报音效和 BGM 切换事件。
+- D5：数据清洗图标配置、舆论操控话术、黑盒评价台词、通用小关卡成败音效和黑盒台词音效绑定。
 
 ## 目录说明
 
@@ -18,11 +19,12 @@
 - `src/audio/soundMap.ts`：程序 A / B 可调用的事件名到音效 ID 的映射。
 - `scripts/validate-content.mjs`：JSON 内容校验。
 - `scripts/bundle-size-report.mjs`：8MB 包体预算检查。
+- `docs/audio-preview.html`：本地音效试听页。
 
 ## 本地检查
 
 ```bash
-cmd /c npm run check
+npm run check
 ```
 
 ## 给队友的接入口
@@ -32,10 +34,13 @@ const readyPackages = content.findPackagePreviews(selectedCardIds, {
   onlyReady: true,
 });
 
-const news = content.pickNewsForPackage("精准画像包");
+const news = content.pickNewsForPackage("precise_profile");
 const day2Challenge = content.findChallengeByDay(2);
+const opinion = content.pickPublicOpinionScript("precise_profile");
+const blackBoxLine = content.pickBlackBoxLine("challenge_success", { day: 2 });
 
 audio.handleGameEvent("newsBroadcast");
+audio.handleGameEvent("challengeSuccess");
 audio.handleGameEvent("bgmPressure");
 ```
 

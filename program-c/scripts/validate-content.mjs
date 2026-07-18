@@ -14,6 +14,17 @@ const dataTypes = new Set([
 const sensitivities = new Set(["low", "medium", "high"]);
 const dayChallengeTypes = new Set(["protocol_match", "data_cleaning"]);
 const dataCleaningTrapTypes = new Set(["backup_file", "audit_log", "system_file"]);
+const dataCleaningIconRoles = new Set(["sensitive", "decoy"]);
+const dataCleaningIconRiskColors = new Set(["red", "orange", "blue"]);
+const blackBoxLineStages = new Set([
+  "challenge_intro",
+  "challenge_success",
+  "challenge_fail",
+  "package_review",
+  "public_opinion",
+  "transaction_success",
+  "ending_pressure",
+]);
 const variableKeys = ["姓名", "城市", "金额", "平台"];
 const emotionKeys = ["empathy", "anger", "numbness"];
 const placeholderPattern = /\{([^}]+)\}/g;
@@ -48,6 +59,13 @@ function assertKnownPlaceholders(text, label, variables) {
   }
 }
 
+function readSoundEvents() {
+  const source = readFileSync(new URL("src/audio/soundMap.ts", root), "utf8");
+  const objectBody = source.match(/SOUND_EVENT_MAP\s*=\s*\{([\s\S]*?)\}\s*as const/)?.[1] ?? "";
+
+  return [...objectBody.matchAll(/^\s*([A-Za-z][A-Za-z0-9_]*)\s*:/gm)].map((match) => match[1]);
+}
+
 const cardTemplates = readJson("card_templates.json");
 const users = readJson("users.json");
 const buyers = readJson("buyers.json");
@@ -56,6 +74,10 @@ const newsTemplates = readJson("news_templates.json");
 const protocolTerms = readJson("protocol_terms.json");
 const recipes = readJson("package_recipes.json");
 const dayChallenges = readJson("day_challenges.json");
+const dataCleaningIcons = readJson("data_cleaning_icons.json");
+const publicOpinionScripts = readJson("public_opinion_scripts.json");
+const blackBoxLines = readJson("black_box_lines.json");
+const soundEvents = new Set(readSoundEvents());
 
 assertUniqueIds(cardTemplates, "card_templates");
 assertUniqueIds(users, "users");
@@ -64,11 +86,17 @@ assertUniqueIds(newsTemplates, "news_templates");
 assertUniqueIds(protocolTerms, "protocol_terms");
 assertUniqueIds(recipes, "package_recipes");
 assertUniqueIds(dayChallenges, "day_challenges");
+assertUniqueIds(dataCleaningIcons, "data_cleaning_icons");
+assertUniqueIds(publicOpinionScripts, "public_opinion_scripts");
+assertUniqueIds(blackBoxLines, "black_box_lines");
 
 assert(cardTemplates.length >= 10, "card_templates needs at least 10 templates for Program C Day 2");
 assert(users.length >= 20, "users needs at least 20 profiles for Program C Day 2");
 assert(newsTemplates.length >= 20, "news_templates needs at least 20 templates for Program C D4");
 assert(protocolTerms.length >= 20, "protocol_terms needs at least 20 pairs for Program C D4");
+assert(dataCleaningIcons.length >= 10, "data_cleaning_icons needs icon coverage for Program C D5");
+assert(publicOpinionScripts.length >= 5, "public_opinion_scripts needs at least 5 templates for Program C D5");
+assert(blackBoxLines.length >= 10, "black_box_lines needs at least 10 voice lines for Program C D5");
 
 for (const key of variableKeys) {
   assert(Array.isArray(variables[key]), `variables missing array: ${key}`);
@@ -118,6 +146,8 @@ for (const card of cardTemplates) {
 
 const packageTypes = new Set(recipes.map((recipe) => recipe.packageType));
 const protocolTermIds = new Set(protocolTerms.map((term) => term.id));
+const dataCleaningIconHints = new Set(dataCleaningIcons.map((icon) => icon.iconHint));
+const challengeDays = new Set(dayChallenges.map((challenge) => challenge.day));
 
 for (const packageType of packageTypes) {
   assert(
@@ -179,7 +209,76 @@ for (const news of newsTemplates) {
   }
 }
 
-const challengeDays = new Set(dayChallenges.map((challenge) => challenge.day));
+for (const icon of dataCleaningIcons) {
+  assert(icon.iconHint, `data_cleaning_icon ${icon.id} missing iconHint`);
+  assert(icon.lucideIcon, `data_cleaning_icon ${icon.id} missing lucideIcon`);
+  assert(
+    dataCleaningIconRoles.has(icon.role),
+    `data_cleaning_icon ${icon.id} invalid role: ${icon.role}`,
+  );
+  assert(
+    dataCleaningIconRiskColors.has(icon.riskColor),
+    `data_cleaning_icon ${icon.id} invalid riskColor: ${icon.riskColor}`,
+  );
+  assert(icon.shortLabel, `data_cleaning_icon ${icon.id} missing shortLabel`);
+  assert(icon.scanText, `data_cleaning_icon ${icon.id} missing scanText`);
+  assert(icon.hitText, `data_cleaning_icon ${icon.id} missing hitText`);
+}
+
+for (const script of publicOpinionScripts) {
+  assert(
+    packageTypes.has(script.packageType),
+    `public_opinion_script ${script.id} references unknown package: ${script.packageType}`,
+  );
+  assert(script.platform, `public_opinion_script ${script.id} missing platform`);
+  assert(script.scenario, `public_opinion_script ${script.id} missing scenario`);
+  assert(script.manipulationGoal, `public_opinion_script ${script.id} missing manipulationGoal`);
+  assert(script.openingLine, `public_opinion_script ${script.id} missing openingLine`);
+  assert(script.counterCue, `public_opinion_script ${script.id} missing counterCue`);
+  assert(script.consciencePrompt, `public_opinion_script ${script.id} missing consciencePrompt`);
+  assert(
+    Array.isArray(script.tactics) && script.tactics.length >= 3,
+    `public_opinion_script ${script.id} needs at least 3 tactics`,
+  );
+  assertUniqueIds(script.tactics, `${script.id} tactics`);
+
+  for (const tactic of script.tactics) {
+    assert(tactic.label, `public_opinion_script ${script.id} tactic ${tactic.id} missing label`);
+    assert(tactic.line, `public_opinion_script ${script.id} tactic ${tactic.id} missing line`);
+    assert(
+      tactic.playerPrompt,
+      `public_opinion_script ${script.id} tactic ${tactic.id} missing playerPrompt`,
+    );
+  }
+}
+
+for (const line of blackBoxLines) {
+  assert(
+    blackBoxLineStages.has(line.stage),
+    `black_box_line ${line.id} invalid stage: ${line.stage}`,
+  );
+  assert(
+    soundEvents.has(line.cueEventName),
+    `black_box_line ${line.id} references unknown sound event: ${line.cueEventName}`,
+  );
+  assert(line.voiceHint, `black_box_line ${line.id} missing voiceHint`);
+  assert(line.text, `black_box_line ${line.id} missing text`);
+
+  if (line.relatedChallengeDay !== undefined) {
+    assert(
+      challengeDays.has(line.relatedChallengeDay),
+      `black_box_line ${line.id} references unknown challenge day: ${line.relatedChallengeDay}`,
+    );
+  }
+
+  if (line.relatedPackageType !== undefined) {
+    assert(
+      packageTypes.has(line.relatedPackageType),
+      `black_box_line ${line.id} references unknown package: ${line.relatedPackageType}`,
+    );
+  }
+}
+
 assert(challengeDays.has(1), "day_challenges missing Day 1 challenge");
 assert(challengeDays.has(2), "day_challenges missing Day 2 challenge");
 
@@ -250,6 +349,10 @@ for (const challenge of dayChallenges) {
       );
       assert(item.label, `challenge ${challenge.id} item ${item.id} missing label`);
       assert(item.iconHint, `challenge ${challenge.id} item ${item.id} missing iconHint`);
+      assert(
+        dataCleaningIconHints.has(item.iconHint),
+        `challenge ${challenge.id} item ${item.id} references unknown iconHint: ${item.iconHint}`,
+      );
       assert(item.description, `challenge ${challenge.id} item ${item.id} missing description`);
     }
 
@@ -260,6 +363,10 @@ for (const challenge of dayChallenges) {
       );
       assert(item.label, `challenge ${challenge.id} decoy ${item.id} missing label`);
       assert(item.iconHint, `challenge ${challenge.id} decoy ${item.id} missing iconHint`);
+      assert(
+        dataCleaningIconHints.has(item.iconHint),
+        `challenge ${challenge.id} decoy ${item.id} references unknown iconHint: ${item.iconHint}`,
+      );
       assert(item.description, `challenge ${challenge.id} decoy ${item.id} missing description`);
     }
   }
@@ -273,3 +380,6 @@ console.log(`recipes=${recipes.length}`);
 console.log(`news=${newsTemplates.length}`);
 console.log(`protocolTerms=${protocolTerms.length}`);
 console.log(`dayChallenges=${dayChallenges.length}`);
+console.log(`dataCleaningIcons=${dataCleaningIcons.length}`);
+console.log(`publicOpinionScripts=${publicOpinionScripts.length}`);
+console.log(`blackBoxLines=${blackBoxLines.length}`);

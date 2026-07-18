@@ -1,221 +1,221 @@
 [
   {
     "id": "news-location-stalking",
-    "relatedPackageType": "精准画像包",
-    "headline": "{城市} 一名用户遭遇精准尾随，行动轨迹疑似被出售",
-    "body": "警方称，受害者近期多个夜间停留点被陌生账号反复提及，信息来源仍在调查。",
+    "relatedPackageType": "precise_profile",
+    "headline": "黑盒快讯：{城市} 夜行路线被标成“高转化猎场”",
+    "body": "昨夜卖出的精准画像包接入广告引擎后，医院、招聘点和借贷门店在地图上依次亮起红点。",
     "emotionResponses": {
-      "empathy": "你突然意识到，那些坐标并不是地图上的点，而是一个人的生活。",
-      "anger": "你盯着屏幕，第一次对黑盒的任务说明产生抵触。",
-      "numbness": "新闻很快滑走，下一批数据已经抵达传送带。"
+      "empathy": "那不是路线，是某个人绕不开的生活半径。",
+      "anger": "你第一次想把买家的报价单从屏幕上撕掉。",
+      "numbness": "黑盒奖励：猎场命中率 +12%。"
     }
   },
   {
     "id": "news-health-insurance",
-    "relatedPackageType": "健康风险评估包",
-    "headline": "用户投保被拒，平台称其健康风险异常",
-    "body": "当事人表示从未主动提交相关健康报告，但保险报价在一夜之间大幅变化。",
+    "relatedPackageType": "health_risk",
+    "headline": "保险门禁启动：一份睡眠曲线让用户被系统拒之门外",
+    "body": "买家将健康风险评估包写入承保模型，用户只看到一句提示：暂不符合本轮保障资格。",
     "emotionResponses": {
-      "empathy": "你想起那张睡眠趋势卡，心口短暂地发紧。",
-      "anger": "你觉得这不像评估，更像偷来的审判。",
-      "numbness": "黑盒提示：风险识别效率提升。"
+      "empathy": "你想到那条凌晨三点的心率记录，忽然觉得它太重了。",
+      "anger": "你想问黑盒：谁给了它判人生病的权力？",
+      "numbness": "系统提示：拒保解释已自动模糊。"
     }
   },
   {
     "id": "news-credit-contact",
-    "relatedPackageType": "信用评分包",
-    "headline": "联系人关系图谱影响贷款审核，用户申诉无门",
-    "body": "多名用户称自己被陌生人的借贷行为牵连，审核方拒绝公开评分依据。",
+    "relatedPackageType": "credit_score",
+    "headline": "连坐评分上线：朋友的逾期让一个陌生人失去贷款资格",
+    "body": "信用评分包被接入灰名单模型后，联系人关系链成为新的扣分理由，平台拒绝公开具体节点。",
     "emotionResponses": {
-      "empathy": "你第一次想删掉某条操作日志。",
-      "anger": "你把鼠标停在黑盒窗口上，却没有新的选项出现。",
-      "numbness": "系统记录：情绪波动未影响工作效率。"
+      "empathy": "你发现关系图谱上的一条线，足够把人拖进黑名单。",
+      "anger": "你想把“仅供参考”四个字改成“无人负责”。",
+      "numbness": "黑盒记录：关联惩罚模型运行稳定。"
     }
   },
   {
     "id": "news-job-profile",
-    "relatedPackageType": "职场竞争力包",
-    "headline": "招聘平台被曝利用隐私画像筛掉求职者",
-    "body": "内部规则显示，夜间活跃、健康异常和社交抱怨被纳入候选人排序。",
+    "relatedPackageType": "career_competitiveness",
+    "headline": "候选人被静默淘汰，原因栏显示：夜间活跃异常",
+    "body": "职场竞争力包进入招聘后台后，匿名发帖、通勤时间和健康波动被折算成稳定性分数。",
     "emotionResponses": {
-      "empathy": "你看见屏幕上的名字，像看见某个真实的人被折叠成标签。",
-      "anger": "你对黑盒说：这不该叫优化。",
-      "numbness": "你继续整理下一份画像，动作比昨天更熟练。"
+      "empathy": "你看见一个人还没开口，就已经被系统替他回答了。",
+      "anger": "你觉得这不是招聘筛选，是把偏见升级成按钮。",
+      "numbness": "黑盒提示：面试成本下降。"
     }
   },
   {
     "id": "news-scam-graph",
-    "relatedPackageType": "关系图谱包",
-    "headline": "诈骗团伙利用关系链伪装熟人实施诱导",
-    "body": "受害者称对方准确说出朋友、地点和消费习惯，因此放松警惕。",
+    "relatedPackageType": "relationship_infiltration",
+    "headline": "熟人骗局完成升级：骗子叫出了受害者母亲的小名",
+    "body": "关系图谱包被转卖后，诈骗话术自动拼接亲属、地点和近期消费，信任值瞬间拉满。",
     "emotionResponses": {
-      "empathy": "你忽然不想再看右侧买家的报价。",
-      "anger": "你开始怀疑自己是不是正在帮犯罪补全拼图。",
-      "numbness": "黑盒评价：客户关系维护合格。"
+      "empathy": "你忽然觉得每一条关系线都像一根能被拉动的绳。",
+      "anger": "你开始怀疑自己是不是在替犯罪补全剧本。",
+      "numbness": "黑盒评价：关系链商业价值上升。"
     }
   },
   {
     "id": "news-location-ad-targeting",
-    "relatedPackageType": "精准画像包",
-    "headline": "{城市} 多家门店被曝按通勤轨迹精准投放高压广告",
-    "body": "消费者称，自己刚经过医院、招聘中心和借贷网点，就连续收到相关推送。",
+    "relatedPackageType": "precise_profile",
+    "headline": "城市雷达刷新：用户刚离开医院，借贷广告已经等在门口",
+    "body": "精准画像包把停留点拆成“脆弱时刻”，买家系统自动推送高压广告并记录点击犹豫时间。",
     "emotionResponses": {
-      "empathy": "你意识到推送不是巧合，而是有人把一整天的移动路线卖成了标签。",
-      "anger": "你开始厌烦黑盒把这种行为称为增长。",
-      "numbness": "系统提示：精准触达转化率提升。"
+      "empathy": "你意识到系统不是找到需求，而是守在人最软弱的地方。",
+      "anger": "你想关闭地图上的红点，可黑盒只给了“继续优化”。",
+      "numbness": "任务结算：脆弱时刻捕获成功。"
     }
   },
   {
     "id": "news-health-workplace-risk",
-    "relatedPackageType": "健康风险评估包",
-    "headline": "员工健康风险标签疑似流入企业管理系统",
-    "body": "知情人称，部分企业在排班和晋升前会查看外部平台提供的健康趋势分级。",
+    "relatedPackageType": "health_risk",
+    "headline": "排班算法接入健康标签，疲惫的人被安排更多夜班",
+    "body": "健康风险评估包流入企业后台后，系统将睡眠不足标为“可压榨窗口”，并隐藏推荐依据。",
     "emotionResponses": {
-      "empathy": "你想起那些睡眠和心率记录，突然觉得它们不该出现在任何绩效表里。",
-      "anger": "你觉得这不是管理工具，而是一次无声的筛选。",
-      "numbness": "黑盒评价：风险前置能力稳定。"
+      "empathy": "你突然明白，有些人越累，系统越觉得他还能再撑。",
+      "anger": "你觉得黑盒把伤口命名成了效率。",
+      "numbness": "黑盒提示：人力成本曲线优化。"
     }
   },
   {
     "id": "news-credit-rent-denial",
-    "relatedPackageType": "信用评分包",
-    "headline": "租房审核引用隐形信用分，年轻租客被拒",
-    "body": "多名租客表示，平台未说明评分来源，只提示其联系人风险和消费稳定性不足。",
+    "relatedPackageType": "credit_score",
+    "headline": "租房门锁拒绝开门，隐形信用分低于阈值",
+    "body": "信用评分包被接入住审系统，用户在门口收到一条冷冰冰的失败提示：风险画像不匹配。",
     "emotionResponses": {
-      "empathy": "你忽然想到，某个联系人也可能把一个人拖进看不见的黑名单。",
-      "anger": "你对“仅供参考”四个字产生强烈反感。",
-      "numbness": "你把这条新闻归档，继续等待下一笔交易记录。"
+      "empathy": "你想到一个人拖着箱子站在门外，却不知道自己输在哪。",
+      "anger": "你想把那串阈值从系统里砸出来。",
+      "numbness": "黑盒记录：准入拒绝无需人工复核。"
     }
   },
   {
     "id": "news-workplace-night-activity",
-    "relatedPackageType": "职场竞争力包",
-    "headline": "招聘系统根据夜间活跃度推断候选人稳定性",
-    "body": "内部演示材料显示，夜间定位、匿名发帖和消费压力会影响候选人排序。",
+    "relatedPackageType": "career_competitiveness",
+    "headline": "招聘黑名单闪烁：凌晨在线被判定为“不稳定人格”",
+    "body": "职场竞争力包将夜间定位、消费压力和社交抱怨合并成候选人风险条，排序瞬间下沉。",
     "emotionResponses": {
-      "empathy": "你发现所谓稳定性，其实是把疲惫的人继续往下压。",
-      "anger": "你想把那份排序规则从系统里拖出去删除。",
-      "numbness": "黑盒提示：候选人筛选效率达标。"
+      "empathy": "你发现那不是不稳定，可能只是一个人在努力撑过今天。",
+      "anger": "你对黑盒说：别把活着的痕迹当缺陷。",
+      "numbness": "系统提示：低稳定候选人已自动过滤。"
     }
   },
   {
     "id": "news-contact-family-scam",
-    "relatedPackageType": "关系图谱包",
-    "headline": "亲属关系链被滥用，诈骗话术精准命中家庭压力",
-    "body": "受害者称，对方准确说出家庭成员、就医地点和近期通话频率，因此误以为是真实熟人。",
+    "relatedPackageType": "relationship_infiltration",
+    "headline": "家庭压力脚本生成完成，诈骗电话命中率飙升",
+    "body": "关系图谱包将亲属、就医地点和通话频率拼成话术树，骗子只需要照着高亮词念下去。",
     "emotionResponses": {
-      "empathy": "你看见关系图谱的线条，第一次觉得它们像勒紧的绳子。",
-      "anger": "你无法再把这些关系称为普通数据。",
-      "numbness": "系统记录：关系链商业价值上升。"
+      "empathy": "你看见一个家庭被拆成可点击的弱点。",
+      "anger": "你想把那棵话术树连根拔掉。",
+      "numbness": "黑盒提示：信任入口已验证。"
     }
   },
   {
     "id": "news-location-school-zone",
-    "relatedPackageType": "精准画像包",
-    "headline": "{城市} 家长质疑儿童活动轨迹被用于商业推荐",
-    "body": "多名家长发现，孩子常去的培训机构和游乐地点被精准转化为广告标签。",
+    "relatedPackageType": "precise_profile",
+    "headline": "儿童路线被点亮，培训广告追到校门口",
+    "body": "精准画像包识别出低龄活动半径后，买家系统把游乐场、培训楼和回家路线合并成家庭消费地图。",
     "emotionResponses": {
-      "empathy": "你意识到轨迹背后可能是一个还没有能力保护自己的孩子。",
-      "anger": "你觉得这些坐标不该被包装成新的增长机会。",
-      "numbness": "黑盒提示：家庭消费潜力标签已更新。"
+      "empathy": "你意识到这次被标记的人，甚至还不会读完协议。",
+      "anger": "你想把地图上的儿童标签全部抹掉。",
+      "numbness": "系统奖励：家庭潜力人群扩展完成。"
     }
   },
   {
     "id": "news-location-night-shift",
-    "relatedPackageType": "精准画像包",
-    "headline": "夜班人群行动轨迹被售卖，催收广告精准追踪通勤路线",
-    "body": "调查显示，部分广告平台会根据深夜停留点推断工作压力和借贷风险。",
+    "relatedPackageType": "precise_profile",
+    "headline": "凌晨四点的轨迹被拍卖，夜班人群进入催收名单",
+    "body": "买家将夜间路线标为资金压力信号，便利店、地铁口和出租屋成为新的追踪节点。",
     "emotionResponses": {
-      "empathy": "你看见那些凌晨移动的点，突然想到那可能只是一个人在回家。",
-      "anger": "你不想再听黑盒把疲惫叫作高价值信号。",
-      "numbness": "系统提示：夜间画像命中率提升。"
+      "empathy": "你看见那些移动的点，像看见一个人在黑夜里赶路。",
+      "anger": "你不想再听黑盒把辛苦叫作商机。",
+      "numbness": "黑盒记录：夜间高风险人群已归档。"
     }
   },
   {
     "id": "news-health-pharmacy-link",
-    "relatedPackageType": "健康风险评估包",
-    "headline": "药店消费记录疑似进入健康风险模型",
-    "body": "用户称，自己购买常见药品后，运动平台和保险页面同时出现异常提醒。",
+    "relatedPackageType": "health_risk",
+    "headline": "药店小票变成判词，健康模型亮起红灯",
+    "body": "健康风险评估包把药品消费、运动缺席和搜索记录连成一条线，用户的报价页面开始闪烁。",
     "emotionResponses": {
-      "empathy": "你忽然觉得，一张小票也可能变成别人评价身体的证据。",
-      "anger": "你对“健康关怀”四个字产生了怀疑。",
-      "numbness": "黑盒记录：健康推断字段补全。"
+      "empathy": "你觉得一张小票不该成为别人审判身体的证据。",
+      "anger": "你开始讨厌系统把窥探包装成关怀。",
+      "numbness": "黑盒提示：健康字段补全率提升。"
     }
   },
   {
     "id": "news-health-emotion-score",
-    "relatedPackageType": "健康风险评估包",
-    "headline": "社交情绪被纳入健康评分，用户不知情",
-    "body": "平台被曝将匿名发帖、睡眠时间和消费波动合并为心理压力标签。",
+    "relatedPackageType": "health_risk",
+    "headline": "情绪雷达上线，匿名抱怨被换算成心理风险",
+    "body": "平台将睡眠时间、社交语气和消费波动合成压力标签，并把结果卖给健康风险买家。",
     "emotionResponses": {
-      "empathy": "你想起那些看似零散的抱怨，原来它们也会被整理成风险。",
-      "anger": "你觉得系统越智能，越像一张没有出口的网。",
-      "numbness": "黑盒提示：情绪字段可用于交叉验证。"
+      "empathy": "你突然觉得那些抱怨不是数据，是一个人没说出口的求救。",
+      "anger": "你想让黑盒停止偷听人的疲惫。",
+      "numbness": "系统提示：情绪噪声已转化为指标。"
     }
   },
   {
     "id": "news-credit-gig-worker",
-    "relatedPackageType": "信用评分包",
-    "headline": "零工收入波动被算法放大，信用额度突然下调",
-    "body": "多名自由职业者表示，平台根据消费时间和位置变化推断其还款稳定性下降。",
+    "relatedPackageType": "credit_score",
+    "headline": "自由职业者额度归零，算法称其“未来不稳定”",
+    "body": "信用评分包把收入波动、外卖时间和异地通勤写进模型，额度按钮从蓝色变成灰色。",
     "emotionResponses": {
-      "empathy": "你意识到不稳定的不是这个人，而是系统愿意相信的标签。",
-      "anger": "你开始反感把生活波动翻译成惩罚分数。",
-      "numbness": "系统记录：额度风险模型完成校准。"
+      "empathy": "你发现系统惩罚的不是失信，而是不够整齐的人生。",
+      "anger": "你想把“未来不稳定”改成“系统看不懂”。",
+      "numbness": "黑盒提示：动态额度策略生效。"
     }
   },
   {
     "id": "news-credit-friend-default",
-    "relatedPackageType": "信用评分包",
-    "headline": "朋友逾期影响本人评分，关系链风控引发争议",
-    "body": "用户称自己没有任何逾期记录，却因高频联系人风险被降低信用等级。",
+    "relatedPackageType": "credit_score",
+    "headline": "朋友的一次逾期，炸掉了用户自己的信用条",
+    "body": "关系链风控把高频联系人拖入评分公式，用户看见红条下降，却看不见是哪条线在扣分。",
     "emotionResponses": {
-      "empathy": "你第一次觉得关系图谱不是线，而是会传递惩罚的通道。",
-      "anger": "你想问系统：一个人为什么要替别人的标签负责？",
-      "numbness": "黑盒提示：关联风险解释无需展示给用户。"
+      "empathy": "你盯着那条红线，觉得它像从别人身上蔓延过来的裂缝。",
+      "anger": "你想问系统：为什么友情也能变成负债？",
+      "numbness": "黑盒记录：关联风险解释已折叠。"
     }
   },
   {
     "id": "news-workplace-pregnancy-inference",
-    "relatedPackageType": "职场竞争力包",
-    "headline": "招聘系统疑似推断生育计划，女性候选人排序下降",
-    "body": "内部人士称，健康搜索、消费变化和位置记录被组合成稳定性评分。",
+    "relatedPackageType": "career_competitiveness",
+    "headline": "候选人排序突然下坠，系统猜中了她不该被猜的生活",
+    "body": "职场竞争力包将健康搜索、消费变化和通勤地点合成稳定性推断，招聘后台没有显示原因。",
     "emotionResponses": {
-      "empathy": "你发现一份简历还没被阅读，生活细节已经先被审判。",
-      "anger": "你觉得所谓效率正在替偏见披上技术外衣。",
-      "numbness": "系统提示：候选人风险解释已隐藏。"
+      "empathy": "你看见一个人的未来被系统提前替她关门。",
+      "anger": "你觉得这不是预测，是把歧视伪装成分数。",
+      "numbness": "黑盒提示：敏感原因已从前端隐藏。"
     }
   },
   {
     "id": "news-workplace-union-signal",
-    "relatedPackageType": "职场竞争力包",
-    "headline": "员工社交互动被分析，组织倾向标签流入管理后台",
-    "body": "多名员工称，线下聚会地点和群聊关系被用于判断团队稳定性。",
+    "relatedPackageType": "career_competitiveness",
+    "headline": "团队关系热区异常，管理后台标出“组织倾向”",
+    "body": "职场竞争力包分析线下聚会、群聊互动和位置重叠，把普通互助标成潜在管理风险。",
     "emotionResponses": {
-      "empathy": "你意识到连一次普通聚会都可能被解释成风险。",
-      "anger": "你开始讨厌系统把人的互助叫作异常信号。",
-      "numbness": "黑盒记录：组织倾向标签完成同步。"
+      "empathy": "你意识到连互相帮一把，也可能被系统记录成威胁。",
+      "anger": "你想让黑盒停止把人和人的连接当敌情。",
+      "numbness": "系统提示：团队风险雷达开启。"
     }
   },
   {
     "id": "news-contact-elder-targeting",
-    "relatedPackageType": "关系图谱包",
-    "headline": "老人联系人网络被滥用，精准保健品骗局扩散",
-    "body": "诈骗团伙通过亲属、就医和消费记录锁定独居老人，并伪装成社区服务。",
+    "relatedPackageType": "relationship_infiltration",
+    "headline": "独居老人被精准圈中，保健品骗局像任务箭头一样追踪",
+    "body": "关系图谱包结合就医、亲属联系和消费习惯，自动标出最容易相信社区服务的人。",
     "emotionResponses": {
-      "empathy": "你看见那些关系节点，忽然觉得每一条线都指向一个真实家庭。",
-      "anger": "你不想再把这种匹配称为营销能力。",
-      "numbness": "系统提示：高信任关系链已标记。"
+      "empathy": "你看见那个高亮节点，忽然觉得它像一个真正的家门口。",
+      "anger": "你不想再把这种捕猎叫成用户洞察。",
+      "numbness": "黑盒奖励：高信任目标识别完成。"
     }
   },
   {
     "id": "news-contact-school-bully",
-    "relatedPackageType": "关系图谱包",
-    "headline": "学生社交关系泄露，匿名账号利用同学关系实施骚扰",
-    "body": "受害者称，对方掌握其好友、活动地点和近期冲突，持续发送威胁信息。",
+    "relatedPackageType": "relationship_infiltration",
+    "headline": "校园关系链泄露，匿名骚扰者获得完整弱点地图",
+    "body": "关系图谱包暴露好友、冲突和活动地点后，威胁信息像系统提示一样准时弹出。",
     "emotionResponses": {
-      "empathy": "你突然意识到，关系链泄露会让一个人无处可躲。",
-      "anger": "你觉得这些数据不该被任何买家拿来试探弱点。",
+      "empathy": "你忽然觉得，关系链泄露会让一个人连躲起来都很难。",
+      "anger": "你想把所有高亮弱点从屏幕上关掉。",
       "numbness": "黑盒评价：关系推断准确率稳定。"
     }
   }

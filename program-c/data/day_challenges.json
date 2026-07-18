@@ -49,7 +49,7 @@
     "sensitiveItems": [
       {
         "id": "clean-location-gps-trail",
-        "label": "GPS连续轨迹",
+        "label": "GPS 连续轨迹",
         "dataType": "location",
         "sensitivity": "high",
         "iconHint": "crosshair",

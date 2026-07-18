@@ -1,29 +1,34 @@
 {
   "budgetBytes": 8388608,
-  "totalRawBytes": 56861,
-  "totalGzipBytes": 19007,
-  "remainingRawBytes": 8331747,
-  "remainingGzipBytes": 8369601,
+  "totalRawBytes": 77302,
+  "totalGzipBytes": 25268,
+  "remainingRawBytes": 8311306,
+  "remainingGzipBytes": 8363340,
   "files": [
     {
       "file": "data\\news_templates.json",
-      "rawBytes": 11143,
-      "gzipBytes": 4042
+      "rawBytes": 11353,
+      "gzipBytes": 4298
     },
     {
       "file": "src\\audio\\AudioManager.ts",
-      "rawBytes": 9141,
-      "gzipBytes": 2060
+      "rawBytes": 12039,
+      "gzipBytes": 2850
     },
     {
-      "file": "data\\day_challenges.json",
-      "rawBytes": 4602,
-      "gzipBytes": 1849
+      "file": "data\\public_opinion_scripts.json",
+      "rawBytes": 6305,
+      "gzipBytes": 2324
     },
     {
       "file": "src\\content\\ContentRepository.ts",
-      "rawBytes": 7228,
-      "gzipBytes": 1829
+      "rawBytes": 9689,
+      "gzipBytes": 2242
+    },
+    {
+      "file": "data\\day_challenges.json",
+      "rawBytes": 4603,
+      "gzipBytes": 1850
     },
     {
       "file": "data\\users.json",
@@ -36,49 +41,59 @@
       "gzipBytes": 1499
     },
     {
+      "file": "src\\content\\schema.ts",
+      "rawBytes": 5320,
+      "gzipBytes": 1290
+    },
+    {
       "file": "data\\card_templates.json",
       "rawBytes": 3541,
       "gzipBytes": 1179
     },
     {
-      "file": "src\\content\\schema.ts",
-      "rawBytes": 3760,
-      "gzipBytes": 956
+      "file": "data\\black_box_lines.json",
+      "rawBytes": 2986,
+      "gzipBytes": 1039
     },
     {
       "file": "dist\\content-manifest.json",
-      "rawBytes": 1928,
-      "gzipBytes": 859
+      "rawBytes": 2512,
+      "gzipBytes": 951
+    },
+    {
+      "file": "data\\data_cleaning_icons.json",
+      "rawBytes": 2569,
+      "gzipBytes": 769
     },
     {
       "file": "dist\\offline-assets.json",
-      "rawBytes": 1316,
-      "gzipBytes": 567
-    },
-    {
-      "file": "data\\package_recipes.json",
-      "rawBytes": 1148,
-      "gzipBytes": 522
-    },
-    {
-      "file": "data\\buyers.json",
-      "rawBytes": 833,
-      "gzipBytes": 494
+      "rawBytes": 1525,
+      "gzipBytes": 633
     },
     {
       "file": "src\\content\\defaultContentBundle.ts",
-      "rawBytes": 1408,
-      "gzipBytes": 447
+      "rawBytes": 1918,
+      "gzipBytes": 570
+    },
+    {
+      "file": "data\\package_recipes.json",
+      "rawBytes": 1149,
+      "gzipBytes": 516
+    },
+    {
+      "file": "data\\buyers.json",
+      "rawBytes": 831,
+      "gzipBytes": 501
+    },
+    {
+      "file": "src\\audio\\soundMap.ts",
+      "rawBytes": 1084,
+      "gzipBytes": 479
     },
     {
       "file": "data\\variables.json",
       "rawBytes": 880,
-      "gzipBytes": 438
-    },
-    {
-      "file": "src\\audio\\soundMap.ts",
-      "rawBytes": 935,
-      "gzipBytes": 428
+      "gzipBytes": 440
     },
     {
       "file": "src\\content\\index.ts",

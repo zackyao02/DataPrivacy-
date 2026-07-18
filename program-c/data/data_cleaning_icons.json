@@ -1,0 +1,102 @@
+[
+  {
+    "id": "icon-sensitive-location",
+    "iconHint": "crosshair",
+    "lucideIcon": "Crosshair",
+    "role": "sensitive",
+    "shortLabel": "轨迹",
+    "riskColor": "red",
+    "scanText": "连续定位",
+    "hitText": "轨迹缓存已擦除"
+  },
+  {
+    "id": "icon-sensitive-contact",
+    "iconHint": "network",
+    "lucideIcon": "Network",
+    "role": "sensitive",
+    "shortLabel": "关系",
+    "riskColor": "red",
+    "scanText": "联系人链",
+    "hitText": "关系链索引已断开"
+  },
+  {
+    "id": "icon-sensitive-face",
+    "iconHint": "scan-face",
+    "lucideIcon": "ScanFace",
+    "role": "sensitive",
+    "shortLabel": "面部",
+    "riskColor": "red",
+    "scanText": "生物特征",
+    "hitText": "面部向量已模糊"
+  },
+  {
+    "id": "icon-sensitive-health",
+    "iconHint": "activity",
+    "lucideIcon": "Activity",
+    "role": "sensitive",
+    "shortLabel": "健康",
+    "riskColor": "orange",
+    "scanText": "健康波动",
+    "hitText": "健康日志已清除"
+  },
+  {
+    "id": "icon-sensitive-credit",
+    "iconHint": "credit-card",
+    "lucideIcon": "CreditCard",
+    "role": "sensitive",
+    "shortLabel": "消费",
+    "riskColor": "orange",
+    "scanText": "借贷线索",
+    "hitText": "消费标签已擦除"
+  },
+  {
+    "id": "icon-sensitive-social",
+    "iconHint": "message-square-warning",
+    "lucideIcon": "MessageSquareWarning",
+    "role": "sensitive",
+    "shortLabel": "发言",
+    "riskColor": "orange",
+    "scanText": "社交片段",
+    "hitText": "匿名片段已移除"
+  },
+  {
+    "id": "icon-sensitive-link",
+    "iconHint": "link",
+    "lucideIcon": "Link",
+    "role": "sensitive",
+    "shortLabel": "关联",
+    "riskColor": "red",
+    "scanText": "身份合并",
+    "hitText": "跨平台链接已切断"
+  },
+  {
+    "id": "icon-decoy-backup",
+    "iconHint": "archive-restore",
+    "lucideIcon": "ArchiveRestore",
+    "role": "decoy",
+    "shortLabel": "备份",
+    "riskColor": "blue",
+    "scanText": "备份文件",
+    "hitText": "备份误触，证据可能恢复"
+  },
+  {
+    "id": "icon-decoy-audit",
+    "iconHint": "clipboard-list",
+    "lucideIcon": "ClipboardList",
+    "role": "decoy",
+    "shortLabel": "审计",
+    "riskColor": "blue",
+    "scanText": "审计日志",
+    "hitText": "审计误触，风险记录上报"
+  },
+  {
+    "id": "icon-decoy-system",
+    "iconHint": "cpu",
+    "lucideIcon": "Cpu",
+    "role": "decoy",
+    "shortLabel": "核心",
+    "riskColor": "blue",
+    "scanText": "系统核心",
+    "hitText": "核心误触，界面短暂卡顿"
+  }
+]

@@ -10,6 +10,7 @@ export class AudioManager {
   private masterGain: GainNode | null = null;
   private bgmOscillators: OscillatorNode[] = [];
   private bgmGain: GainNode | null = null;
+  private bgmTimers: number[] = [];
   private enabled: boolean;
   private masterVolume: number;
 
@@ -60,92 +61,147 @@ export class AudioManager {
 
     switch (soundId) {
       case "data-pulse":
-        this.tone({ frequency: 440, duration: 0.08, type: "sine", startTime: now });
-        this.tone({ frequency: 880, duration: 0.05, type: "triangle", startTime: now + 0.05 });
+        this.arpeggio([261.63, 329.63, 392, 523.25], now, 0.045, 0.09, "triangle", 0.09);
         break;
       case "slot-click":
-        this.noise({ duration: 0.035, gain: 0.08 });
-        this.tone({ frequency: 360, duration: 0.04, type: "square", startTime: now });
+        this.tone({ frequency: 659.25, duration: 0.045, type: "triangle", startTime: now, gain: 0.08 });
+        this.tone({ frequency: 987.77, duration: 0.07, type: "sine", startTime: now + 0.035, gain: 0.07 });
         break;
       case "package-seal":
-        this.tone({ frequency: 220, duration: 0.08, type: "sawtooth", startTime: now });
-        this.tone({ frequency: 660, duration: 0.12, type: "triangle", startTime: now + 0.08 });
+        this.arpeggio([196, 261.63, 329.63, 392], now, 0.055, 0.12, "triangle", 0.08);
+        this.chord([196, 293.66, 392], now + 0.22, 0.22, "sine", 0.045);
         break;
       case "neon-charge":
-        this.tone({ frequency: 330, duration: 0.06, type: "sine", startTime: now });
-        this.tone({ frequency: 660, duration: 0.08, type: "sine", startTime: now + 0.04 });
-        this.tone({ frequency: 990, duration: 0.1, type: "triangle", startTime: now + 0.09 });
+        this.arpeggio([220, 277.18, 329.63, 440, 554.37, 659.25], now, 0.04, 0.1, "sine", 0.075);
+        this.tone({ frequency: 880, duration: 0.18, type: "triangle", startTime: now + 0.2, gain: 0.06 });
         break;
       case "glitch-fail":
-        this.noise({ duration: 0.16, gain: 0.12 });
-        this.tone({ frequency: 90, duration: 0.14, type: "sawtooth", startTime: now });
+        this.chord([174.61, 185, 233.08], now, 0.16, "sawtooth", 0.045);
+        this.tone({ frequency: 87.31, duration: 0.24, type: "triangle", startTime: now + 0.1, gain: 0.08 });
+        this.noise({ duration: 0.08, gain: 0.04 });
         break;
       case "coin-burst":
-        [523, 659, 784].forEach((frequency, index) => {
-          this.tone({ frequency, duration: 0.07, type: "triangle", startTime: now + index * 0.045 });
-        });
+        this.arpeggio([523.25, 659.25, 783.99, 1046.5], now, 0.05, 0.1, "triangle", 0.08);
+        this.chord([523.25, 659.25, 783.99], now + 0.18, 0.18, "sine", 0.04);
         break;
       case "transaction-seal":
-        this.tone({ frequency: 494, duration: 0.07, type: "triangle", startTime: now });
-        this.tone({ frequency: 247, duration: 0.12, type: "square", startTime: now + 0.06 });
-        this.noise({ duration: 0.04, gain: 0.035 });
+        this.arpeggio([392, 329.63, 261.63], now, 0.075, 0.15, "triangle", 0.075);
+        this.chord([130.81, 196, 261.63], now + 0.24, 0.28, "sine", 0.045);
         break;
       case "risk-ping":
-        this.tone({ frequency: 1046, duration: 0.06, type: "square", startTime: now });
-        this.tone({ frequency: 698, duration: 0.08, type: "square", startTime: now + 0.07 });
+        this.arpeggio([880, 739.99, 698.46], now, 0.055, 0.09, "square", 0.06);
         break;
       case "crt-news":
-        this.noise({ duration: 0.08, gain: 0.06 });
-        this.tone({ frequency: 180, duration: 0.18, type: "triangle", startTime: now + 0.04 });
+        this.newsBell(now, 0.85);
         break;
       case "news-broadcast":
-        this.noise({ duration: 0.05, gain: 0.045 });
-        this.tone({ frequency: 262, duration: 0.08, type: "triangle", startTime: now + 0.02 });
-        this.tone({ frequency: 392, duration: 0.1, type: "triangle", startTime: now + 0.09 });
-        this.tone({ frequency: 196, duration: 0.16, type: "sine", startTime: now + 0.18 });
+        this.newsBell(now, 1);
+        this.chord([196, 246.94, 392], now + 0.24, 0.2, "sine", 0.035);
         break;
       case "news-ticker":
-        [880, 740, 660, 740].forEach((frequency, index) => {
-          this.tone({ frequency, duration: 0.035, type: "square", startTime: now + index * 0.045 });
-        });
+        this.arpeggio([987.77, 783.99, 880, 659.25], now, 0.045, 0.055, "triangle", 0.07);
+        break;
+      case "opinion-pulse":
+        this.arpeggio([392, 466.16, 554.37, 466.16], now, 0.06, 0.11, "square", 0.052);
+        this.noise({ duration: 0.035, gain: 0.018 });
         break;
       case "emotion-select":
-        this.tone({ frequency: 330, duration: 0.05, type: "sine", startTime: now });
-        this.tone({ frequency: 495, duration: 0.09, type: "sine", startTime: now + 0.04 });
+        this.arpeggio([329.63, 392, 493.88], now, 0.055, 0.1, "sine", 0.07);
         break;
       case "emotion-empathy":
-        this.tone({ frequency: 392, duration: 0.08, type: "sine", startTime: now });
-        this.tone({ frequency: 523, duration: 0.12, type: "triangle", startTime: now + 0.05 });
+        this.arpeggio([293.66, 349.23, 440, 587.33], now, 0.07, 0.18, "sine", 0.055);
+        this.chord([293.66, 440, 587.33], now + 0.28, 0.25, "triangle", 0.035);
         break;
       case "emotion-anger":
-        this.noise({ duration: 0.06, gain: 0.07 });
-        this.tone({ frequency: 196, duration: 0.08, type: "sawtooth", startTime: now });
-        this.tone({ frequency: 784, duration: 0.05, type: "square", startTime: now + 0.06 });
+        this.arpeggio([196, 233.08, 277.18, 466.16], now, 0.045, 0.1, "sawtooth", 0.055);
+        this.noise({ duration: 0.045, gain: 0.035 });
         break;
       case "emotion-numbness":
-        this.tone({ frequency: 294, duration: 0.13, type: "sine", startTime: now });
-        this.tone({ frequency: 247, duration: 0.16, type: "sine", startTime: now + 0.08 });
+        this.tone({ frequency: 261.63, duration: 0.24, type: "sine", startTime: now, gain: 0.045 });
+        this.tone({ frequency: 196, duration: 0.32, type: "sine", startTime: now + 0.16, gain: 0.038 });
+        this.tone({ frequency: 164.81, duration: 0.28, type: "triangle", startTime: now + 0.32, gain: 0.032 });
+        break;
+      case "challenge-success":
+        this.arpeggio([261.63, 329.63, 392, 659.25], now, 0.07, 0.15, "triangle", 0.07);
+        this.chord([329.63, 392, 659.25], now + 0.28, 0.22, "sine", 0.04);
+        break;
+      case "challenge-fail":
+        this.chord([196, 207.65, 261.63], now, 0.2, "sawtooth", 0.04);
+        this.arpeggio([261.63, 220, 174.61], now + 0.08, 0.09, 0.16, "triangle", 0.06);
+        this.noise({ duration: 0.09, gain: 0.035 });
+        break;
+      case "blackbox-voice":
+        this.tone({ frequency: 73.42, duration: 0.18, type: "sine", startTime: now, gain: 0.035 });
+        this.tone({ frequency: 146.83, duration: 0.12, type: "triangle", startTime: now + 0.05, gain: 0.028 });
+        this.noise({ duration: 0.045, gain: 0.012 });
         break;
       case "bgm-blackbox":
-        this.switchBgm([110, 165, 220], 0.032);
+        this.switchBgm([55, 110, 165], 0.026, "blackbox");
         break;
       case "bgm-pressure":
-        this.switchBgm([92, 138, 277], 0.04);
+        this.switchBgm([46, 92, 185], 0.034, "pressure");
         break;
       case "bgm-silence":
         this.stopBgm();
         break;
       case "conscience-shift":
-        this.tone({ frequency: 260, duration: 0.12, type: "triangle", startTime: now });
+        this.arpeggio([196, 261.63, 329.63, 523.25], now, 0.065, 0.13, "triangle", 0.06);
         break;
       case "ending-stinger":
-        this.tone({ frequency: 110, duration: 0.28, type: "sawtooth", startTime: now });
-        this.noise({ duration: 0.2, gain: 0.05 });
+        this.chord([65.41, 98, 130.81, 196], now, 0.55, "sawtooth", 0.04);
+        this.arpeggio([392, 329.63, 261.63, 196], now + 0.15, 0.12, 0.22, "triangle", 0.055);
         break;
     }
   }
 
-  private switchBgm(frequencies: readonly number[], gainValue: number): void {
+  private arpeggio(
+    frequencies: readonly number[],
+    startTime: number,
+    step: number,
+    duration: number,
+    type: OscillatorType,
+    gain = 0.08,
+  ): void {
+    frequencies.forEach((frequency, index) => {
+      this.tone({
+        frequency,
+        duration,
+        type,
+        startTime: startTime + index * step,
+        gain,
+      });
+    });
+  }
+
+  private chord(
+    frequencies: readonly number[],
+    startTime: number,
+    duration: number,
+    type: OscillatorType,
+    gain = 0.045,
+  ): void {
+    frequencies.forEach((frequency) => {
+      this.tone({ frequency, duration, type, startTime, gain });
+    });
+  }
+
+  private newsBell(startTime: number, gainScale: number): void {
+    this.noise({ duration: 0.045, gain: 0.018 * gainScale });
+    this.arpeggio([392, 523.25, 659.25, 783.99], startTime + 0.02, 0.052, 0.1, "triangle", 0.065 * gainScale);
+    this.tone({
+      frequency: 523.25,
+      duration: 0.16,
+      type: "sine",
+      startTime: startTime + 0.24,
+      gain: 0.05 * gainScale,
+    });
+  }
+
+  private switchBgm(
+    frequencies: readonly number[],
+    gainValue: number,
+    pattern: "blackbox" | "pressure",
+  ): void {
     if (!this.enabled) {
       return;
     }
@@ -168,13 +224,58 @@ export class AudioManager {
     this.bgmGain = gain;
     this.bgmOscillators = frequencies.map((frequency, index) => {
       const oscillator = context.createOscillator();
-      oscillator.type = index === 0 ? "sine" : "triangle";
+      oscillator.type = index === 0 ? "sine" : "sawtooth";
       oscillator.frequency.value = frequency;
-      oscillator.detune.value = index * 4;
+      oscillator.detune.value = pattern === "pressure" ? index * 9 : index * 3;
       oscillator.connect(gain);
       oscillator.start(now);
       return oscillator;
     });
+
+    if (pattern === "blackbox") {
+      this.bgmTimers.push(
+        window.setInterval(() => {
+          if (!this.enabled || !this.context) {
+            return;
+          }
+
+          const startTime = this.context.currentTime;
+          this.arpeggio([220, 277.18, 329.63, 277.18], startTime, 0.18, 0.22, "sine", 0.026);
+        }, 1800),
+      );
+      this.bgmTimers.push(
+        window.setInterval(() => {
+          if (!this.enabled || !this.context) {
+            return;
+          }
+
+          this.noise({ duration: 0.075, gain: 0.018 });
+        }, 3100),
+      );
+      return;
+    }
+
+    this.bgmTimers.push(
+      window.setInterval(() => {
+        if (!this.enabled || !this.context) {
+          return;
+        }
+
+        const startTime = this.context.currentTime;
+        this.arpeggio([184.99, 220, 246.94, 277.18], startTime, 0.12, 0.16, "triangle", 0.032);
+      }, 620),
+    );
+    this.bgmTimers.push(
+      window.setInterval(() => {
+        if (!this.enabled || !this.context) {
+          return;
+        }
+
+        const startTime = this.context.currentTime;
+        this.arpeggio([987.77, 739.99, 659.25], startTime, 0.07, 0.08, "sine", 0.035);
+        this.noise({ duration: 0.025, gain: 0.014 });
+      }, 1650),
+    );
   }
 
   private stopBgm(): void {
@@ -194,8 +295,13 @@ export class AudioManager {
       }
     }
 
+    for (const timer of this.bgmTimers) {
+      window.clearInterval(timer);
+    }
+
     this.bgmOscillators = [];
     this.bgmGain = null;
+    this.bgmTimers = [];
   }
 
   private ensureContext(): AudioContext {
@@ -216,6 +322,7 @@ export class AudioManager {
     readonly duration: number;
     readonly type: OscillatorType;
     readonly startTime: number;
+    readonly gain?: number;
   }): void {
     const context = this.ensureContext();
     const output = this.masterGain;
@@ -230,7 +337,7 @@ export class AudioManager {
     oscillator.type = options.type;
     oscillator.frequency.value = options.frequency;
     gain.gain.setValueAtTime(0.0001, options.startTime);
-    gain.gain.exponentialRampToValueAtTime(0.14, options.startTime + 0.012);
+    gain.gain.exponentialRampToValueAtTime(options.gain ?? 0.12, options.startTime + 0.012);
     gain.gain.exponentialRampToValueAtTime(0.0001, options.startTime + options.duration);
 
     oscillator.connect(gain);
