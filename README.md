@@ -10,6 +10,7 @@
 - D4：新闻模板扩到 20 条，协议伪装配对扩到 20 组，补充新闻播报音效和 BGM 切换事件。
 - D5：数据清洗图标配置、5 组舆论操控话术、12 条黑盒评价台词、通用小关卡成功/失败音效和黑盒台词音效绑定。
 - D6：Day 4 用户画像拼图内容库、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM 和独白打字机音效。
+- D7：Week 1 垂直切片内容整合验收、音效整合检查、包体/加载初测报告、工具链文档。
 
 ## 接入重点
 
@@ -86,3 +87,5 @@ npm run check
 - 低于 8MB 预算
 
 完整交接说明见 `program-c/docs/program-c-integration.md`。
+
+D7 垂直切片报告见 `program-c/docs/week1-vertical-slice-report.md`，工具链说明见 `program-c/docs/program-c-toolchain.md`。

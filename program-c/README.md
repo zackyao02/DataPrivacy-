@@ -10,6 +10,7 @@
 - D4：新闻模板扩到 20 条，协议伪装配对扩到 20 组，新增新闻播报音效和 BGM 切换事件。
 - D5：数据清洗图标配置、舆论操控话术、黑盒评价台词、通用小关卡成败音效和黑盒台词音效绑定。
 - D6：Day 4 用户画像拼图碎片、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM 和独白打字机音效。
+- D7：Week 1 垂直切片内容整合验收、音效整合检查、性能初测报告和工具链文档。
 
 ## 目录说明
 
@@ -20,7 +21,10 @@
 - `src/audio/soundMap.ts`：程序 A / B 可调用的事件名到音效 ID 的映射。
 - `scripts/validate-content.mjs`：JSON 内容校验。
 - `scripts/bundle-size-report.mjs`：8MB 包体预算检查。
+- `scripts/week1-vertical-slice-report.mjs`：D7 垂直切片内容、音效和性能初测报告。
 - `docs/audio-preview.html`：本地音效试听页。
+- `docs/program-c-toolchain.md`：程序 C 工具链交接说明。
+- `docs/week1-vertical-slice-report.md`：Week 1 垂直切片验收报告。
 
 ## 本地检查
 

@@ -10,6 +10,7 @@
 - D4：新闻模板扩到 20 条、协议伪装配对扩到 20 组、新闻播报音效和 BGM 切换事件。
 - D5：10 组数据清洗图标配置、5 组舆论操控话术、12 条黑盒评价台词、通用小关卡成败音效和黑盒台词音效绑定。
 - D6：4 组用户画像拼图、6 组买家谈判纯叙事话术、7 天每日独白、小关卡 BGM 和独白打字机音效。
+- D7：`report:week1` 自动检查 Week 1 内容覆盖、音效整合、封装音效、试音页一致性、包体和 JSON 加载初测，并生成交接报告。
 - 内容工具：`ContentRepository` 支持读取卡牌、用户、买家、新闻、协议词、打包配方、小关卡配置、数据清洗图标、舆论话术和黑盒台词。
 - 打包辅助：可根据卡牌 ID 生成打包预览，返回是否可打包、缺失数据类型、匹配买家和相关新闻。
 - 游戏内 Day 1 内容：`day_challenges.json` 覆盖“协议伪装”。
@@ -19,6 +20,7 @@
 - 内容校验：检查 ID 重复、数据类型、敏感度、包类型引用、占位符、配方可组装性、小关卡引用、新闻三情绪反馈、D2-D5 数据量、图标覆盖和黑盒台词音效绑定。
 - 构建清单：生成 `dist/content-manifest.json`。
 - 离线清单：生成 `dist/offline-assets.json`。
+- D7 验收报告：生成 `dist/week1-vertical-slice-report.json` 和 `docs/week1-vertical-slice-report.md`。
 - 离线就绪检查：确认程序 C 资源不依赖外部 URL。
 - 包体检查：raw 和 gzip 均低于 8MB。
 
@@ -65,6 +67,7 @@ npm run check
 - 程序 B：用 `findChallengeByDay(4/5)` 读取 D6 小关卡入口，用 `pickProfilePuzzleByDay(4)` 读取画像拼图，用 `pickBuyerNegotiationScript(packageType)` 读取买家谈判话术，用 `findDailyMonologueByDay(day)` 读取每日独白。
 - 程序 A/B：可用 `newsBroadcast`、`newsTicker` 做新闻播报，用 `challengeSuccess`、`challengeFail` 做小关卡反馈，用 `challengeBgm`、`bgmBlackBox`、`bgmPressure`、`bgmSilence` 做 BGM 切换，用 `monologueType` 做独白打字机声。
 - 策划：可继续编辑 `data/*.json`，编辑后运行 `npm run check` 检查格式和引用。
+- 程序 C：D7 交付报告见 `docs/week1-vertical-slice-report.md`，工具链说明见 `docs/program-c-toolchain.md`。
 
 ## 后续可做
 

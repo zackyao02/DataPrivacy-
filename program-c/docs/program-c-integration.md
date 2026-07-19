@@ -12,6 +12,7 @@
 | D4 | 新闻扩到 20 条、协议伪装配对扩到 20 组、新闻播报音效、BGM 切换 | 已完成 |
 | D5 | 数据清洗图标、舆论操控话术、黑盒评价台词、小关卡通用成败音效 | 已完成 |
 | D6 | Day 4 画像拼图、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM、独白打字机音效 | 已完成 |
+| D7 | Week 1 内容整合验收、音效整合检查、性能初测报告、工具链文档 | 已完成 |
 
 ## 内容文件
 
@@ -128,6 +129,13 @@ audio.handleGameEvent("bgmPressure");
 ```bash
 npm run check
 ```
+
+`npm run check` 会同时生成 D7 Week 1 垂直切片报告：
+
+- `dist/week1-vertical-slice-report.json`
+- `docs/week1-vertical-slice-report.md`
+
+程序 C 工具链说明见 `docs/program-c-toolchain.md`。
 
 最新目标：
 
