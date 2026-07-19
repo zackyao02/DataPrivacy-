@@ -12,6 +12,10 @@ type HitAction =
   | { readonly type: "seal-package" }
   | { readonly type: "choose-emotion"; readonly choice: EmotionChoice }
   | { readonly type: "begin-challenge" }
+  | { readonly type: "accept-protocol-term"; readonly termId: string }
+  | { readonly type: "clean-data-item"; readonly itemId: string }
+  | { readonly type: "select-puzzle-fragment"; readonly fragmentId: string }
+  | { readonly type: "choose-negotiation-option"; readonly optionId: string }
   | { readonly type: "complete-challenge"; readonly succeeded: boolean };
 
 interface Rect {
@@ -118,6 +122,26 @@ export class WeekOneSliceScene implements Scene {
       case "begin-challenge":
         if (this.controller.beginChallenge()) {
           this.navigate("mini-game");
+        }
+        break;
+      case "accept-protocol-term":
+        if (this.controller.acceptProtocolTerm(action.termId)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "clean-data-item":
+        if (this.controller.cleanDataItem(action.itemId)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "select-puzzle-fragment":
+        if (this.controller.selectPuzzleFragment(action.fragmentId)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "choose-negotiation-option":
+        if (this.controller.chooseNegotiationOption(action.optionId)) {
+          this.navigate("workbench");
         }
         break;
       case "complete-challenge":
@@ -301,12 +325,15 @@ export class WeekOneSliceScene implements Scene {
     layout: Layout,
     snapshot: WeekOneSliceSnapshot,
   ): void {
-    const panel = {
-      x: layout.body.x,
-      y: layout.body.y + 10,
-      width: layout.body.width,
-      height: layout.body.height - 86,
-    };
+    this.renderMiniGameInteractive(context, layout, snapshot);
+  }
+
+  private renderMiniGameInteractive(
+    context: CanvasRenderingContext2D,
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const panel = this.getMiniGamePanelRect(layout);
     const challenge = snapshot.activeChallenge;
 
     this.drawPanel(context, panel, "#101a18", "#3e6158");
@@ -330,32 +357,179 @@ export class WeekOneSliceScene implements Scene {
       panel.x + 14,
       panel.y + 102,
       panel.width - 28,
-      5,
+      4,
       16,
     );
 
-    if (snapshot.activeProfilePuzzle && challenge?.type === "profile_puzzle") {
-      this.drawMiniBlock(context, "画像拼图", snapshot.activeProfilePuzzle.objective, panel.x + 14, panel.y + 190, panel.width - 28);
-    } else if (snapshot.activeNegotiation && challenge?.type === "buyer_negotiation") {
-      this.drawMiniBlock(context, "买家谈判", snapshot.activeNegotiation.briefing, panel.x + 14, panel.y + 190, panel.width - 28);
-    } else if (challenge) {
-      this.drawMiniBlock(context, "目标", challenge.objective, panel.x + 14, panel.y + 190, panel.width - 28);
+    if (!challenge) {
+      return;
     }
 
-    if (snapshot.activeBlackBoxLine) {
+    context.fillStyle = "#91c8bd";
+    context.font = "800 10px ui-monospace, Consolas, monospace";
+    context.fillText(snapshot.miniGame.progressText, panel.x + 14, panel.y + 176);
+
+    switch (challenge.type) {
+      case "protocol_match":
+        this.renderProtocolMatch(context, layout, snapshot);
+        break;
+      case "data_cleaning":
+        this.renderDataCleaning(context, layout, snapshot);
+        break;
+      case "profile_puzzle":
+        this.renderProfilePuzzle(context, layout, snapshot);
+        break;
+      case "buyer_negotiation":
+        this.renderBuyerNegotiation(context, layout, snapshot);
+        break;
+    }
+
+    const blackBoxY = panel.y + panel.height - 62;
+    if (
+      snapshot.activeBlackBoxLine &&
+      this.getMiniGameContentBottom(layout, snapshot) + 10 <= blackBoxY
+    ) {
       this.drawMiniBlock(
         context,
         "黑盒反馈",
         snapshot.activeBlackBoxLine.text,
         panel.x + 14,
-        panel.y + panel.height - 88,
+        blackBoxY,
+        panel.width - 28,
+      );
+    }
+  }
+
+  private renderProtocolMatch(
+    context: CanvasRenderingContext2D,
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const accepted = new Set(snapshot.miniGame.acceptedProtocolTermIds);
+    const rects = this.getProtocolTermRects(layout, snapshot.miniGame.protocolTerms.length);
+
+    snapshot.miniGame.protocolTerms.forEach((term, index) => {
+      const rect = rects[index];
+      const active = accepted.has(term.id);
+
+      this.drawPanel(context, rect, active ? "#263d34" : "#111c20", active ? "#77b8ad" : "#40505a");
+      context.fillStyle = active ? "#9fd6ca" : "#e2ebe6";
+      context.font = "800 10px ui-monospace, Consolas, monospace";
+      context.fillText(active ? "已伪装" : `协议 ${index + 1}`, rect.x + 9, rect.y + 16);
+      context.fillStyle = "#d7e2dc";
+      context.font = "700 10px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, `${term.riskyTerm} => ${term.disguisedTerm}`, rect.x + 9, rect.y + 33, rect.width - 18, 2, 13);
+      context.fillStyle = "#91a09b";
+      context.font = "500 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, term.explanation, rect.x + 9, rect.y + 60, rect.width - 18, 2, 12);
+    });
+  }
+
+  private renderDataCleaning(
+    context: CanvasRenderingContext2D,
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const cleaned = new Set(snapshot.miniGame.cleanedSensitiveItemIds);
+    const rects = this.getCleaningItemRects(layout, snapshot.miniGame.cleaningItems.length);
+
+    snapshot.miniGame.cleaningItems.forEach((item, index) => {
+      const rect = rects[index];
+      const active = cleaned.has(item.id);
+      const decoy = item.kind === "decoy";
+
+      this.drawPanel(
+        context,
+        rect,
+        active ? "#263d34" : decoy ? "#251b18" : "#111c20",
+        active ? "#77b8ad" : decoy ? "#7a5244" : "#40505a",
+      );
+      context.fillStyle = decoy ? "#e0a166" : active ? "#9fd6ca" : "#d7e2dc";
+      context.font = "800 10px ui-monospace, Consolas, monospace";
+      context.fillText(active ? "已清理" : decoy ? "干扰项" : "敏感项", rect.x + 8, rect.y + 15);
+      context.fillStyle = "#e2ebe6";
+      context.font = "700 10px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, item.label, rect.x + 8, rect.y + 32, rect.width - 16, 1, 13);
+      context.fillStyle = "#91a09b";
+      context.font = "500 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, item.description, rect.x + 8, rect.y + 48, rect.width - 16, 2, 12);
+    });
+  }
+
+  private renderProfilePuzzle(
+    context: CanvasRenderingContext2D,
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const panel = this.getMiniGamePanelRect(layout);
+    const accepted = new Set(snapshot.miniGame.acceptedPuzzleFragmentIds);
+    const rects = this.getPuzzleFragmentRects(layout, snapshot.miniGame.puzzleFragments.length);
+
+    if (snapshot.activeProfilePuzzle) {
+      context.fillStyle = "#aebbb7";
+      context.font = "500 10px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(
+        context,
+        snapshot.activeProfilePuzzle.objective,
+        panel.x + 14,
+        panel.y + 194,
+        panel.width - 28,
+        2,
+        14,
+      );
+    }
+
+    snapshot.miniGame.puzzleFragments.forEach((fragment, index) => {
+      const rect = rects[index];
+      const active = accepted.has(fragment.id);
+
+      this.drawPanel(context, rect, active ? "#263d34" : "#111c20", active ? "#77b8ad" : "#40505a");
+      context.fillStyle = fragment.decoy ? "#e0a166" : active ? "#9fd6ca" : "#d7e2dc";
+      context.font = "800 10px ui-monospace, Consolas, monospace";
+      context.fillText(active ? "已归位" : fragment.decoy ? "干扰线索" : "画像碎片", rect.x + 8, rect.y + 15);
+      context.fillStyle = "#e2ebe6";
+      context.font = "700 10px ui-monospace, Consolas, monospace";
+      context.fillText(fragment.label, rect.x + 8, rect.y + 32);
+      context.fillStyle = "#91a09b";
+      context.font = "500 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, fragment.text, rect.x + 8, rect.y + 48, rect.width - 16, 2, 12);
+    });
+  }
+
+  private renderBuyerNegotiation(
+    context: CanvasRenderingContext2D,
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const panel = this.getMiniGamePanelRect(layout);
+    const rects = this.getNegotiationOptionRects(layout, snapshot.miniGame.negotiationOptions.length);
+
+    if (snapshot.activeNegotiation) {
+      this.drawMiniBlock(
+        context,
+        snapshot.activeNegotiation.buyerType,
+        snapshot.activeNegotiation.scenario,
+        panel.x + 14,
+        panel.y + 194,
         panel.width - 28,
       );
     }
 
-    const [successRect, failRect] = this.getChallengeResultRects(layout);
-    this.drawButton(context, successRect, "判定成功", true);
-    this.drawButton(context, failRect, "判定失败", false);
+    snapshot.miniGame.negotiationOptions.forEach((option, index) => {
+      const rect = rects[index];
+      const active = snapshot.miniGame.selectedNegotiationOptionId === option.id;
+
+      this.drawPanel(context, rect, active ? "#263d34" : "#111c20", active ? "#77b8ad" : "#40505a");
+      context.fillStyle = active ? "#9fd6ca" : "#d7e2dc";
+      context.font = "800 11px ui-monospace, Consolas, monospace";
+      context.fillText(option.label, rect.x + 10, rect.y + 18);
+      context.fillStyle = "#e0a166";
+      context.font = "700 9px ui-monospace, Consolas, monospace";
+      context.fillText(option.tone.toUpperCase(), rect.x + 10, rect.y + 35);
+      context.fillStyle = "#aebbb7";
+      context.font = "500 10px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, option.playerLine, rect.x + 10, rect.y + 54, rect.width - 20, 3, 14);
+    });
   }
 
   private renderBackground(context: CanvasRenderingContext2D, layout: Layout): void {
@@ -458,18 +632,57 @@ export class WeekOneSliceScene implements Scene {
       ];
     }
 
-    const [successRect, failRect] = this.getChallengeResultRects(layout);
+    switch (snapshot.activeChallenge?.type) {
+      case "protocol_match": {
+        const rects = this.getProtocolTermRects(layout, snapshot.miniGame.protocolTerms.length);
 
-    return [
-      {
-        rect: successRect,
-        action: { type: "complete-challenge", succeeded: true },
-      },
-      {
-        rect: failRect,
-        action: { type: "complete-challenge", succeeded: false },
-      },
-    ];
+        return snapshot.miniGame.protocolTerms.map((term, index) => ({
+          rect: rects[index],
+          action: { type: "accept-protocol-term", termId: term.id } as const,
+        }));
+      }
+      case "data_cleaning": {
+        const rects = this.getCleaningItemRects(layout, snapshot.miniGame.cleaningItems.length);
+
+        return snapshot.miniGame.cleaningItems.map((item, index) => ({
+          rect: rects[index],
+          action: { type: "clean-data-item", itemId: item.id } as const,
+        }));
+      }
+      case "profile_puzzle": {
+        const rects = this.getPuzzleFragmentRects(layout, snapshot.miniGame.puzzleFragments.length);
+
+        return snapshot.miniGame.puzzleFragments.map((fragment, index) => ({
+          rect: rects[index],
+          action: { type: "select-puzzle-fragment", fragmentId: fragment.id } as const,
+        }));
+      }
+      case "buyer_negotiation": {
+        const rects = this.getNegotiationOptionRects(
+          layout,
+          snapshot.miniGame.negotiationOptions.length,
+        );
+
+        return snapshot.miniGame.negotiationOptions.map((option, index) => ({
+          rect: rects[index],
+          action: { type: "choose-negotiation-option", optionId: option.id } as const,
+        }));
+      }
+      default: {
+        const [successRect, failRect] = this.getChallengeResultRects(layout);
+
+        return [
+          {
+            rect: successRect,
+            action: { type: "complete-challenge", succeeded: true },
+          },
+          {
+            rect: failRect,
+            action: { type: "complete-challenge", succeeded: false },
+          },
+        ];
+      }
+    }
   }
 
   private createLayout(frame: SceneFrame): Layout {
@@ -577,6 +790,98 @@ export class WeekOneSliceScene implements Scene {
       width: layout.body.width,
       height: 36,
     };
+  }
+
+  private getMiniGamePanelRect(layout: Layout): Rect {
+    return {
+      x: layout.body.x,
+      y: layout.body.y + 10,
+      width: layout.body.width,
+      height: layout.body.height - 20,
+    };
+  }
+
+  private getProtocolTermRects(layout: Layout, count: number): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const columns = panel.width >= 620 ? 2 : 1;
+
+    return this.getMiniGameItemRects(layout, count, 210, 74, columns);
+  }
+
+  private getCleaningItemRects(layout: Layout, count: number): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const columns = panel.width >= 340 ? 2 : 1;
+
+    return this.getMiniGameItemRects(layout, count, 204, 58, columns);
+  }
+
+  private getPuzzleFragmentRects(layout: Layout, count: number): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const columns = panel.width >= 620 ? 3 : 2;
+
+    return this.getMiniGameItemRects(layout, count, 238, 64, columns);
+  }
+
+  private getNegotiationOptionRects(layout: Layout, count: number): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const columns = panel.width >= 620 ? 2 : 1;
+
+    return this.getMiniGameItemRects(layout, count, 254, 104, columns);
+  }
+
+  private getMiniGameItemRects(
+    layout: Layout,
+    count: number,
+    startOffsetY: number,
+    itemHeight: number,
+    preferredColumns: number,
+  ): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const gap = 8;
+    const columns = Math.max(1, Math.min(preferredColumns, Math.max(count, 1)));
+    const width = (panel.width - 28 - gap * (columns - 1)) / columns;
+
+    return Array.from({ length: count }, (_, index) => {
+      const column = index % columns;
+      const row = Math.floor(index / columns);
+
+      return {
+        x: panel.x + 14 + column * (width + gap),
+        y: panel.y + startOffsetY + row * (itemHeight + gap),
+        width,
+        height: itemHeight,
+      };
+    });
+  }
+
+  private getMiniGameContentBottom(
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): number {
+    switch (snapshot.activeChallenge?.type) {
+      case "protocol_match":
+        return this.getRectsBottom(
+          this.getProtocolTermRects(layout, snapshot.miniGame.protocolTerms.length),
+        );
+      case "data_cleaning":
+        return this.getRectsBottom(
+          this.getCleaningItemRects(layout, snapshot.miniGame.cleaningItems.length),
+        );
+      case "profile_puzzle":
+        return this.getRectsBottom(
+          this.getPuzzleFragmentRects(layout, snapshot.miniGame.puzzleFragments.length),
+        );
+      case "buyer_negotiation":
+        return this.getRectsBottom(
+          this.getNegotiationOptionRects(layout, snapshot.miniGame.negotiationOptions.length),
+        );
+      default:
+        return this.getMiniGamePanelRect(layout).y + 210;
+    }
+  }
+
+  private getRectsBottom(rects: readonly Rect[]): number {
+    return rects.reduce((bottom, rect) => Math.max(bottom, rect.y + rect.height), 0);
   }
 
   private getChallengeResultRects(layout: Layout): readonly [Rect, Rect] {
