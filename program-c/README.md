@@ -26,7 +26,9 @@
 - `scripts/bundle-size-report.mjs`：8MB 包体预算检查。
 - `scripts/week1-vertical-slice-report.mjs`：D7 垂直切片内容、音效和性能初测报告。
 - `docs/audio-preview.html`：本地音效试听页。
+- `docs/program-c-delivery-index.md`：Program C D1-D8 交付索引。
 - `docs/program-c-toolchain.md`：程序 C 工具链交接说明。
+- `docs/program-c-acceptance-checklist.md`：Program C 验收清单。
 - `docs/week1-vertical-slice-report.md`：Week 1 垂直切片验收报告。
 
 ## 本地检查

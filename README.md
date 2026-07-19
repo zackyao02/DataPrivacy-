@@ -109,5 +109,5 @@ npm run check
 - 低于 8MB 预算
 
 完整交接说明见 `program-c/docs/program-c-integration.md`。
-
-D7 垂直切片报告见 `program-c/docs/week1-vertical-slice-report.md`，工具链说明见 `program-c/docs/program-c-toolchain.md`。
+Program C 交付索引见 `program-c/docs/program-c-delivery-index.md`，可按 D1-D8 快速核对对应交付物。
+D7 垂直切片报告见 `program-c/docs/week1-vertical-slice-report.md`，工具链说明见 `program-c/docs/program-c-toolchain.md`，验收清单见 `program-c/docs/program-c-acceptance-checklist.md`。

@@ -1,75 +1,76 @@
-# 程序 C 验收清单
+# Program C Acceptance Checklist
 
-本清单用于说明“程序 C：内容工具与音效 / 构建与性能”的当前完成度。
+Updated: 2026-07-20
 
-## 已完成
+This checklist records the current Program C delivery state for content tools, audio, build, performance, and the integrated Week 1 slice.
 
-- D1：本地开发工具链、内容校验、离线检查、包体检查、Web Audio 音频管理器框架。
-- D2：10 套卡牌数据、20 个用户画像、变量填充系统、数据流入音效、同情/愤怒/麻木三种情绪音效。
-- D3：10 条新闻模板、每种数据包类型至少 2 条新闻、`pickNewsForPackage` 新闻匹配方法、打包/霓虹/交易音效事件。
-- D4：新闻模板扩到 20 条、协议伪装配对扩到 20 组、新闻播报音效和 BGM 切换事件。
-- D5：10 组数据清洗图标配置、5 组舆论操控话术、12 条黑盒评价台词、通用小关卡成败音效和黑盒台词音效绑定。
-- D6：4 组用户画像拼图、6 组买家谈判纯叙事话术、7 天每日独白、小关卡 BGM 和独白打字机音效。
-- D7：`report:week1` 自动检查 Week 1 内容覆盖、音效整合、封装音效、试音页一致性、包体和 JSON 加载初测，并生成交接报告。
-- 内容工具：`ContentRepository` 支持读取卡牌、用户、买家、新闻、协议词、打包配方、小关卡配置、数据清洗图标、舆论话术和黑盒台词。
-- 打包辅助：可根据卡牌 ID 生成打包预览，返回是否可打包、缺失数据类型、匹配买家和相关新闻。
-- 游戏内 Day 1 内容：`day_challenges.json` 覆盖“协议伪装”。
-- 游戏内 Day 2 内容：`day_challenges.json` 覆盖“数据清洗”。
-- 变量替换：支持 `{姓名}`、`{城市}`、`{金额}`、`{平台}`，可优先使用当前用户的姓名和城市。
-- 音效系统：`AudioManager` 支持按游戏事件名触发 Web Audio 程序化音效。
-- 内容校验：检查 ID 重复、数据类型、敏感度、包类型引用、占位符、配方可组装性、小关卡引用、新闻三情绪反馈、D2-D5 数据量、图标覆盖和黑盒台词音效绑定。
-- 构建清单：生成 `dist/content-manifest.json`。
-- 离线清单：生成 `dist/offline-assets.json`。
-- D7 验收报告：生成 `dist/week1-vertical-slice-report.json` 和 `docs/week1-vertical-slice-report.md`。
-- 离线就绪检查：确认程序 C 资源不依赖外部 URL。
-- 包体检查：raw 和 gzip 均低于 8MB。
+## Completed Milestones
 
-## 当前数据规模
+- D1: local development toolchain, content validation, offline readiness check, bundle size check, and Web Audio manager scaffold.
+- D2: 10 card templates, 20 user profiles, variable filling, data-flow audio, and empathy / anger / numbness emotion audio events.
+- D3: 10 initial news templates, package-to-news matching, and package / neon / transaction audio events.
+- D4: news templates expanded to 20, protocol disguise terms expanded to 20, news broadcast audio, and BGM switching events.
+- D5: 10 data-cleaning icon configs, 5 public-opinion manipulation scripts, 12 black-box lines, challenge success/fail audio, and black-box line audio binding.
+- D6: 4 profile puzzle sets, 6 buyer negotiation scripts, 7 daily monologues, challenge BGM, and monologue typewriter audio.
+- D7: `report:week1` checks Week 1 content coverage, audio integration, package seal audio, preview-page consistency, package size, and JSON parse timing, then generates the handoff report.
+- D8: integrated `mini-game` scene now uses content-driven Day 1 / 2 / 4 / 5 rules instead of generic success/fail buttons.
 
-| 数据 | 数量 |
-| --- | --- |
-| 卡牌模板 | 10 |
-| 用户画像 | 20 |
-| 买家 | 3 |
-| 打包配方 | 5 |
-| 新闻模板 | 20 |
-| 协议词 | 20 |
-| 游戏内小关卡配置 | 4 |
-| 数据清洗图标 | 10 |
-| 舆论操控话术 | 5 |
-| 用户画像拼图 | 4 |
-| 买家谈判话术 | 6 |
-| 每日独白 | 7 |
-| 黑盒台词 | 12 |
-| 音效事件 | 28 |
+## Current Data Scale
 
-## 当前体积
+| Data | Count |
+| --- | ---: |
+| Card templates | 10 |
+| User profiles | 20 |
+| Buyers | 3 |
+| Package recipes | 5 |
+| News templates | 20 |
+| Protocol terms | 20 |
+| Day challenges | 4 |
+| Data-cleaning icons | 10 |
+| Public-opinion scripts | 5 |
+| Profile puzzles | 4 |
+| Buyer negotiation scripts | 6 |
+| Daily monologues | 7 |
+| Black-box lines | 12 |
+| Audio events | 28 |
 
-| 指标 | 数值 |
-| --- | --- |
-| raw | 107666 bytes |
-| gzip | 34404 bytes |
-| 预算 | 8388608 bytes |
-| 结果 | 通过 |
+## Current Size Check
 
-## 一键验收命令
+| Metric | Value |
+| --- | ---: |
+| Raw tracked bytes | 109783 |
+| Gzip tracked bytes | 34880 |
+| Budget bytes | 8388608 |
+| Remaining raw bytes | 8278825 |
+| Remaining gzip bytes | 8353728 |
+
+## Generated Artifacts
+
+- `program-c/dist/content-manifest.json`
+- `program-c/dist/offline-assets.json`
+- `program-c/dist/gzip-size-report.json`
+- `program-c/dist/week1-vertical-slice-report.json`
+- `program-c/docs/week1-vertical-slice-report.md`
+
+## One-Command Verification
+
+Run from `program-c/`:
 
 ```bash
 npm run check
 ```
 
-## 可交接给队友的内容
+This verifies TypeScript, JSON content references, generated manifests, offline readiness, raw/gzip size budgets, and the Week 1 vertical-slice report.
 
-- 程序 A：接入 `AudioManager`，在视觉交互事件发生时调用 `audio.handleGameEvent(eventName)`。
-- 程序 B：接入 `ContentRepository`，用 `findPackagePreviews(cardIds, { onlyReady: true })` 判断当前卡槽能生成哪些包。
-- 程序 B：用 `pickNewsForPackage(packageType)` 生成昨日新闻，用 `findChallengeByDay(1/2)` 读取游戏内小关卡配置。
-- 程序 B：用 `findDataCleaningIcon(iconHint)`、`pickPublicOpinionScript(packageType)`、`pickBlackBoxLine(stage, filters)` 接入 D5 内容。
-- 程序 B：用 `findChallengeByDay(4/5)` 读取 D6 小关卡入口，用 `pickProfilePuzzleByDay(4)` 读取画像拼图，用 `pickBuyerNegotiationScript(packageType)` 读取买家谈判话术，用 `findDailyMonologueByDay(day)` 读取每日独白。
-- 程序 A/B：可用 `newsBroadcast`、`newsTicker` 做新闻播报，用 `challengeSuccess`、`challengeFail` 做小关卡反馈，用 `challengeBgm`、`bgmBlackBox`、`bgmPressure`、`bgmSilence` 做 BGM 切换，用 `monologueType` 做独白打字机声。
-- 策划：可继续编辑 `data/*.json`，编辑后运行 `npm run check` 检查格式和引用。
-- 程序 C：D7 交付报告见 `docs/week1-vertical-slice-report.md`，工具链说明见 `docs/program-c-toolchain.md`。
+## Handoff Notes
 
-## 后续可做
+- Program A can call `audio.handleGameEvent(eventName)` through the Program C audio manager.
+- Program B can call `findPackagePreviews(cardIds, { onlyReady: true })` to determine valid card-slot packages.
+- Program B can call `pickNewsForPackage(packageType)`, `findChallengeByDay(1/2/4/5)`, `pickProfilePuzzleByDay(4)`, `pickBuyerNegotiationScript(packageType)`, and `findDailyMonologueByDay(day)`.
+- Planning/content edits should happen in `program-c/data/*.json`, followed by `npm run check`.
 
-- 主项目接入后做端到端联调，重点检查 A/B 卡槽数量、包类型枚举、新闻生成、Day 4/5 小关卡入口和音效事件是否一致。
-- 真实音频素材或最终策划文案接入后，继续跑 `npm run check` 控制包体和引用。
+## Remaining Work
+
+- D9: implement real workbench drag-and-drop instead of click-to-select card placement.
+- D9: run a human end-to-end playtest for Day 1 / 2 / 4 / 5 spacing, wording, and audio feel.
+- Later: rerun `npm run check` after real audio assets or final copy changes are added.
