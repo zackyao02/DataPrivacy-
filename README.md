@@ -12,6 +12,7 @@
 - D6：Day 4 用户画像拼图内容库、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM 和独白打字机音效。
 - D7：Week 1 垂直切片内容整合验收、音效整合检查、包体/加载初测报告、工具链文档。
 - 架构审查修复：Program C 加入 TypeScript 验收；打包预览会拦截未知卡、重复卡和额外卡；主应用调试入口已接入 C 的内容仓库和音效管理器。
+- D7 后联调：主应用已把 `workbench`、`news`、`mini-game` 替换成可点击 Week 1 垂直切片场景，串通卡槽打包、新闻反馈、情绪选择、小关卡入口和 C 侧音效事件。
 
 ## 接入重点
 
@@ -42,6 +43,13 @@ window.programA.programC.content.findPackagePreviews(selectedCardIds, {
 window.programA.programC.audio.handleGameEvent("newsBroadcast");
 window.programA.programB.emit("newsBroadcast");
 ```
+
+当前可玩联调路径：
+
+1. 切到 `workbench` 场景，点击数据卡调整 3 个槽位。
+2. 点击“封装数据包”，有效组合会进入 `news` 场景并触发封装/新闻音效。
+3. 在 `news` 场景选择同情、愤怒或麻木，再点击“进入小关卡”。
+4. 在 `mini-game` 场景点击成功或失败，系统会触发小关卡反馈音效并回到工作台。
 
 程序 A / B 可调用音效接口：
 

@@ -28,10 +28,12 @@ import {
   type ProgramBStateListener,
   type ProgramBStatePatch,
 } from "../game/ProgramBBridge";
+import { WeekOneSliceController } from "../game/WeekOneSliceController";
 import { LayerRenderer } from "../render/LayerRenderer";
 import { PlaceholderScene } from "../scenes/PlaceholderScene";
 import type { SceneFrame } from "../scenes/Scene";
 import { SceneManager } from "../scenes/SceneManager";
+import { WeekOneSliceScene } from "../scenes/WeekOneSliceScene";
 
 export interface ProgramADebugSnapshot {
   readonly lifecycle: AppLifecycleState;
@@ -57,6 +59,12 @@ export interface ProgramCDebugSnapshot {
   };
   readonly sampleCardIds: readonly string[];
   readonly sampleReadyPackageTypes: readonly string[];
+  readonly weekOne: {
+    readonly day: number;
+    readonly phase: string;
+    readonly selectedCardIds: readonly string[];
+    readonly readyPackageTypes: readonly string[];
+  };
 }
 
 export interface ProgramADebugApi {
@@ -98,6 +106,10 @@ export class ProgramACanvasApp {
   private readonly programB = new ProgramBBridge(INITIAL_SCENE);
   private readonly programCContent = createDefaultContentRepository();
   private readonly programCAudio = new AudioManager();
+  private readonly weekOneSlice = new WeekOneSliceController(
+    this.programCContent,
+    this.programB,
+  );
   private readonly sceneManager: SceneManager;
   private readonly renderer: LayerRenderer;
   private readonly loop: GameLoop;
@@ -117,7 +129,7 @@ export class ProgramACanvasApp {
       this.events.emit("input:event", event);
     });
 
-    const scenes = SCENE_IDS.map((sceneId) => new PlaceholderScene(sceneId));
+    const scenes = SCENE_IDS.map((sceneId) => this.createScene(sceneId));
     this.sceneManager = new SceneManager(
       scenes,
       INITIAL_SCENE,
@@ -310,6 +322,7 @@ export class ProgramACanvasApp {
   }
 
   private getProgramCSnapshot(): ProgramCDebugSnapshot {
+    const weekOne = this.weekOneSlice.getSnapshot();
     const sampleCardIds = this.programCContent
       .getCardTemplates()
       .slice(0, 3)
@@ -330,7 +343,27 @@ export class ProgramACanvasApp {
       },
       sampleCardIds,
       sampleReadyPackageTypes,
+      weekOne: {
+        day: weekOne.day,
+        phase: weekOne.phase,
+        selectedCardIds: weekOne.selectedCardIds,
+        readyPackageTypes: weekOne.readyPackages.map((preview) => preview.packageType),
+      },
     };
+  }
+
+  private createScene(sceneId: SceneId) {
+    if (
+      sceneId === "workbench" ||
+      sceneId === "news" ||
+      sceneId === "mini-game"
+    ) {
+      return new WeekOneSliceScene(sceneId, this.weekOneSlice, (nextSceneId) => {
+        this.switchScene(nextSceneId);
+      });
+    }
+
+    return new PlaceholderScene(sceneId);
   }
 
   private createDebugApi(): ProgramADebugApi {

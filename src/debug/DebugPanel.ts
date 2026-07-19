@@ -40,7 +40,7 @@ export class DebugPanel {
   ) {
     root.innerHTML = `
       <details class="debug-panel" open>
-        <summary>Day1 Debug</summary>
+        <summary>Week1 Debug</summary>
         <div class="debug-content">
           <label class="debug-field">
             <span>Scene</span>
