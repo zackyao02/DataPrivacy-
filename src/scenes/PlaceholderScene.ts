@@ -42,6 +42,15 @@ const PALETTES: Record<SceneId, ScenePalette> = {
     warning: "#dca75e",
     text: "#d7e2dc",
   },
+  "monitor-desktop": {
+    background: "#10294a",
+    grid: "#1d4c72",
+    panel: "#d6d2c4",
+    screen: "#1c5a8c",
+    accent: "#f4e87c",
+    warning: "#d06d58",
+    text: "#f0f3e8",
+  },
   workbench: {
     background: "#15120e",
     grid: "#292219",
@@ -413,4 +422,3 @@ export class PlaceholderScene implements Scene {
     context.fill();
   }
 }
-

@@ -1,10 +1,16 @@
 import type { SceneId } from "../core/types";
+import {
+  MOCK_VISIBLE_STATE,
+  freezeVisibleGameState,
+  type VisibleGameState,
+} from "./VisibleGameState";
 
 export interface ProgramBGameState {
   readonly schemaVersion: 1;
   readonly currentScene: SceneId;
   readonly previousScene: SceneId | null;
   readonly phase: string;
+  readonly visibleState: Readonly<VisibleGameState>;
   readonly flags: Readonly<Record<string, boolean>>;
   readonly counters: Readonly<Record<string, number>>;
   readonly data: Readonly<Record<string, unknown>>;
@@ -14,6 +20,7 @@ export interface ProgramBStatePatch {
   readonly currentScene?: SceneId;
   readonly previousScene?: SceneId | null;
   readonly phase?: string;
+  readonly visibleState?: VisibleGameState;
   readonly flags?: Record<string, boolean>;
   readonly counters?: Record<string, number>;
   readonly data?: Record<string, unknown>;
@@ -35,12 +42,16 @@ export class ProgramBBridge {
   private readonly stateListeners = new Set<ProgramBStateListener>();
   private readonly eventListeners = new Set<ProgramBEventListener>();
 
-  constructor(initialScene: SceneId) {
+  constructor(
+    initialScene: SceneId,
+    initialVisibleState: Readonly<VisibleGameState> = MOCK_VISIBLE_STATE,
+  ) {
     this.state = this.freezeState({
       schemaVersion: 1,
       currentScene: initialScene,
       previousScene: null,
       phase: "foundation",
+      visibleState: initialVisibleState,
       flags: {},
       counters: {},
       data: {},
@@ -51,11 +62,18 @@ export class ProgramBBridge {
     return this.state;
   }
 
+  getVisibleState(): Readonly<VisibleGameState> {
+    return this.state.visibleState;
+  }
+
   patchState(patch: ProgramBStatePatch): Readonly<ProgramBGameState> {
     this.state = this.freezeState({
       ...this.state,
       ...patch,
       schemaVersion: 1,
+      visibleState: patch.visibleState
+        ? freezeVisibleGameState(patch.visibleState)
+        : this.state.visibleState,
       flags: {
         ...this.state.flags,
         ...patch.flags,
@@ -106,7 +124,7 @@ export class ProgramBBridge {
       flags: Object.freeze({ ...state.flags }),
       counters: Object.freeze({ ...state.counters }),
       data: Object.freeze({ ...state.data }),
+      visibleState: freezeVisibleGameState(state.visibleState),
     });
   }
 }
-

@@ -1,4 +1,5 @@
 import {
+  DAY1_PLACEHOLDER_SCENE_IDS,
   RENDER_LAYERS,
   SCENE_IDS,
   SCENE_LABELS,
@@ -16,11 +17,35 @@ export interface DebugMetrics {
   readonly frameNumber: number;
   readonly viewport: ViewportSnapshot;
   readonly input: InputSnapshot;
+  readonly interaction: {
+    readonly view: string;
+    readonly currentApp?: string | null;
+    readonly hitAreasVisible: boolean;
+    readonly hoveredItemId: string | null;
+    readonly pressedItemId?: string | null;
+    readonly draggingItemId?: string | null;
+    readonly draggingCardId?: string | null;
+    readonly highlightedSlotIndex?: number | null;
+    readonly disabledRawCardIds?: readonly string[];
+    readonly selectedRawCardId?: string | null;
+    readonly selectedPackageId?: string | null;
+    readonly selectedBuyerId?: string | null;
+    readonly slotCardIds?: readonly (string | null)[];
+    readonly newsOpen?: boolean;
+    readonly cardDetailOpen?: boolean;
+    readonly cameraLightOn?: boolean;
+    readonly assets?: {
+      readonly loaded: number;
+      readonly failed: number;
+      readonly total: number;
+    };
+  };
 }
 
 interface DebugPanelCallbacks {
   onSceneChange(sceneId: SceneId): void;
   onLayerChange(layer: RenderLayer, visible: boolean): void;
+  onDeskHitAreasChange(visible: boolean): void;
   onPause(): void;
   onResume(): void;
   onDestroy(): void;
@@ -29,6 +54,7 @@ interface DebugPanelCallbacks {
 export class DebugPanel {
   private readonly sceneSelect: HTMLSelectElement;
   private readonly lifecycleButton: HTMLButtonElement;
+  private readonly hitAreasCheckbox: HTMLInputElement;
   private readonly metricsElement: HTMLElement;
   private readonly inputElement: HTMLElement;
   private lifecycle: AppLifecycleState = "running";
@@ -40,7 +66,7 @@ export class DebugPanel {
   ) {
     root.innerHTML = `
       <details class="debug-panel" open>
-        <summary>Day1 Debug</summary>
+        <summary>Program A Debug</summary>
         <div class="debug-content">
           <label class="debug-field">
             <span>Scene</span>
@@ -49,6 +75,10 @@ export class DebugPanel {
           <fieldset class="debug-layers">
             <legend>Render layers</legend>
             <div data-debug="layers"></div>
+            <label class="debug-check debug-hit-areas">
+              <input type="checkbox" data-debug="hit-areas" />
+              <span>desk hit areas</span>
+            </label>
           </fieldset>
           <div class="debug-actions">
             <button type="button" data-debug="lifecycle">Pause</button>
@@ -56,7 +86,7 @@ export class DebugPanel {
           </div>
           <pre data-debug="metrics"></pre>
           <pre data-debug="input"></pre>
-          <p class="debug-hint">快捷键：1–7 切换场景，空格暂停/恢复。</p>
+          <p class="debug-hint">快捷键：1–2 主线场景，3–8 Day1 占位调试，H 热区，Esc 返回，空格暂停/恢复。</p>
         </div>
       </details>
     `;
@@ -66,6 +96,9 @@ export class DebugPanel {
     );
     this.lifecycleButton = this.requireElement<HTMLButtonElement>(
       '[data-debug="lifecycle"]',
+    );
+    this.hitAreasCheckbox = this.requireElement<HTMLInputElement>(
+      '[data-debug="hit-areas"]',
     );
     this.metricsElement = this.requireElement<HTMLElement>(
       '[data-debug="metrics"]',
@@ -79,6 +112,10 @@ export class DebugPanel {
 
     this.sceneSelect.addEventListener("change", this.handleSceneChange);
     this.lifecycleButton.addEventListener("click", this.handleLifecycleClick);
+    this.hitAreasCheckbox.addEventListener(
+      "change",
+      this.handleHitAreasChange,
+    );
     this.requireElement<HTMLButtonElement>('[data-debug="destroy"]').addEventListener(
       "click",
       this.callbacks.onDestroy,
@@ -94,6 +131,10 @@ export class DebugPanel {
     this.lifecycleButton.disabled = lifecycle === "destroyed";
     this.lifecycleButton.textContent =
       lifecycle === "running" ? "Pause" : "Resume";
+  }
+
+  setHitAreasVisible(visible: boolean): void {
+    this.hitAreasCheckbox.checked = visible;
   }
 
   update(metrics: DebugMetrics): void {
@@ -125,9 +166,9 @@ export class DebugPanel {
     ].join("\n");
 
     const input = metrics.input.lastEvent;
-    this.inputElement.textContent = input
+    const inputLines = input
       ? [
-          `input: ${input.phase}`,
+          `lastEvent: ${input.phase}`,
           `pointerId: ${input.pointerId}`,
           `type: ${input.pointerType}`,
           `position: ${input.position.x.toFixed(1)}, ${input.position.y.toFixed(
@@ -136,8 +177,40 @@ export class DebugPanel {
           `drag: ${input.totalDelta.x.toFixed(1)}, ${input.totalDelta.y.toFixed(
             1,
           )}`,
-        ].join("\n")
-      : "input: waiting";
+        ]
+      : ["lastEvent: waiting"];
+    const interaction = metrics.interaction;
+
+    this.setHitAreasVisible(interaction.hitAreasVisible);
+    this.inputElement.textContent = [
+      ...inputLines,
+      "",
+      `currentView: ${interaction.view}`,
+      `currentApp: ${interaction.currentApp ?? "—"}`,
+      `hover: ${interaction.hoveredItemId ?? "—"}`,
+      `pressed: ${interaction.pressedItemId ?? "—"}`,
+      `dragging: ${interaction.draggingItemId ?? interaction.draggingCardId ?? "—"}`,
+      `highlight slot: ${interaction.highlightedSlotIndex ?? "—"}`,
+      `disabled raw: ${interaction.disabledRawCardIds?.join(" | ") || "—"}`,
+      `selected raw: ${interaction.selectedRawCardId ?? "—"}`,
+      `selected package: ${interaction.selectedPackageId ?? "—"}`,
+      `selected buyer: ${interaction.selectedBuyerId ?? "—"}`,
+      `slots: ${interaction.slotCardIds?.map((cardId) => cardId ?? "—").join(" | ") ?? "—"}`,
+      `card detail: ${interaction.cardDetailOpen ? "open" : "closed"}`,
+      `news: ${interaction.newsOpen ? "open" : "closed"}`,
+      `camera: ${
+        interaction.cameraLightOn === undefined
+          ? "—"
+          : interaction.cameraLightOn
+            ? "on"
+            : "off"
+      }`,
+      `assets: ${
+        interaction.assets
+          ? `${interaction.assets.loaded}/${interaction.assets.total} · failed ${interaction.assets.failed}`
+          : "—"
+      }`,
+    ].join("\n");
   }
 
   destroy(): void {
@@ -146,15 +219,27 @@ export class DebugPanel {
       "click",
       this.handleLifecycleClick,
     );
+    this.hitAreasCheckbox.removeEventListener(
+      "change",
+      this.handleHitAreasChange,
+    );
     this.root.replaceChildren();
   }
 
   private populateScenes(): void {
+    const day1PlaceholderScenes = new Set<SceneId>(
+      DAY1_PLACEHOLDER_SCENE_IDS,
+    );
+
     SCENE_IDS.forEach((sceneId) => {
       const option = document.createElement("option");
       option.value = sceneId;
       option.textContent = `${SCENE_IDS.indexOf(sceneId) + 1}. ${
         SCENE_LABELS[sceneId]
+      } · ${
+        day1PlaceholderScenes.has(sceneId)
+          ? "Day1 debug only"
+          : "player flow"
       }`;
       this.sceneSelect.append(option);
     });
@@ -193,6 +278,10 @@ export class DebugPanel {
     }
   };
 
+  private readonly handleHitAreasChange = (): void => {
+    this.callbacks.onDeskHitAreasChange(this.hitAreasCheckbox.checked);
+  };
+
   private requireElement<ElementType extends Element>(
     selector: string,
   ): ElementType {
@@ -205,4 +294,3 @@ export class DebugPanel {
     return element;
   }
 }
-

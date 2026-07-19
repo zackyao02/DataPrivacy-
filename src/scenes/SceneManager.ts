@@ -1,6 +1,10 @@
 import type { ProgramAEventMap } from "../core/events";
 import { TypedEventBus } from "../core/TypedEventBus";
-import type { RenderLayer, SceneId } from "../core/types";
+import type {
+  NormalizedPointerEvent,
+  RenderLayer,
+  SceneId,
+} from "../core/types";
 import { ProgramBBridge } from "../game/ProgramBBridge";
 import type { Scene, SceneFrame } from "./Scene";
 
@@ -71,6 +75,10 @@ export class SceneManager {
     this.currentScene.update(frame);
   }
 
+  handleInput(event: NormalizedPointerEvent, frame: SceneFrame): void {
+    this.currentScene.handleInput?.(event, frame);
+  }
+
   renderLayer(
     context: CanvasRenderingContext2D,
     layer: RenderLayer,
@@ -85,7 +93,7 @@ export class SceneManager {
       this.started = false;
     }
 
+    this.scenes.forEach((scene) => scene.destroy?.());
     this.scenes.clear();
   }
 }
-

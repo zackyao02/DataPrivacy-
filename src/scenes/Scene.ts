@@ -1,5 +1,6 @@
 import type {
   InputSnapshot,
+  NormalizedPointerEvent,
   RenderLayer,
   SceneId,
   ViewportSnapshot,
@@ -21,10 +22,11 @@ export interface Scene {
   enter(frame: SceneFrame): void;
   exit(frame: SceneFrame): void;
   update(frame: SceneFrame): void;
+  handleInput?(event: NormalizedPointerEvent, frame: SceneFrame): void;
   renderLayer(
     context: CanvasRenderingContext2D,
     layer: RenderLayer,
     frame: SceneFrame,
   ): void;
+  destroy?(): void;
 }
-

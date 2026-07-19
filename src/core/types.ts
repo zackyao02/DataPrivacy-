@@ -1,5 +1,11 @@
-export const SCENE_IDS = [
+export const PLAYER_SCENE_IDS = [
   "monitor-room",
+  "monitor-desktop",
+] as const;
+
+export type PlayerSceneId = (typeof PLAYER_SCENE_IDS)[number];
+
+export const DAY1_PLACEHOLDER_SCENE_IDS = [
   "workbench",
   "buyer-exchange",
   "risk-panel",
@@ -8,10 +14,21 @@ export const SCENE_IDS = [
   "ending",
 ] as const;
 
+export type Day1PlaceholderSceneId =
+  (typeof DAY1_PLACEHOLDER_SCENE_IDS)[number];
+
+// Keep every Day1 placeholder registered for state-machine/debug coverage.
+// Player-facing navigation must use PLAYER_SCENE_IDS instead.
+export const SCENE_IDS = [
+  ...PLAYER_SCENE_IDS,
+  ...DAY1_PLACEHOLDER_SCENE_IDS,
+] as const;
+
 export type SceneId = (typeof SCENE_IDS)[number];
 
 export const SCENE_LABELS: Record<SceneId, string> = {
   "monitor-room": "Monitor Room",
+  "monitor-desktop": "Monitor Desktop",
   workbench: "Workbench",
   "buyer-exchange": "Buyer Exchange",
   "risk-panel": "Risk Panel",
@@ -80,4 +97,3 @@ export interface InputSnapshot {
   readonly lastEvent: NormalizedPointerEvent | null;
   readonly dragTrail: readonly Point[];
 }
-
