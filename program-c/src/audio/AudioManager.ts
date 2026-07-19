@@ -3,6 +3,7 @@ import { SOUND_EVENT_MAP, type GameSoundEventName, type SoundId } from "./soundM
 export interface AudioManagerOptions {
   readonly masterVolume?: number;
   readonly enabled?: boolean;
+  readonly warnOnUnknownEvent?: boolean;
 }
 
 export class AudioManager {
@@ -11,12 +12,15 @@ export class AudioManager {
   private bgmOscillators: OscillatorNode[] = [];
   private bgmGain: GainNode | null = null;
   private bgmTimers: number[] = [];
+  private readonly warnedUnknownEvents = new Set<string>();
   private enabled: boolean;
   private masterVolume: number;
+  private readonly warnOnUnknownEvent: boolean;
 
   constructor(options: AudioManagerOptions = {}) {
     this.enabled = options.enabled ?? true;
     this.masterVolume = options.masterVolume ?? 0.72;
+    this.warnOnUnknownEvent = options.warnOnUnknownEvent ?? true;
   }
 
   setEnabled(enabled: boolean): void {
@@ -43,12 +47,23 @@ export class AudioManager {
     }
   }
 
-  handleGameEvent(eventName: string): void {
+  handleGameEvent(eventName: string): boolean {
     const soundId = SOUND_EVENT_MAP[eventName as GameSoundEventName];
 
-    if (soundId) {
-      this.play(soundId);
+    if (!soundId) {
+      if (
+        this.warnOnUnknownEvent &&
+        !this.warnedUnknownEvents.has(eventName)
+      ) {
+        this.warnedUnknownEvents.add(eventName);
+        console.warn(`[Program C Audio] Unknown sound event: ${eventName}`);
+      }
+
+      return false;
     }
+
+    this.play(soundId);
+    return true;
   }
 
   play(soundId: SoundId): void {
@@ -157,6 +172,18 @@ export class AudioManager {
         this.chord([65.41, 98, 130.81, 196], now, 0.55, "sawtooth", 0.04);
         this.arpeggio([392, 329.63, 261.63, 196], now + 0.15, 0.12, 0.22, "triangle", 0.055);
         break;
+    }
+  }
+
+  destroy(): void {
+    this.stopBgm();
+
+    const context = this.context;
+    this.context = null;
+    this.masterGain = null;
+
+    if (context && context.state !== "closed") {
+      void context.close().catch(() => undefined);
     }
   }
 

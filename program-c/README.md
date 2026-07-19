@@ -11,6 +11,7 @@
 - D5：数据清洗图标配置、舆论操控话术、黑盒评价台词、通用小关卡成败音效和黑盒台词音效绑定。
 - D6：Day 4 用户画像拼图碎片、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM 和独白打字机音效。
 - D7：Week 1 垂直切片内容整合验收、音效整合检查、性能初测报告和工具链文档。
+- 架构审查修复：补充 Program C TypeScript 验收、严格打包预览契约、未知音效事件提示、主应用调试入口接入。
 
 ## 目录说明
 
@@ -53,5 +54,7 @@ audio.handleGameEvent("challengeBgm");
 audio.handleGameEvent("monologueType");
 audio.handleGameEvent("bgmPressure");
 ```
+
+`readyPackages` 会过滤掉未知卡、重复卡和额外卡；需要排查原因时看预览对象里的 `unknownCardIds`、`duplicateCardIds`、`extraCardIds` 和 `missingDataTypes`。`handleGameEvent` 返回 `boolean`，未知事件会返回 `false` 并在控制台提示一次。
 
 更完整的交接说明见 `docs/program-c-integration.md`。

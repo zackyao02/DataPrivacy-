@@ -40,6 +40,8 @@ export interface PackagePreview {
   readonly matchedCards: readonly CardTemplate[];
   readonly missingDataTypes: readonly DataType[];
   readonly unknownCardIds: readonly string[];
+  readonly duplicateCardIds: readonly string[];
+  readonly extraCardIds: readonly string[];
   readonly buyers: readonly Buyer[];
   readonly newsTemplates: readonly NewsTemplate[];
   readonly ready: boolean;
@@ -378,18 +380,40 @@ export class ContentRepository {
     cardIds: readonly string[],
   ): PackagePreview {
     const selectedCards = this.findCardsByIds(cardIds);
-    const selectedDataTypes = new Set(selectedCards.map((card) => card.dataType));
-    const requiredDataTypes = new Set(recipe.requiredDataTypes);
-    const matchedCards = selectedCards.filter((card) =>
-      requiredDataTypes.has(card.dataType),
-    );
-    const missingDataTypes = recipe.requiredDataTypes.filter(
-      (dataType) => !selectedDataTypes.has(dataType),
-    );
+    const remainingDataTypes = this.countDataTypes(recipe.requiredDataTypes);
+    const matchedCards: CardTemplate[] = [];
+    const extraCardIds: string[] = [];
     const knownCardIds = new Set(this.bundle.cardTemplates.map((card) => card.id));
     const unknownCardIds = [...new Set(cardIds)].filter(
       (cardId) => !knownCardIds.has(cardId),
     );
+    const duplicateCardIds = this.findDuplicateCardIds(cardIds);
+
+    for (const card of selectedCards) {
+      const remaining = remainingDataTypes.get(card.dataType) ?? 0;
+
+      if (remaining > 0) {
+        matchedCards.push(card);
+
+        if (remaining === 1) {
+          remainingDataTypes.delete(card.dataType);
+        } else {
+          remainingDataTypes.set(card.dataType, remaining - 1);
+        }
+      } else {
+        extraCardIds.push(card.id);
+      }
+    }
+
+    const missingDataTypes = [...remainingDataTypes.entries()].flatMap(
+      ([dataType, count]) => Array.from<DataType>({ length: count }).fill(dataType),
+    );
+    const ready =
+      missingDataTypes.length === 0 &&
+      unknownCardIds.length === 0 &&
+      duplicateCardIds.length === 0 &&
+      extraCardIds.length === 0 &&
+      selectedCards.length === recipe.requiredDataTypes.length;
 
     return {
       recipe,
@@ -398,10 +422,37 @@ export class ContentRepository {
       matchedCards,
       missingDataTypes,
       unknownCardIds,
+      duplicateCardIds,
+      extraCardIds,
       buyers: this.findBuyersForPackage(recipe.packageType),
       newsTemplates: this.findNewsForPackage(recipe.packageType),
-      ready: missingDataTypes.length === 0,
+      ready,
     };
+  }
+
+  private countDataTypes(dataTypes: readonly DataType[]): Map<DataType, number> {
+    const counts = new Map<DataType, number>();
+
+    for (const dataType of dataTypes) {
+      counts.set(dataType, (counts.get(dataType) ?? 0) + 1);
+    }
+
+    return counts;
+  }
+
+  private findDuplicateCardIds(cardIds: readonly string[]): readonly string[] {
+    const seen = new Set<string>();
+    const duplicates = new Set<string>();
+
+    for (const cardId of cardIds) {
+      if (seen.has(cardId)) {
+        duplicates.add(cardId);
+      }
+
+      seen.add(cardId);
+    }
+
+    return [...duplicates];
   }
 
   private resolveVariableValue(

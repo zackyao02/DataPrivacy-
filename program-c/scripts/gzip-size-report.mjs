@@ -10,6 +10,8 @@ const trackedDirs = ["data", "src", "dist"];
 const excludedFiles = new Set([
   "dist\\gzip-size-report.json",
   "dist/gzip-size-report.json",
+  "dist\\week1-vertical-slice-report.json",
+  "dist/week1-vertical-slice-report.json",
 ]);
 
 function walk(dir) {

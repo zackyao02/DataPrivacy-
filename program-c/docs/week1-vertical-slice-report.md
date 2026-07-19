@@ -42,11 +42,11 @@ Audio preview buttons matched: yes (28 buttons).
 
 | Metric | Value |
 | --- | ---: |
-| Raw tracked bytes | 107666 |
-| Gzip tracked bytes | 34404 |
+| Raw tracked bytes | 109783 |
+| Gzip tracked bytes | 34880 |
 | Budget bytes | 8388608 |
-| Remaining raw bytes | 8280942 |
-| Remaining gzip bytes | 8354204 |
+| Remaining raw bytes | 8278825 |
+| Remaining gzip bytes | 8353728 |
 | Data JSON files | 14 |
 | JSON parse average per full pass | 0.182 ms |
 

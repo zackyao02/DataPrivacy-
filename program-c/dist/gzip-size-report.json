@@ -1,9 +1,9 @@
 {
   "budgetBytes": 8388608,
-  "totalRawBytes": 107666,
-  "totalGzipBytes": 34404,
-  "remainingRawBytes": 8280942,
-  "remainingGzipBytes": 8354204,
+  "totalRawBytes": 109783,
+  "totalGzipBytes": 34880,
+  "remainingRawBytes": 8278825,
+  "remainingGzipBytes": 8353728,
   "files": [
     {
       "file": "data\\news_templates.json",
@@ -17,8 +17,8 @@
     },
     {
       "file": "src\\audio\\AudioManager.ts",
-      "rawBytes": 13333,
-      "gzipBytes": 3036
+      "rawBytes": 14068,
+      "gzipBytes": 3236
     },
     {
       "file": "data\\profile_puzzles.json",
@@ -26,14 +26,14 @@
       "gzipBytes": 2720
     },
     {
+      "file": "src\\content\\ContentRepository.ts",
+      "rawBytes": 12727,
+      "gzipBytes": 2712
+    },
+    {
       "file": "data\\day_challenges.json",
       "rawBytes": 6285,
       "gzipBytes": 2473
-    },
-    {
-      "file": "src\\content\\ContentRepository.ts",
-      "rawBytes": 11373,
-      "gzipBytes": 2435
     },
     {
       "file": "data\\public_opinion_scripts.json",
@@ -117,8 +117,8 @@
     },
     {
       "file": "src\\audio\\index.ts",
-      "rawBytes": 60,
-      "gzipBytes": 66
+      "rawBytes": 88,
+      "gzipBytes": 65
     }
   ]
 }

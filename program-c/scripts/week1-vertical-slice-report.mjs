@@ -8,6 +8,7 @@ const docsDir = new URL("docs/", root);
 const outputJson = new URL("week1-vertical-slice-report.json", distDir);
 const outputMd = new URL("week1-vertical-slice-report.md", docsDir);
 const budgetBytes = 8 * 1024 * 1024;
+const refreshBenchmark = process.env.PROGRAM_C_REFRESH_BENCHMARK === "1";
 
 const requiredAudioEvents = [
   "packageCreated",
@@ -38,6 +39,22 @@ const requiredPackageTypes = [
 
 function readJson(name) {
   return JSON.parse(readFileSync(new URL(name, dataDir), "utf8"));
+}
+
+function readExistingMarkdownMatch(pattern) {
+  if (!existsSync(outputMd)) {
+    return undefined;
+  }
+
+  return readFileSync(outputMd, "utf8").match(pattern)?.[1];
+}
+
+function writeIfChanged(file, content) {
+  if (existsSync(file) && readFileSync(file, "utf8") === content) {
+    return;
+  }
+
+  writeFileSync(file, content, "utf8");
 }
 
 function assert(condition, message) {
@@ -125,6 +142,12 @@ const negotiations = readJson("buyer_negotiation_scripts.json");
 const monologues = readJson("daily_monologues.json");
 const soundMap = readSoundMap();
 const previewEvents = readPreviewEvents();
+const existingGeneratedAt = readExistingMarkdownMatch(/^Generated:\s+(.+)$/m);
+const existingParseAverage = Number(
+  readExistingMarkdownMatch(
+    /^\| JSON parse average per full pass \| ([0-9.]+) ms \|$/m,
+  ),
+);
 
 const packageTypes = recipes.map((recipe) => recipe.packageType);
 const challengeDays = dayChallenges.map((challenge) => challenge.day).sort((a, b) => a - b);
@@ -147,7 +170,14 @@ const gzipBytes = trackedFiles.reduce(
   (sum, file) => sum + gzipSync(readFileSync(file), { level: 9 }).length,
   0,
 );
-const parseBench = measureDataParse(dataFiles);
+const measuredParseBench = measureDataParse(dataFiles);
+const parseBench =
+  Number.isFinite(existingParseAverage) && !refreshBenchmark
+    ? {
+        ...measuredParseBench,
+        averageMsPerFullPass: existingParseAverage,
+      }
+    : measuredParseBench;
 
 for (const packageType of requiredPackageTypes) {
   assert(packageTypes.includes(packageType), `missing package type: ${packageType}`);
@@ -189,7 +219,10 @@ assert(rawBytes < budgetBytes, "raw tracked files exceed 8MB budget");
 assert(gzipBytes < budgetBytes, "gzip tracked files exceed 8MB budget");
 
 const report = {
-  generatedAt: new Date().toISOString(),
+  generatedAt:
+    process.env.PROGRAM_C_REPORT_GENERATED_AT ??
+    existingGeneratedAt ??
+    new Date().toISOString(),
   scope: "Program C D7 Week 1 vertical slice readiness",
   week1Coverage: {
     supportedChallengeDays: challengeDays,
@@ -244,7 +277,7 @@ const report = {
 
 mkdirSync(distDir, { recursive: true });
 mkdirSync(docsDir, { recursive: true });
-writeFileSync(outputJson, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+writeIfChanged(outputJson, `${JSON.stringify(report, null, 2)}\n`);
 
 const markdown = `# Program C Week 1 Vertical Slice Report
 
@@ -307,7 +340,7 @@ FPS risk proxy: low for Program C assets. Program C currently ships JSON presets
 - Program C: rerun \`npm run check\` before each content or audio handoff.
 `;
 
-writeFileSync(outputMd, markdown, "utf8");
+writeIfChanged(outputMd, markdown);
 console.log(`Wrote ${decodeURIComponent(outputJson.pathname)}`);
 console.log(`Wrote ${decodeURIComponent(outputMd.pathname)}`);
 console.log("Week 1 vertical slice readiness passed.");

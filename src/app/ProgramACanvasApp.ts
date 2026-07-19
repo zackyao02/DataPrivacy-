@@ -4,6 +4,15 @@ import { GameLoop, type LoopFrame } from "../core/GameLoop";
 import { InputManager } from "../core/InputManager";
 import { TypedEventBus } from "../core/TypedEventBus";
 import {
+  AudioManager,
+  SOUND_EVENT_MAP,
+  type GameSoundEventName,
+} from "../../program-c/src/audio";
+import {
+  createDefaultContentRepository,
+  type ContentRepository,
+} from "../../program-c/src/content";
+import {
   RENDER_LAYERS,
   SCENE_IDS,
   type AppLifecycleState,
@@ -33,6 +42,21 @@ export interface ProgramADebugSnapshot {
   readonly layers: Readonly<Record<RenderLayer, boolean>>;
   readonly input: ReturnType<InputManager["getSnapshot"]>;
   readonly gameState: Readonly<ProgramBGameState>;
+  readonly programC: ProgramCDebugSnapshot;
+}
+
+export interface ProgramCDebugSnapshot {
+  readonly counts: {
+    readonly cardTemplates: number;
+    readonly users: number;
+    readonly buyers: number;
+    readonly packageRecipes: number;
+    readonly newsTemplates: number;
+    readonly dayChallenges: number;
+    readonly audioEvents: number;
+  };
+  readonly sampleCardIds: readonly string[];
+  readonly sampleReadyPackageTypes: readonly string[];
 }
 
 export interface ProgramADebugApi {
@@ -51,6 +75,16 @@ export interface ProgramADebugApi {
     onStateChange(listener: ProgramBStateListener): () => void;
     onEvent(listener: ProgramBEventListener): () => void;
   };
+  readonly programC: {
+    readonly content: ContentRepository;
+    readonly audio: {
+      unlock(): Promise<void>;
+      handleGameEvent(eventName: GameSoundEventName | string): boolean;
+      setEnabled(enabled: boolean): void;
+      setMasterVolume(volume: number): void;
+    };
+    getSnapshot(): ProgramCDebugSnapshot;
+  };
 }
 
 const INITIAL_SCENE: SceneId = "monitor-room";
@@ -62,10 +96,13 @@ export class ProgramACanvasApp {
   private readonly surface: CanvasSurface;
   private readonly input: InputManager;
   private readonly programB = new ProgramBBridge(INITIAL_SCENE);
+  private readonly programCContent = createDefaultContentRepository();
+  private readonly programCAudio = new AudioManager();
   private readonly sceneManager: SceneManager;
   private readonly renderer: LayerRenderer;
   private readonly loop: GameLoop;
   private readonly debugPanel: DebugPanel;
+  private readonly detachProgramBAudioBridge: () => void;
   private lifecycle: AppLifecycleState = "running";
   private latestFrame: SceneFrame;
 
@@ -88,6 +125,9 @@ export class ProgramACanvasApp {
       this.programB,
     );
     this.renderer = new LayerRenderer(this.surface, this.sceneManager);
+    this.detachProgramBAudioBridge = this.programB.onEvent((event) => {
+      this.programCAudio.handleGameEvent(event.type);
+    });
     this.latestFrame = this.createSceneFrame({
       deltaTime: 0,
       elapsedTime: 0,
@@ -201,7 +241,9 @@ export class ProgramACanvasApp {
     this.input.destroy();
     this.surface.destroy();
     this.sceneManager.destroy(this.latestFrame);
+    this.detachProgramBAudioBridge();
     this.programB.destroy();
+    this.programCAudio.destroy();
     this.debugPanel.destroy();
     this.events.clear();
 
@@ -224,6 +266,7 @@ export class ProgramACanvasApp {
       layers: this.renderer.getVisibility(),
       input: this.input.getSnapshot(),
       gameState: this.programB.getState(),
+      programC: this.getProgramCSnapshot(),
     };
   }
 
@@ -266,6 +309,30 @@ export class ProgramACanvasApp {
     return { ...this.surface.snapshot };
   }
 
+  private getProgramCSnapshot(): ProgramCDebugSnapshot {
+    const sampleCardIds = this.programCContent
+      .getCardTemplates()
+      .slice(0, 3)
+      .map((card) => card.id);
+    const sampleReadyPackageTypes = this.programCContent
+      .findPackagePreviews(sampleCardIds, { onlyReady: true })
+      .map((preview) => preview.packageType);
+
+    return {
+      counts: {
+        cardTemplates: this.programCContent.getCardTemplates().length,
+        users: this.programCContent.getUsers().length,
+        buyers: this.programCContent.getBuyers().length,
+        packageRecipes: this.programCContent.getPackageRecipes().length,
+        newsTemplates: this.programCContent.getNewsTemplates().length,
+        dayChallenges: this.programCContent.getDayChallenges().length,
+        audioEvents: Object.keys(SOUND_EVENT_MAP).length,
+      },
+      sampleCardIds,
+      sampleReadyPackageTypes,
+    };
+  }
+
   private createDebugApi(): ProgramADebugApi {
     return Object.freeze({
       scenes: SCENE_IDS,
@@ -287,6 +354,18 @@ export class ProgramACanvasApp {
           this.programB.onStateChange(listener),
         onEvent: (listener: ProgramBEventListener) =>
           this.programB.onEvent(listener),
+      }),
+      programC: Object.freeze({
+        content: this.programCContent,
+        audio: Object.freeze({
+          unlock: () => this.programCAudio.unlock(),
+          handleGameEvent: (eventName: GameSoundEventName | string) =>
+            this.programCAudio.handleGameEvent(eventName),
+          setEnabled: (enabled: boolean) => this.programCAudio.setEnabled(enabled),
+          setMasterVolume: (volume: number) =>
+            this.programCAudio.setMasterVolume(volume),
+        }),
+        getSnapshot: () => this.getProgramCSnapshot(),
       }),
     });
   }

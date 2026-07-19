@@ -11,6 +11,7 @@
 - D5：数据清洗图标配置、5 组舆论操控话术、12 条黑盒评价台词、通用小关卡成功/失败音效和黑盒台词音效绑定。
 - D6：Day 4 用户画像拼图内容库、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM 和独白打字机音效。
 - D7：Week 1 垂直切片内容整合验收、音效整合检查、包体/加载初测报告、工具链文档。
+- 架构审查修复：Program C 加入 TypeScript 验收；打包预览会拦截未知卡、重复卡和额外卡；主应用调试入口已接入 C 的内容仓库和音效管理器。
 
 ## 接入重点
 
@@ -28,6 +29,18 @@ const blackBoxLine = content.pickBlackBoxLine("package_review", { packageType })
 const profilePuzzle = content.pickProfilePuzzleByDay(4);
 const negotiation = content.pickBuyerNegotiationScript(packageType);
 const monologue = content.findDailyMonologueByDay(day);
+```
+
+`readyPackages` 只返回严格匹配配方的结果；如果传入未知卡、重复卡或额外卡，预览对象会保留问题字段，但不会进入 `onlyReady` 结果。
+
+主应用调试入口已挂载 C：
+
+```ts
+window.programA.programC.content.findPackagePreviews(selectedCardIds, {
+  onlyReady: true,
+});
+window.programA.programC.audio.handleGameEvent("newsBroadcast");
+window.programA.programB.emit("newsBroadcast");
 ```
 
 程序 A / B 可调用音效接口：
@@ -82,8 +95,8 @@ npm run check
 - buyerNegotiationScripts=6
 - dailyMonologues=7
 - blackBoxLines=12
-- raw=107666 bytes
-- gzip=34404 bytes
+- raw=109783 bytes
+- gzip=34880 bytes
 - 低于 8MB 预算
 
 完整交接说明见 `program-c/docs/program-c-integration.md`。

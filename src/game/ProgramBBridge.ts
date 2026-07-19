@@ -1,4 +1,4 @@
-import type { SceneId } from "../core/types";
+import { SCENE_IDS, type SceneId } from "../core/types";
 
 export interface ProgramBGameState {
   readonly schemaVersion: 1;
@@ -52,10 +52,23 @@ export class ProgramBBridge {
   }
 
   patchState(patch: ProgramBStatePatch): Readonly<ProgramBGameState> {
+    this.assertSceneId(patch.currentScene);
+    this.assertSceneId(patch.previousScene);
+
+    const nextCurrentScene = patch.currentScene ?? this.state.currentScene;
+    const nextPreviousScene =
+      patch.previousScene !== undefined
+        ? patch.previousScene
+        : nextCurrentScene !== this.state.currentScene
+          ? this.state.currentScene
+          : this.state.previousScene;
+
     this.state = this.freezeState({
       ...this.state,
       ...patch,
       schemaVersion: 1,
+      currentScene: nextCurrentScene,
+      previousScene: nextPreviousScene,
       flags: {
         ...this.state.flags,
         ...patch.flags,
@@ -107,6 +120,12 @@ export class ProgramBBridge {
       counters: Object.freeze({ ...state.counters }),
       data: Object.freeze({ ...state.data }),
     });
+  }
+
+  private assertSceneId(sceneId: SceneId | null | undefined): void {
+    if (sceneId !== undefined && sceneId !== null && !SCENE_IDS.includes(sceneId)) {
+      throw new Error(`Unknown scene id in Program B state patch: ${sceneId}`);
+    }
   }
 }
 

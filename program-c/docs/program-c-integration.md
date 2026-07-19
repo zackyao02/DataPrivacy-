@@ -73,6 +73,12 @@ const monologue = content.findDailyMonologueByDay(5);
 - `findDailyMonologueByDay(day)`：读取指定天数新闻后的独白文案，`day` 范围 1-7。
 - `pickBlackBoxLine(stage, filters)`：按阶段、天数或包类型抽取黑盒台词。
 
+打包预览契约：
+
+- `ready=true` 需要卡牌刚好满足配方，且没有未知卡、重复卡或额外卡。
+- 如果 `onlyReady=true` 没有返回结果，B 侧可以先不结算；调试时检查 `unknownCardIds`、`duplicateCardIds`、`extraCardIds` 和 `missingDataTypes`。
+- 当前工作台按 3 个槽位联调；如果 B 侧保留 4 槽位，需要先在 B 区共享文档写明兼容策略。
+
 ## 程序 A / B 接入音效
 
 ```ts
@@ -84,7 +90,7 @@ window.addEventListener("pointerdown", () => {
   void audio.unlock();
 }, { once: true });
 
-audio.handleGameEvent("dataFlowIn");
+const played = audio.handleGameEvent("dataFlowIn");
 audio.handleGameEvent("newsBroadcast");
 audio.handleGameEvent("challengeSuccess");
 audio.handleGameEvent("blackBoxLine");
@@ -92,6 +98,20 @@ audio.handleGameEvent("challengeBgm");
 audio.handleGameEvent("monologueType");
 audio.handleGameEvent("bgmPressure");
 ```
+
+`handleGameEvent` 返回 `boolean`：事件名命中时返回 `true`，未知事件返回 `false` 并在调试控制台提示一次。
+
+主应用调试入口：
+
+```ts
+window.programA.programC.content.findPackagePreviews(selectedCardIds, {
+  onlyReady: true,
+});
+window.programA.programC.audio.handleGameEvent("challengeBgm");
+window.programA.programB.emit("challengeSuccess");
+```
+
+`programB.emit(eventName)` 会把同名事件转给 Program C 音效映射，方便 A/B/C 早期联调。
 
 推荐事件名：
 
