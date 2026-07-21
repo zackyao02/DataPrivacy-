@@ -1,6 +1,6 @@
 # Program C Delivery Index
 
-Updated: 2026-07-20
+Updated: 2026-07-21
 
 This index lists the concrete delivery artifacts for Program C. It is meant to answer "where is the thing?" before teammates need to search the repo.
 
@@ -14,9 +14,8 @@ This index lists the concrete delivery artifacts for Program C. It is meant to a
 | D4 | Done | 20 news templates, 20 protocol disguise terms, news broadcast and BGM events |
 | D5 | Done | Data-cleaning icon config, public-opinion scripts, black-box lines, challenge success/fail audio |
 | D6 | Done | Day 4 profile puzzles, Day 5 buyer negotiation scripts, daily monologues, challenge BGM and typewriter audio |
-| D7 | Done | Week 1 vertical-slice report, initial performance check, toolchain handoff document |
+| D7 | Done | Week 1 vertical-slice report, initial performance check, toolchain handoff document, latest text-config content alignment |
 | D8 | Done | Content-driven mini-game interactions for Day 1 / 2 / 4 / 5 |
-| D9 | Not started | Workbench drag-and-drop polish and end-to-end playtest tuning |
 
 ## D7 Reports And Tool Docs
 
@@ -27,15 +26,15 @@ This index lists the concrete delivery artifacts for Program C. It is meant to a
 | Toolchain handoff | `program-c/docs/program-c-toolchain.md` | Commands, edit workflow, and what each check validates |
 | Acceptance checklist | `program-c/docs/program-c-acceptance-checklist.md` | Human checklist mapping D1-D8 to concrete deliverables |
 
-Current D7 performance numbers:
+Current Program C performance numbers:
 
 | Metric | Value |
 | --- | ---: |
-| Raw tracked bytes | 109783 |
-| Gzip tracked bytes | 34880 |
+| Raw tracked bytes | 146193 |
+| Gzip tracked bytes | 36504 |
 | Budget bytes | 8388608 |
-| Remaining raw bytes | 8278825 |
-| Remaining gzip bytes | 8353728 |
+| Remaining raw bytes | 8242415 |
+| Remaining gzip bytes | 8352104 |
 | JSON parse average per full pass | 0.182 ms |
 
 Note: D7 performance is an initial Program C asset/build check. Full FPS must be measured in the integrated Program A canvas build.
@@ -75,12 +74,14 @@ npm run build
 | Content schema and repository | `program-c/src/content/schema.ts`, `program-c/src/content/ContentRepository.ts` |
 | Audio manager and event map | `program-c/src/audio/AudioManager.ts`, `program-c/src/audio/soundMap.ts` |
 | Validation and reports | `program-c/scripts/*.mjs` |
+| Feishu text-config sync | `program-c/scripts/sync-feishu-text-config.mjs` |
 | Local audio preview | `program-c/docs/audio-preview.html` |
 | Integrated Week 1 controller | `src/game/WeekOneSliceController.ts` |
 | Integrated Week 1 scene | `src/scenes/WeekOneSliceScene.ts` |
 
 ## Known Remaining Work
 
-- Workbench currently uses click-to-select cards. True drag-and-drop card placement is still D9.
-- D8 mini-games have real rule handling, but still need human playtest tuning for spacing, copy density, and feel.
+- Workbench currently uses click-to-select cards. True drag-and-drop card placement is still a follow-up gameplay task.
+- Latest Feishu text config is now local content/reference data, but Day 3 public-opinion gameplay, Day 6 protocol scan, Day 7 branches, endings, report generation, and UI/system copy are not yet implemented as playable flows.
+- D8 mini-games have real rule handling for Day 1 / 2 / 4 / 5, but still need human playtest tuning for spacing, copy density, and feel.
 - Real audio assets, if added later, must rerun `npm run check` to keep offline and size guarantees.

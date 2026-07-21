@@ -44,6 +44,12 @@ const forbiddenNegotiationKeys = new Set([
   "riskeffect",
 ]);
 const blackBoxLineStages = new Set([
+  "tutorial",
+  "morning_briefing",
+  "task_instruction",
+  "process_feedback",
+  "evening_summary",
+  "general_prompt",
   "challenge_intro",
   "challenge_success",
   "challenge_fail",
@@ -52,7 +58,18 @@ const blackBoxLineStages = new Set([
   "transaction_success",
   "ending_pressure",
 ]);
-const variableKeys = ["姓名", "城市", "金额", "平台"];
+const variableKeys = [
+  "姓名",
+  "城市",
+  "金额",
+  "平台",
+  "地点",
+  "话题",
+  "商品",
+  "时长",
+  "场景",
+  "数值",
+];
 const emotionKeys = ["empathy", "anger", "numbness"];
 const placeholderPattern = /\{([^}]+)\}/g;
 
@@ -144,14 +161,14 @@ assertUniqueIds(profilePuzzles, "profile_puzzles");
 assertUniqueIds(publicOpinionScripts, "public_opinion_scripts");
 assertUniqueIds(blackBoxLines, "black_box_lines");
 
-assert(cardTemplates.length >= 10, "card_templates needs at least 10 templates for Program C Day 2");
+assert(cardTemplates.length >= 20, "card_templates needs 20 templates from the Feishu text config");
 assert(users.length >= 20, "users needs at least 20 profiles for Program C Day 2");
 assert(newsTemplates.length >= 20, "news_templates needs at least 20 templates for Program C D4");
 assert(protocolTerms.length >= 20, "protocol_terms needs at least 20 pairs for Program C D4");
 assert(dayChallenges.length >= 4, "day_challenges needs Day 1/2/4/5 entries for Program C D6");
 assert(dataCleaningIcons.length >= 10, "data_cleaning_icons needs icon coverage for Program C D5");
 assert(publicOpinionScripts.length >= 5, "public_opinion_scripts needs at least 5 templates for Program C D5");
-assert(profilePuzzles.length >= 4, "profile_puzzles needs at least 4 puzzles for Program C D6");
+assert(profilePuzzles.length >= 3, "profile_puzzles needs 3 official sets from the Feishu text config");
 assert(buyerNegotiationScripts.length >= 6, "buyer_negotiation_scripts needs 6 scripts for Program C D6");
 assert(dailyMonologues.length >= 7, "daily_monologues needs 7 daily monologues for Program C D6");
 assert(blackBoxLines.length >= 10, "black_box_lines needs at least 10 voice lines for Program C D5");
@@ -173,6 +190,7 @@ for (const dataType of dataTypes) {
 }
 
 const cardDataTypes = new Set(cardTemplates.map((card) => card.dataType));
+const userIds = new Set(users.map((user) => user.id));
 
 for (const card of cardTemplates) {
   assert(dataTypes.has(card.dataType), `card ${card.id} invalid dataType: ${card.dataType}`);
@@ -181,11 +199,15 @@ for (const card of cardTemplates) {
     `card ${card.id} invalid sensitivity: ${card.sensitivity}`,
   );
   assert(Array.isArray(card.userProfileTags), `card ${card.id} missing userProfileTags`);
+  assert(card.summary, `card ${card.id} missing summary`);
+  assert(userIds.has(card.relatedUserId), `card ${card.id} references unknown user: ${card.relatedUserId}`);
   assertKnownPlaceholders(card.title, `card ${card.id} title`, variables);
+  assertKnownPlaceholders(card.summary, `card ${card.id} summary`, variables);
   assertKnownPlaceholders(card.description, `card ${card.id} description`, variables);
 
   const usedVariables = new Set([
     ...collectPlaceholders(card.title),
+    ...collectPlaceholders(card.summary),
     ...collectPlaceholders(card.description),
   ]);
 
@@ -241,6 +263,20 @@ for (const recipe of recipes) {
     newsTemplates.some((news) => news.relatedPackageType === recipe.packageType),
     `recipe ${recipe.id} has no news template for package: ${recipe.packageType}`,
   );
+
+  if (recipe.priceRange !== undefined) {
+    assert(Array.isArray(recipe.priceRange) && recipe.priceRange.length === 2, `recipe ${recipe.id} invalid priceRange`);
+    assert(recipe.priceRange[0] <= recipe.priceRange[1], `recipe ${recipe.id} priceRange min exceeds max`);
+  }
+
+  if (recipe.newsSeverity !== undefined) {
+    assert(
+      Number.isInteger(recipe.newsSeverity) &&
+        recipe.newsSeverity >= 1 &&
+        recipe.newsSeverity <= 5,
+      `recipe ${recipe.id} invalid newsSeverity`,
+    );
+  }
 }
 
 for (const buyer of buyers) {
@@ -261,6 +297,17 @@ for (const news of newsTemplates) {
   );
   assertKnownPlaceholders(news.headline, `news ${news.id} headline`, variables);
   assertKnownPlaceholders(news.body, `news ${news.id} body`, variables);
+
+  for (const userId of news.relatedUserIds ?? []) {
+    assert(userIds.has(userId), `news ${news.id} references unknown user: ${userId}`);
+  }
+
+  if (news.severity !== undefined) {
+    assert(
+      Number.isInteger(news.severity) && news.severity >= 1 && news.severity <= 5,
+      `news ${news.id} invalid severity`,
+    );
+  }
 
   for (const emotionKey of emotionKeys) {
     assert(news.emotionResponses?.[emotionKey], `news ${news.id} missing ${emotionKey} response`);
@@ -476,7 +523,15 @@ for (const line of blackBoxLines) {
 
   if (line.relatedChallengeDay !== undefined) {
     assert(
-      challengeDays.has(line.relatedChallengeDay),
+      Number.isInteger(line.relatedChallengeDay) &&
+        line.relatedChallengeDay >= 1 &&
+        line.relatedChallengeDay <= 7,
+      `black_box_line ${line.id} invalid related day: ${line.relatedChallengeDay}`,
+    );
+
+    assert(
+      !line.stage.startsWith("challenge_") ||
+        challengeDays.has(line.relatedChallengeDay),
       `black_box_line ${line.id} references unknown challenge day: ${line.relatedChallengeDay}`,
     );
   }

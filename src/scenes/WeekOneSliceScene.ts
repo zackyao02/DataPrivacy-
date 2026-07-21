@@ -184,11 +184,15 @@ export class WeekOneSliceScene implements Scene {
       const rect = cardRects[index];
       const selected = selectedIds.has(card.id);
       const title = this.controller.fillText(card.title);
+      const summary = this.controller.fillText(card.summary);
 
       this.drawPanel(context, rect, selected ? "#263d34" : "#141d22", selected ? "#77b8ad" : "#33424a");
       context.fillStyle = selected ? "#9fd6ca" : "#d7e2dc";
       context.font = "700 11px ui-monospace, Consolas, monospace";
       this.drawWrappedText(context, title, rect.x + 9, rect.y + 10, rect.width - 18, 2, 13);
+      context.fillStyle = "#aebbb7";
+      context.font = "500 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, summary, rect.x + 9, rect.y + 39, rect.width - 18, 1, 12);
       context.fillStyle = card.sensitivity === "high" ? "#e0a166" : "#87b6ac";
       context.font = "600 9px ui-monospace, Consolas, monospace";
       context.fillText(`${card.dataType} · ${card.sensitivity}`, rect.x + 9, rect.y + rect.height - 18);
@@ -452,7 +456,7 @@ export class WeekOneSliceScene implements Scene {
       this.drawWrappedText(context, item.label, rect.x + 8, rect.y + 32, rect.width - 16, 1, 13);
       context.fillStyle = "#91a09b";
       context.font = "500 9px ui-monospace, Consolas, monospace";
-      this.drawWrappedText(context, item.description, rect.x + 8, rect.y + 48, rect.width - 16, 2, 12);
+      this.drawWrappedText(context, item.description, rect.x + 8, rect.y + 48, rect.width - 16, 1, 12);
     });
   }
 
@@ -810,9 +814,9 @@ export class WeekOneSliceScene implements Scene {
 
   private getCleaningItemRects(layout: Layout, count: number): readonly Rect[] {
     const panel = this.getMiniGamePanelRect(layout);
-    const columns = panel.width >= 340 ? 2 : 1;
+    const columns = panel.width >= 620 ? 4 : panel.width >= 420 ? 3 : 2;
 
-    return this.getMiniGameItemRects(layout, count, 204, 58, columns);
+    return this.getMiniGameItemRects(layout, count, 190, 52, columns);
   }
 
   private getPuzzleFragmentRects(layout: Layout, count: number): readonly Rect[] {

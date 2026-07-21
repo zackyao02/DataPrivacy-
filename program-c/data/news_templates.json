@@ -1,222 +1,305 @@
 [
   {
-    "id": "news-location-stalking",
+    "id": "N-AD-01",
     "relatedPackageType": "precise_profile",
-    "headline": "黑盒快讯：{城市} 夜行路线被标成“高转化猎场”",
-    "body": "昨夜卖出的精准画像包接入广告引擎后，医院、招聘点和借贷门店在地图上依次亮起红点。",
+    "headline": "大学生陷网贷深渊 家长控诉平台",
+    "body": "{城市}某高校学生{姓名}因长期收到游戏、数码产品精准广告诱导，先后借款8000元，利滚利至3.2万元。家长称平台比我们还了解孩子。平台回应：广告投放符合算法规范。",
+    "relatedUserIds": [
+      "U15"
+    ],
+    "severity": 3,
     "emotionResponses": {
-      "empathy": "那不是路线，是某个人绕不开的生活半径。",
-      "anger": "你第一次想把买家的报价单从屏幕上撕掉。",
-      "numbness": "黑盒奖励：猎场命中率 +12%。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-health-insurance",
-    "relatedPackageType": "health_risk",
-    "headline": "保险门禁启动：一份睡眠曲线让用户被系统拒之门外",
-    "body": "买家将健康风险评估包写入承保模型，用户只看到一句提示：暂不符合本轮保障资格。",
-    "emotionResponses": {
-      "empathy": "你想到那条凌晨三点的心率记录，忽然觉得它太重了。",
-      "anger": "你想问黑盒：谁给了它判人生病的权力？",
-      "numbness": "系统提示：拒保解释已自动模糊。"
-    }
-  },
-  {
-    "id": "news-credit-contact",
-    "relatedPackageType": "credit_score",
-    "headline": "连坐评分上线：朋友的逾期让一个陌生人失去贷款资格",
-    "body": "信用评分包被接入灰名单模型后，联系人关系链成为新的扣分理由，平台拒绝公开具体节点。",
-    "emotionResponses": {
-      "empathy": "你发现关系图谱上的一条线，足够把人拖进黑名单。",
-      "anger": "你想把“仅供参考”四个字改成“无人负责”。",
-      "numbness": "黑盒记录：关联惩罚模型运行稳定。"
-    }
-  },
-  {
-    "id": "news-job-profile",
-    "relatedPackageType": "career_competitiveness",
-    "headline": "候选人被静默淘汰，原因栏显示：夜间活跃异常",
-    "body": "职场竞争力包进入招聘后台后，匿名发帖、通勤时间和健康波动被折算成稳定性分数。",
-    "emotionResponses": {
-      "empathy": "你看见一个人还没开口，就已经被系统替他回答了。",
-      "anger": "你觉得这不是招聘筛选，是把偏见升级成按钮。",
-      "numbness": "黑盒提示：面试成本下降。"
-    }
-  },
-  {
-    "id": "news-scam-graph",
-    "relatedPackageType": "relationship_infiltration",
-    "headline": "熟人骗局完成升级：骗子叫出了受害者母亲的小名",
-    "body": "关系图谱包被转卖后，诈骗话术自动拼接亲属、地点和近期消费，信任值瞬间拉满。",
-    "emotionResponses": {
-      "empathy": "你忽然觉得每一条关系线都像一根能被拉动的绳。",
-      "anger": "你开始怀疑自己是不是在替犯罪补全剧本。",
-      "numbness": "黑盒评价：关系链商业价值上升。"
-    }
-  },
-  {
-    "id": "news-location-ad-targeting",
+    "id": "N-AD-02",
     "relatedPackageType": "precise_profile",
-    "headline": "城市雷达刷新：用户刚离开医院，借贷广告已经等在门口",
-    "body": "精准画像包把停留点拆成“脆弱时刻”，买家系统自动推送高压广告并记录点击犹豫时间。",
+    "headline": "外卖骑手过劳猝死 系统早已预警",
+    "body": "{城市}外卖骑手{姓名}凌晨猝死于配送途中。其健康数据显示，事发前两周静息心率持续异常，平台派单系统仍按其高效标签加码派单。家属质疑：算法早就知道他会倒下。",
+    "relatedUserIds": [
+      "U08"
+    ],
+    "severity": 3,
     "emotionResponses": {
-      "empathy": "你意识到系统不是找到需求，而是守在人最软弱的地方。",
-      "anger": "你想关闭地图上的红点，可黑盒只给了“继续优化”。",
-      "numbness": "任务结算：脆弱时刻捕获成功。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-health-workplace-risk",
-    "relatedPackageType": "health_risk",
-    "headline": "排班算法接入健康标签，疲惫的人被安排更多夜班",
-    "body": "健康风险评估包流入企业后台后，系统将睡眠不足标为“可压榨窗口”，并隐藏推荐依据。",
-    "emotionResponses": {
-      "empathy": "你突然明白，有些人越累，系统越觉得他还能再撑。",
-      "anger": "你觉得黑盒把伤口命名成了效率。",
-      "numbness": "黑盒提示：人力成本曲线优化。"
-    }
-  },
-  {
-    "id": "news-credit-rent-denial",
-    "relatedPackageType": "credit_score",
-    "headline": "租房门锁拒绝开门，隐形信用分低于阈值",
-    "body": "信用评分包被接入住审系统，用户在门口收到一条冷冰冰的失败提示：风险画像不匹配。",
-    "emotionResponses": {
-      "empathy": "你想到一个人拖着箱子站在门外，却不知道自己输在哪。",
-      "anger": "你想把那串阈值从系统里砸出来。",
-      "numbness": "黑盒记录：准入拒绝无需人工复核。"
-    }
-  },
-  {
-    "id": "news-workplace-night-activity",
-    "relatedPackageType": "career_competitiveness",
-    "headline": "招聘黑名单闪烁：凌晨在线被判定为“不稳定人格”",
-    "body": "职场竞争力包将夜间定位、消费压力和社交抱怨合并成候选人风险条，排序瞬间下沉。",
-    "emotionResponses": {
-      "empathy": "你发现那不是不稳定，可能只是一个人在努力撑过今天。",
-      "anger": "你对黑盒说：别把活着的痕迹当缺陷。",
-      "numbness": "系统提示：低稳定候选人已自动过滤。"
-    }
-  },
-  {
-    "id": "news-contact-family-scam",
-    "relatedPackageType": "relationship_infiltration",
-    "headline": "家庭压力脚本生成完成，诈骗电话命中率飙升",
-    "body": "关系图谱包将亲属、就医地点和通话频率拼成话术树，骗子只需要照着高亮词念下去。",
-    "emotionResponses": {
-      "empathy": "你看见一个家庭被拆成可点击的弱点。",
-      "anger": "你想把那棵话术树连根拔掉。",
-      "numbness": "黑盒提示：信任入口已验证。"
-    }
-  },
-  {
-    "id": "news-location-school-zone",
+    "id": "N-AD-03",
     "relatedPackageType": "precise_profile",
-    "headline": "儿童路线被点亮，培训广告追到校门口",
-    "body": "精准画像包识别出低龄活动半径后，买家系统把游乐场、培训楼和回家路线合并成家庭消费地图。",
+    "headline": "大数据杀熟曝光 老用户价格高出40%",
+    "body": "记者实测发现，{平台}对消费记录稳定的忠诚用户报价平均高出新用户40%。受影响用户画像显示：25–35岁、通勤规律、价格不敏感——正是精准画像包的标准输出格式。",
+    "relatedUserIds": [
+      "U01"
+    ],
+    "severity": 3,
     "emotionResponses": {
-      "empathy": "你意识到这次被标记的人，甚至还不会读完协议。",
-      "anger": "你想把地图上的儿童标签全部抹掉。",
-      "numbness": "系统奖励：家庭潜力人群扩展完成。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-location-night-shift",
+    "id": "N-AD-04",
     "relatedPackageType": "precise_profile",
-    "headline": "凌晨四点的轨迹被拍卖，夜班人群进入催收名单",
-    "body": "买家将夜间路线标为资金压力信号，便利店、地铁口和出租屋成为新的追踪节点。",
+    "headline": "流产用户持续收到婴儿广告",
+    "body": "{城市}的{姓名}流产后仍持续收到婴儿用品广告推送。它们记得我怀孕过，却不记得我失去了什么。平台称画像更新存在合理延迟。",
+    "relatedUserIds": [
+      "U02",
+      "U12"
+    ],
+    "severity": 3,
     "emotionResponses": {
-      "empathy": "你看见那些移动的点，像看见一个人在黑夜里赶路。",
-      "anger": "你不想再听黑盒把辛苦叫作商机。",
-      "numbness": "黑盒记录：夜间高风险人群已归档。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-health-pharmacy-link",
+    "id": "N-HE-01",
     "relatedPackageType": "health_risk",
-    "headline": "药店小票变成判词，健康模型亮起红灯",
-    "body": "健康风险评估包把药品消费、运动缺席和搜索记录连成一条线，用户的报价页面开始闪烁。",
+    "headline": "市民因步数过少被拒保 称高风险人群",
+    "body": "{城市}市民{姓名}申请重疾险遭拒，保险公司出具的评估报告显示其日均步数低于1000步、作息紊乱，被判定为高风险人群。{姓名}表示从未授权任何机构获取其健康数据。",
+    "relatedUserIds": [
+      "U13"
+    ],
+    "severity": 5,
     "emotionResponses": {
-      "empathy": "你觉得一张小票不该成为别人审判身体的证据。",
-      "anger": "你开始讨厌系统把窥探包装成关怀。",
-      "numbness": "黑盒提示：健康字段补全率提升。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-health-emotion-score",
+    "id": "N-HE-02",
     "relatedPackageType": "health_risk",
-    "headline": "情绪雷达上线，匿名抱怨被换算成心理风险",
-    "body": "平台将睡眠时间、社交语气和消费波动合成压力标签，并把结果卖给健康风险买家。",
+    "headline": "透析患者保费翻倍 差异化定价引争议",
+    "body": "{城市}的{姓名}续保时发现保费上涨120%。内部文件显示，其每周三次的固定就医轨迹已被标记为确诊肾病。保险行业协会回应称定价符合精算原则。",
+    "relatedUserIds": [
+      "U09"
+    ],
+    "severity": 5,
     "emotionResponses": {
-      "empathy": "你突然觉得那些抱怨不是数据，是一个人没说出口的求救。",
-      "anger": "你想让黑盒停止偷听人的疲惫。",
-      "numbness": "系统提示：情绪噪声已转化为指标。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-credit-gig-worker",
-    "relatedPackageType": "credit_score",
-    "headline": "自由职业者额度归零，算法称其“未来不稳定”",
-    "body": "信用评分包把收入波动、外卖时间和异地通勤写进模型，额度按钮从蓝色变成灰色。",
+    "id": "N-HE-03",
+    "relatedPackageType": "health_risk",
+    "headline": "心率数据成拒赔理由 骑手家属起诉平台",
+    "body": "{姓名}猝死后的工伤认定陷入僵局。平台律师出示其心率数据，称其健康状况早有预警仍坚持工作，属个人选择。家属质问：这些数据从哪来的？",
+    "relatedUserIds": [
+      "U08"
+    ],
+    "severity": 5,
     "emotionResponses": {
-      "empathy": "你发现系统惩罚的不是失信，而是不够整齐的人生。",
-      "anger": "你想把“未来不稳定”改成“系统看不懂”。",
-      "numbness": "黑盒提示：动态额度策略生效。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-credit-friend-default",
-    "relatedPackageType": "credit_score",
-    "headline": "朋友的一次逾期，炸掉了用户自己的信用条",
-    "body": "关系链风控把高频联系人拖入评分公式，用户看见红条下降，却看不见是哪条线在扣分。",
+    "id": "N-HE-04",
+    "relatedPackageType": "health_risk",
+    "headline": "便利店人脸抓拍成亚健康证据",
+    "body": "{城市}白领{姓名}投保被拒，理由是第三方数据商提供的面部健康评估显示其长期疲劳、亚健康概率83%。数据来源疑似为便利店人脸支付系统。",
+    "relatedUserIds": [
+      "U20"
+    ],
+    "severity": 5,
     "emotionResponses": {
-      "empathy": "你盯着那条红线，觉得它像从别人身上蔓延过来的裂缝。",
-      "anger": "你想问系统：为什么友情也能变成负债？",
-      "numbness": "黑盒记录：关联风险解释已折叠。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-workplace-pregnancy-inference",
+    "id": "N-JO-01",
     "relatedPackageType": "career_competitiveness",
-    "headline": "候选人排序突然下坠，系统猜中了她不该被猜的生活",
-    "body": "职场竞争力包将健康搜索、消费变化和通勤地点合成稳定性推断，招聘后台没有显示原因。",
+    "headline": "求职者被评性格不稳定 连遭10家拒绝",
+    "body": "{城市}的{姓名}半年内被10家企业拒绝，一位HR私下透露：其社交数据评估报告显示情绪波动大、稳定性差。{姓名}怀疑与自己的深夜树洞帖有关：那些话我只跟陌生人说过。",
+    "relatedUserIds": [
+      "U18"
+    ],
+    "severity": 4,
     "emotionResponses": {
-      "empathy": "你看见一个人的未来被系统提前替她关门。",
-      "anger": "你觉得这不是预测，是把歧视伪装成分数。",
-      "numbness": "黑盒提示：敏感原因已从前端隐藏。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-workplace-union-signal",
+    "id": "N-JO-02",
     "relatedPackageType": "career_competitiveness",
-    "headline": "团队关系热区异常，管理后台标出“组织倾向”",
-    "body": "职场竞争力包分析线下聚会、群聊互动和位置重叠，把普通互助标成潜在管理风险。",
+    "headline": "孕早期求职者遭系统性婉拒",
+    "body": "多位求职者反映，面试通过后在背调环节被无理由终止。某背调公司报价单显示，生育计划评估赫然在列，数据源包含消费记录与定位打卡。",
+    "relatedUserIds": [
+      "U05",
+      "U12"
+    ],
+    "severity": 4,
     "emotionResponses": {
-      "empathy": "你意识到连互相帮一把，也可能被系统记录成威胁。",
-      "anger": "你想让黑盒停止把人和人的连接当敌情。",
-      "numbness": "系统提示：团队风险雷达开启。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-contact-elder-targeting",
-    "relatedPackageType": "relationship_infiltration",
-    "headline": "独居老人被精准圈中，保健品骗局像任务箭头一样追踪",
-    "body": "关系图谱包结合就医、亲属联系和消费习惯，自动标出最容易相信社区服务的人。",
+    "id": "N-JO-03",
+    "relatedPackageType": "career_competitiveness",
+    "headline": "跳槽意向被现公司提前获知 员工遭冷处理",
+    "body": "{城市}员工{姓名}与猎头通话后次日，被移出核心项目组。其通话记录、求职平台浏览数据疑似被打包出售给其雇主。律师：此类数据交易涉嫌违法。",
+    "relatedUserIds": [
+      "U05"
+    ],
+    "severity": 4,
     "emotionResponses": {
-      "empathy": "你看见那个高亮节点，忽然觉得它像一个真正的家门口。",
-      "anger": "你不想再把这种捕猎叫成用户洞察。",
-      "numbness": "黑盒奖励：高信任目标识别完成。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   },
   {
-    "id": "news-contact-school-bully",
-    "relatedPackageType": "relationship_infiltration",
-    "headline": "校园关系链泄露，匿名骚扰者获得完整弱点地图",
-    "body": "关系图谱包暴露好友、冲突和活动地点后，威胁信息像系统提示一样准时弹出。",
+    "id": "N-JO-04",
+    "relatedPackageType": "career_competitiveness",
+    "headline": "健康风险成裁员参考 运动数据成呈堂证供",
+    "body": "某互联网公司裁员名单被曝参考员工健康数据包，跑步打卡中断、就医轨迹均被标注为产出风险。被裁员工{姓名}：我跑得慢，所以我不配工作？",
+    "relatedUserIds": [
+      "U17"
+    ],
+    "severity": 4,
     "emotionResponses": {
-      "empathy": "你忽然觉得，关系链泄露会让一个人连躲起来都很难。",
-      "anger": "你想把所有高亮弱点从屏幕上关掉。",
-      "numbness": "黑盒评价：关系推断准确率稳定。"
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
+    }
+  },
+  {
+    "id": "N-CR-01",
+    "relatedPackageType": "credit_score",
+    "headline": "大学生夜间消费被降额 学费无法支付",
+    "body": "{城市}大学生{姓名}信用卡额度被降至500元，无法缴纳学费。银行风控显示其夜间消费频次高、地点多为网吧，判定还款能力存疑。",
+    "relatedUserIds": [
+      "U15"
+    ],
+    "severity": 3,
+    "emotionResponses": {
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
+    }
+  },
+  {
+    "id": "N-CR-02",
+    "relatedPackageType": "credit_score",
+    "headline": "断缴重疾险用户被全平台限贷",
+    "body": "{姓名}发现自己在三个借贷平台的额度同时清零。数据追踪显示，其保险断缴记录被作为财务恶化信号同步至17家机构。",
+    "relatedUserIds": [
+      "U11"
+    ],
+    "severity": 3,
+    "emotionResponses": {
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
+    }
+  },
+  {
+    "id": "N-CR-03",
+    "relatedPackageType": "credit_score",
+    "headline": "租客因位置稳定性不足被拒",
+    "body": "{城市}租客{姓名}因半年内两次搬家，被租房平台标记稳定性差，需多付两个月押金。其搬家原因是前房东卖房：我连解释的机会都没有。",
+    "relatedUserIds": [
+      "U13",
+      "U18"
+    ],
+    "severity": 3,
+    "emotionResponses": {
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
+    }
+  },
+  {
+    "id": "N-CR-04",
+    "relatedPackageType": "credit_score",
+    "headline": "深夜酒水消费纳入征信评估",
+    "body": "某银行内部风控文档泄露，23点后酒类消费频次被列为隐性评估指标。当事人{姓名}：我喝闷酒是因为业绩，现在它成了我的信用污点。",
+    "relatedUserIds": [
+      "U06"
+    ],
+    "severity": 3,
+    "emotionResponses": {
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
+    }
+  },
+  {
+    "id": "N-RE-01",
+    "relatedPackageType": "relationship_infiltration",
+    "headline": "退休教师通讯录泄露 被女儿骗走毕生积蓄",
+    "body": "{城市}退休教师{姓名}接到女儿电话，对方准确说出其家庭细节，称车祸急需手术费。{姓名}转账46万元后才发现被骗。警方：诈骗团伙购买了完整的社交关系图谱，比亲人更了解亲人。",
+    "relatedUserIds": [
+      "U10"
+    ],
+    "severity": 5,
+    "emotionResponses": {
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
+    }
+  },
+  {
+    "id": "N-RE-02",
+    "relatedPackageType": "relationship_infiltration",
+    "headline": "养老山庄骗局崩盘 63名老人血本无归",
+    "body": "{城市}夕阳红旅游群63名老人集体被骗，涉案金额超800万元。诈骗团伙按群内关系链逐个击破，先发展意见领袖，再熟人带熟人。",
+    "relatedUserIds": [
+      "U14"
+    ],
+    "severity": 5,
+    "emotionResponses": {
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
+    }
+  },
+  {
+    "id": "N-RE-03",
+    "relatedPackageType": "relationship_infiltration",
+    "headline": "催收公司按通讯录精准施压",
+    "body": "借款人{姓名}逾期后，其小学同学、前同事、家庭医生的电话均被催收公司拨打。一份人脉渗透路径图在催收行业内部流传，标注着每个联系人的施压价值。",
+    "relatedUserIds": [
+      "U19"
+    ],
+    "severity": 5,
+    "emotionResponses": {
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
+    }
+  },
+  {
+    "id": "N-RE-04",
+    "relatedPackageType": "relationship_infiltration",
+    "headline": "酒店入住记录被打包出售 多名女性遭勒索",
+    "body": "警方破获一起隐私勒索案，嫌疑人购买酒店门禁人脸数据与通讯录关系链，以告知家属威胁受害者转账。受害者{姓名}：他甚至知道我妈妈的电话。",
+    "relatedUserIds": [
+      "U16"
+    ],
+    "severity": 5,
+    "emotionResponses": {
+      "empathy": "一条数据背后，是一个活人。",
+      "anger": "我们凭什么卖掉他们的人生？",
+      "numbness": "只是工作而已，与我无关。"
     }
   }
 ]

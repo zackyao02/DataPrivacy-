@@ -1,162 +1,259 @@
 [
   {
-    "id": "user-lin-qiao",
-    "name": "林乔",
-    "city": "杭州",
-    "ageRange": "24-29",
-    "background": "刚入职的产品运营，经常深夜通勤。",
-    "tags": ["workplace", "commute"]
+    "id": "U01",
+    "name": "陈立",
+    "city": "临江市",
+    "ageRange": "29",
+    "occupation": "程序员",
+    "background": "连续加班63天，想攒够首付给女友一个家，体检报告一直没敢打开。",
+    "tags": [
+      "通勤族",
+      "加班"
+    ],
+    "newsDirection": "精准画像（杀熟）"
   },
   {
-    "id": "user-chen-ming",
-    "name": "陈明",
-    "city": "宁波",
-    "ageRange": "35-42",
-    "background": "有房贷压力的销售经理，近期频繁搜索保险。",
-    "tags": ["credit", "health_hint"]
+    "id": "U02",
+    "name": "林晓芸",
+    "city": "云州市",
+    "ageRange": "31",
+    "occupation": "全职妈妈",
+    "background": "孩子8个月，奶粉换成了便宜牌子，夜里算账单算到两点。",
+    "tags": [
+      "母婴消费",
+      "价格敏感"
+    ],
+    "newsDirection": "精准画像（母婴广告）"
   },
   {
-    "id": "user-xu-ran",
-    "name": "许然",
-    "city": "上海",
-    "ageRange": "20-25",
-    "background": "大学生，社交平台活跃，常参加线下活动。",
-    "tags": ["social", "location"]
+    "id": "U03",
+    "name": "周雅芝",
+    "city": "北岗市",
+    "ageRange": "26",
+    "occupation": "护士",
+    "background": "妈妈确诊后，她白天安慰病人，夜里安慰妈妈，手术费还差4万。",
+    "tags": [
+      "深夜聊天",
+      "医疗费"
+    ],
+    "newsDirection": "健康包／信用包"
   },
   {
-    "id": "user-tang-yue",
-    "name": "唐悦",
-    "city": "杭州",
-    "ageRange": "28-34",
-    "background": "自由职业者，依赖多个平台接单。",
-    "tags": ["platform", "consumption"]
+    "id": "U04",
+    "name": "王建国",
+    "city": "南汀市",
+    "ageRange": "45",
+    "occupation": "出租车司机",
+    "background": "每天开14小时车供儿子上大学，最怕生病——病一天就没一天的钱。",
+    "tags": [
+      "疲惫",
+      "长工时"
+    ],
+    "newsDirection": "健康包"
   },
   {
-    "id": "user-zhao-ning",
-    "name": "赵宁",
-    "city": "苏州",
-    "ageRange": "31-38",
-    "background": "长期佩戴智能手环，健康数据记录完整。",
-    "tags": ["health", "biometric"]
+    "id": "U05",
+    "name": "张琪",
+    "city": "西岭市",
+    "ageRange": "28",
+    "occupation": "外企职员",
+    "background": "怀孕两个月没敢告诉公司，偷偷联系猎头，怕一透露就再找不到工作。",
+    "tags": [
+      "跳槽",
+      "猎头"
+    ],
+    "newsDirection": "职场包"
   },
   {
-    "id": "user-wu-xia",
-    "name": "吴夏",
-    "city": "广州",
-    "ageRange": "26-32",
-    "background": "互联网客服主管，常在深夜处理投诉工单。",
-    "tags": ["workplace", "night", "social"]
+    "id": "U06",
+    "name": "刘伟",
+    "city": "临江市",
+    "ageRange": "35",
+    "occupation": "销售",
+    "background": "业绩垫底三个月，靠酒精入睡，两张信用卡倒着还。",
+    "tags": [
+      "深夜酒水",
+      "信用卡"
+    ],
+    "newsDirection": "信用包"
   },
   {
-    "id": "user-he-yuan",
-    "name": "何远",
-    "city": "深圳",
-    "ageRange": "30-36",
-    "background": "外卖站点调度员，路线记录和收入波动非常频繁。",
-    "tags": ["location", "platform", "consumption"]
+    "id": "U07",
+    "name": "赵淑芬",
+    "city": "云州市",
+    "ageRange": "58",
+    "occupation": "退休工人",
+    "background": "肺癌中期，在互助群里和病友互相打气，最怕靶向药不能报销。",
+    "tags": [
+      "抗癌互助群"
+    ],
+    "newsDirection": "健康包"
   },
   {
-    "id": "user-liang-sen",
-    "name": "梁森",
-    "city": "成都",
-    "ageRange": "40-46",
-    "background": "小店经营者，近期多次申请短期周转资金。",
-    "tags": ["credit", "consumption", "loan"]
+    "id": "U08",
+    "name": "孙鹏",
+    "city": "北岗市",
+    "ageRange": "24",
+    "occupation": "外卖骑手",
+    "background": "站点单王，月跑900单，胸口的刺痛他以为是累的，缓缓就好。",
+    "tags": [
+      "过劳",
+      "心率异常"
+    ],
+    "newsDirection": "健康包／精准画像（猝死）"
   },
   {
-    "id": "user-zhou-min",
-    "name": "周敏",
-    "city": "武汉",
-    "ageRange": "23-28",
-    "background": "护理专业毕业生，社交平台上记录了求职和轮班压力。",
-    "tags": ["health", "workplace", "social"]
+    "id": "U09",
+    "name": "马国栋",
+    "city": "南汀市",
+    "ageRange": "52",
+    "occupation": "公交车司机",
+    "background": "尿毒症两年，每周三次透析，跟单位请了长假，最怕同事知道自己生病。",
+    "tags": [
+      "透析",
+      "固定轨迹"
+    ],
+    "newsDirection": "健康包（拒保）"
   },
   {
-    "id": "user-ma-ke",
-    "name": "马克",
-    "city": "南京",
-    "ageRange": "33-39",
-    "background": "跨城项目经理，常在机场、酒店和客户园区之间移动。",
-    "tags": ["location", "commute", "workplace"]
+    "id": "U10",
+    "name": "李秀英",
+    "city": "西岭市",
+    "ageRange": "63",
+    "occupation": "退休教师",
+    "background": "女儿在国外，每月38通电话是她的念想，老伴走后家里只剩电视的声音。",
+    "tags": [
+      "高频亲情通话"
+    ],
+    "newsDirection": "关系图谱（冒充子女诈骗）"
   },
   {
-    "id": "user-song-yan",
-    "name": "宋妍",
-    "city": "西安",
-    "ageRange": "27-33",
-    "background": "在线教育讲师，直播时段和平台收入高度规律。",
-    "tags": ["platform", "consumption", "social"]
+    "id": "U11",
+    "name": "吴凯",
+    "city": "临江市",
+    "ageRange": "30",
+    "occupation": "自由职业",
+    "background": "接不到单的那个月，他停了缴了4年的重疾险，想着应该不会那么倒霉。",
+    "tags": [
+      "断缴保险"
+    ],
+    "newsDirection": "健康包／信用包"
   },
   {
-    "id": "user-gao-yu",
-    "name": "高宇",
-    "city": "青岛",
-    "ageRange": "45-52",
-    "background": "制造业班组长，长期佩戴健康手环记录睡眠和心率。",
-    "tags": ["health", "wearable", "biometric"]
+    "id": "U12",
+    "name": "何静",
+    "city": "云州市",
+    "ageRange": "27",
+    "occupation": "小学老师",
+    "background": "刚查出怀孕6周，想等稳定再告诉学校，产检都请假去别的区做。",
+    "tags": [
+      "孕早期",
+      "定位打卡"
+    ],
+    "newsDirection": "职场包／精准画像"
   },
   {
-    "id": "user-luo-cheng",
-    "name": "罗程",
-    "city": "天津",
-    "ageRange": "21-26",
-    "background": "应届毕业生，频繁投递岗位并加入多个求职社群。",
-    "tags": ["workplace", "social", "contact_graph"]
+    "id": "U13",
+    "name": "郑浩",
+    "city": "北岗市",
+    "ageRange": "22",
+    "occupation": "待业青年",
+    "background": "毕业一年投了200份简历，渐渐不再出门，白天睡觉夜里打游戏。",
+    "tags": [
+      "低步数",
+      "昼夜颠倒"
+    ],
+    "newsDirection": "信用包（降额）"
   },
   {
-    "id": "user-qian-mo",
-    "name": "钱默",
-    "city": "合肥",
-    "ageRange": "34-41",
-    "background": "网约车司机，夜间接单路线与家庭住址高度重合。",
-    "tags": ["location", "night", "family"]
+    "id": "U14",
+    "name": "王秀兰",
+    "city": "南汀市",
+    "ageRange": "68",
+    "occupation": "退休",
+    "background": "群里的干儿子比亲儿子还亲，带她旅游送她鸡蛋，推荐她买养老山庄。",
+    "tags": [
+      "老年旅游群",
+      "频繁转账"
+    ],
+    "newsDirection": "关系图谱（养老诈骗）"
   },
   {
-    "id": "user-jiang-yi",
-    "name": "蒋一",
-    "city": "厦门",
-    "ageRange": "29-35",
-    "background": "自由摄影师，常在社交平台发布客户现场和行程片段。",
-    "tags": ["social", "location", "platform"]
+    "id": "U15",
+    "name": "刘一鸣",
+    "city": "西岭市",
+    "ageRange": "19",
+    "occupation": "大学生",
+    "background": "给游戏充值借了第一笔网贷，利滚利到8000，不敢告诉家里。",
+    "tags": [
+      "网吧包夜",
+      "网贷"
+    ],
+    "newsDirection": "精准画像（网贷深渊）"
   },
   {
-    "id": "user-fang-ning",
-    "name": "方宁",
-    "city": "长沙",
-    "ageRange": "38-44",
-    "background": "全职照护者，家庭联系人和医院周边定位非常密集。",
-    "tags": ["family", "health_hint", "contact_graph"]
+    "id": "U16",
+    "name": "陈晓",
+    "city": "临江市",
+    "ageRange": "33",
+    "occupation": "市场部经理",
+    "background": "那次出差的酒店记录，她自己都快忘了，数据却还记得。",
+    "tags": [
+      "酒店门禁",
+      "同行人"
+    ],
+    "newsDirection": "关系图谱（隐私勒索）"
   },
   {
-    "id": "user-han-xue",
-    "name": "韩雪",
-    "city": "苏州",
-    "ageRange": "25-31",
-    "background": "电商运营，消费、退货和平台聊天记录高度活跃。",
-    "tags": ["consumption", "platform", "social"]
+    "id": "U17",
+    "name": "周明",
+    "city": "云州市",
+    "ageRange": "36",
+    "occupation": "程序员",
+    "background": "半马爱好者，膝盖受伤停跑后才发现，运动数据早就在警告他。",
+    "tags": [
+      "跑步中断",
+      "骨科"
+    ],
+    "newsDirection": "职场包（健康裁员）"
   },
   {
-    "id": "user-yu-hao",
-    "name": "余浩",
-    "city": "杭州",
-    "ageRange": "42-48",
-    "background": "保险代理人，经常搜索客户健康和家庭关系相关话题。",
-    "tags": ["health_hint", "contact_graph", "workplace"]
+    "id": "U18",
+    "name": "吴小雨",
+    "city": "北岗市",
+    "ageRange": "25",
+    "occupation": "文员",
+    "background": "抑郁确诊那天，她一个人坐高铁去邻市看病，怕被公司知道后优化。",
+    "tags": [
+      "跨城就医",
+      "精神科"
+    ],
+    "newsDirection": "职场包（性格判定）"
   },
   {
-    "id": "user-deng-lan",
-    "name": "邓岚",
-    "city": "重庆",
-    "ageRange": "31-37",
-    "background": "连锁餐饮店长，排班记录和员工沟通群非常集中。",
-    "tags": ["workplace", "social", "contact_graph"]
+    "id": "U19",
+    "name": "张大军",
+    "city": "南汀市",
+    "ageRange": "41",
+    "occupation": "个体户",
+    "background": "催收电话打给了他的小学同学——他通讯录里每个人都被标好了施压价值。",
+    "tags": [
+      "人脉重叠",
+      "网贷"
+    ],
+    "newsDirection": "关系图谱（催收）"
   },
   {
-    "id": "user-bai-shu",
-    "name": "白术",
-    "city": "北京",
-    "ageRange": "36-43",
-    "background": "运动康复师，既产生健康数据，也频繁接触客户个人信息。",
-    "tags": ["health", "biometric", "contact_graph"]
+    "id": "U20",
+    "name": "王倩",
+    "city": "西岭市",
+    "ageRange": "29",
+    "occupation": "文员",
+    "background": "连续加班一个月，便利店买咖啡时的人脸抓拍，成了保险公司眼里亚健康的证据。",
+    "tags": [
+      "面色苍白",
+      "亚健康"
+    ],
+    "newsDirection": "健康包（拒保）"
   }
 ]

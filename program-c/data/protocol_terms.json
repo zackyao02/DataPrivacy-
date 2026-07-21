@@ -1,122 +1,122 @@
 [
   {
-    "id": "protocol-precise-location",
-    "riskyTerm": "持续定位",
-    "disguisedTerm": "位置服务优化",
-    "explanation": "将连续轨迹包装成提升服务体验的必要权限。"
+    "id": "protocol-01-社交",
+    "riskyTerm": "人脸数据",
+    "disguisedTerm": "面部识别优化服务",
+    "explanation": "社交场景：将「人脸数据」包装为「面部识别优化服务」。"
   },
   {
-    "id": "protocol-contact-upload",
-    "riskyTerm": "上传通讯录",
-    "disguisedTerm": "好友发现",
-    "explanation": "用社交便利掩盖联系人关系采集。"
+    "id": "protocol-02-社交",
+    "riskyTerm": "通讯录",
+    "disguisedTerm": "社交关系增强功能",
+    "explanation": "社交场景：将「通讯录」包装为「社交关系增强功能」。"
   },
   {
-    "id": "protocol-health-score",
-    "riskyTerm": "健康风险评分",
-    "disguisedTerm": "个性化健康建议",
-    "explanation": "把敏感健康推断包装成建议功能。"
+    "id": "protocol-03-社交",
+    "riskyTerm": "聊天记录",
+    "disguisedTerm": "对话体验改进样本",
+    "explanation": "社交场景：将「聊天记录」包装为「对话体验改进样本」。"
   },
   {
-    "id": "protocol-consumption-profile",
-    "riskyTerm": "消费能力画像",
-    "disguisedTerm": "优惠推荐",
-    "explanation": "用折扣推荐掩盖消费水平分层。"
+    "id": "protocol-04-社交",
+    "riskyTerm": "位置轨迹",
+    "disguisedTerm": "基于场景的服务推荐",
+    "explanation": "社交场景：将「位置轨迹」包装为「基于场景的服务推荐」。"
   },
   {
-    "id": "protocol-social-sentiment",
-    "riskyTerm": "情绪与社交倾向分析",
-    "disguisedTerm": "内容偏好优化",
-    "explanation": "用内容推荐名义分析用户表达和情绪。"
+    "id": "protocol-05-外卖",
+    "riskyTerm": "实时定位",
+    "disguisedTerm": "配送效率保障数据",
+    "explanation": "外卖场景：将「实时定位」包装为「配送效率保障数据」。"
   },
   {
-    "id": "protocol-biometric-camera",
-    "riskyTerm": "生物特征识别",
-    "disguisedTerm": "安全校验",
-    "explanation": "将步态、面部等数据归入安全功能。"
+    "id": "protocol-06-外卖",
+    "riskyTerm": "消费记录",
+    "disguisedTerm": "口味偏好分析模型",
+    "explanation": "外卖场景：将「消费记录」包装为「口味偏好分析模型」。"
   },
   {
-    "id": "protocol-cross-platform",
-    "riskyTerm": "跨平台数据合并",
-    "disguisedTerm": "统一账户体验",
-    "explanation": "把多平台追踪说成账号体验优化。"
+    "id": "protocol-07-外卖",
+    "riskyTerm": "常驻地址",
+    "disguisedTerm": "常用服务锚点",
+    "explanation": "外卖场景：将「常驻地址」包装为「常用服务锚点」。"
   },
   {
-    "id": "protocol-third-party",
-    "riskyTerm": "第三方共享",
-    "disguisedTerm": "合作伙伴服务",
-    "explanation": "隐藏数据向外部买家流动的事实。"
+    "id": "protocol-08-外卖",
+    "riskyTerm": "支付信息",
+    "disguisedTerm": "便捷结算凭证",
+    "explanation": "外卖场景：将「支付信息」包装为「便捷结算凭证」。"
   },
   {
-    "id": "protocol-retention",
-    "riskyTerm": "长期留存",
-    "disguisedTerm": "历史记录同步",
-    "explanation": "将超长保存周期包装成同步便利。"
+    "id": "protocol-09-求职",
+    "riskyTerm": "浏览记录",
+    "disguisedTerm": "职业发展倾向画像",
+    "explanation": "求职场景：将「浏览记录」包装为「职业发展倾向画像」。"
   },
   {
-    "id": "protocol-risk-model",
-    "riskyTerm": "自动化风险决策",
-    "disguisedTerm": "智能评估",
-    "explanation": "用智能评估淡化算法直接影响权益的风险。"
+    "id": "protocol-10-求职",
+    "riskyTerm": "技能标签",
+    "disguisedTerm": "能力多维评估参数",
+    "explanation": "求职场景：将「技能标签」包装为「能力多维评估参数」。"
   },
   {
-    "id": "protocol-minor-location",
-    "riskyTerm": "未成年人轨迹采集",
-    "disguisedTerm": "家庭安全提醒",
-    "explanation": "用安全名义包装对儿童活动路线的持续记录。"
+    "id": "protocol-11-求职",
+    "riskyTerm": "社交发言",
+    "disguisedTerm": "文化适配度参考",
+    "explanation": "求职场景：将「社交发言」包装为「文化适配度参考」。"
   },
   {
-    "id": "protocol-night-pattern",
-    "riskyTerm": "夜间活动模式分析",
-    "disguisedTerm": "作息体验优化",
-    "explanation": "把深夜行动和停留点推断包装成作息建议。"
+    "id": "protocol-12-求职",
+    "riskyTerm": "健康数据",
+    "disguisedTerm": "岗位匹配生理基线",
+    "explanation": "求职场景：将「健康数据」包装为「岗位匹配生理基线」。"
   },
   {
-    "id": "protocol-pharmacy-purchase",
-    "riskyTerm": "药品消费记录关联",
-    "disguisedTerm": "健康服务推荐",
-    "explanation": "用服务推荐掩盖药品消费被用于健康推断。"
+    "id": "protocol-13-金融",
+    "riskyTerm": "银行卡流水",
+    "disguisedTerm": "资金行为分析样本",
+    "explanation": "金融场景：将「银行卡流水」包装为「资金行为分析样本」。"
   },
   {
-    "id": "protocol-emotion-inference",
-    "riskyTerm": "心理压力推断",
-    "disguisedTerm": "情绪关怀提示",
-    "explanation": "把社交表达、睡眠和消费波动组合成压力标签。"
+    "id": "protocol-14-金融",
+    "riskyTerm": "借贷记录",
+    "disguisedTerm": "信用履约参考系数",
+    "explanation": "金融场景：将「借贷记录」包装为「信用履约参考系数」。"
   },
   {
-    "id": "protocol-gig-income",
-    "riskyTerm": "收入稳定性推断",
-    "disguisedTerm": "额度动态管理",
-    "explanation": "用额度管理淡化对非固定收入人群的风险分层。"
+    "id": "protocol-15-金融",
+    "riskyTerm": "夜间消费",
+    "disguisedTerm": "消费时段特征标签",
+    "explanation": "金融场景：将「夜间消费」包装为「消费时段特征标签」。"
   },
   {
-    "id": "protocol-association-risk",
-    "riskyTerm": "联系人风险牵连",
-    "disguisedTerm": "社交信用参考",
-    "explanation": "将他人的风险转移到用户评分中。"
+    "id": "protocol-16-金融",
+    "riskyTerm": "工资入账",
+    "disguisedTerm": "收入稳定性指标",
+    "explanation": "金融场景：将「工资入账」包装为「收入稳定性指标」。"
   },
   {
-    "id": "protocol-pregnancy-inference",
-    "riskyTerm": "生育计划推断",
-    "disguisedTerm": "职业稳定性参考",
-    "explanation": "用稳定性名义隐藏对敏感生活状态的推断。"
+    "id": "protocol-17-游戏",
+    "riskyTerm": "在线时长",
+    "disguisedTerm": "用户粘性活跃度",
+    "explanation": "游戏场景：将「在线时长」包装为「用户粘性活跃度」。"
   },
   {
-    "id": "protocol-union-signal",
-    "riskyTerm": "组织倾向识别",
-    "disguisedTerm": "团队协作分析",
-    "explanation": "把线下关系和群体互动包装成协作效率数据。"
+    "id": "protocol-18-游戏",
+    "riskyTerm": "充值记录",
+    "disguisedTerm": "付费意愿分层参数",
+    "explanation": "游戏场景：将「充值记录」包装为「付费意愿分层参数」。"
   },
   {
-    "id": "protocol-elder-targeting",
-    "riskyTerm": "老人脆弱性画像",
-    "disguisedTerm": "适老化服务推荐",
-    "explanation": "用适老服务包装对独居、就医和消费弱点的识别。"
+    "id": "protocol-19-游戏",
+    "riskyTerm": "好友列表",
+    "disguisedTerm": "社交裂变触达网络",
+    "explanation": "游戏场景：将「好友列表」包装为「社交裂变触达网络」。"
   },
   {
-    "id": "protocol-school-social",
-    "riskyTerm": "学生关系链暴露",
-    "disguisedTerm": "校园社交体验",
-    "explanation": "用社交体验掩盖对学生好友和冲突关系的分析。"
+    "id": "protocol-20-游戏",
+    "riskyTerm": "设备信息",
+    "disguisedTerm": "多终端协同标识",
+    "explanation": "游戏场景：将「设备信息」包装为「多终端协同标识」。"
   }
 ]

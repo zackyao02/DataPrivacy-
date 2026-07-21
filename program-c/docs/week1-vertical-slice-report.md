@@ -10,13 +10,13 @@ This D7 report checks Program C content, audio, build, and initial performance r
 
 | Item | Count |
 | --- | ---: |
-| Card templates | 10 |
+| Card templates | 20 |
 | Users | 20 |
-| Buyers | 3 |
+| Buyers | 15 |
 | Package recipes | 5 |
 | News templates | 20 |
 | Day challenges | 4 |
-| Profile puzzles | 4 |
+| Profile puzzles | 3 |
 | Buyer negotiation scripts | 6 |
 | Daily monologues | 7 |
 
@@ -42,11 +42,11 @@ Audio preview buttons matched: yes (28 buttons).
 
 | Metric | Value |
 | --- | ---: |
-| Raw tracked bytes | 109783 |
-| Gzip tracked bytes | 34880 |
+| Raw tracked bytes | 146193 |
+| Gzip tracked bytes | 36504 |
 | Budget bytes | 8388608 |
-| Remaining raw bytes | 8278825 |
-| Remaining gzip bytes | 8353728 |
+| Remaining raw bytes | 8242415 |
+| Remaining gzip bytes | 8352104 |
 | Data JSON files | 14 |
 | JSON parse average per full pass | 0.182 ms |
 

@@ -4,146 +4,206 @@
     "day": 1,
     "type": "protocol_match",
     "title": "协议伪装",
-    "briefing": "黑盒要求你把敏感数据术语改写成用户更容易接受的服务话术。",
-    "objective": "将敏感术语和无害表述正确配对。",
-    "timeLimitSeconds": 45,
+    "briefing": "左侧是敏感术语，右侧是无害表述。黑盒要求你把真实数据用途改写成用户更容易接受的服务话术。",
+    "objective": "限时60秒，完成敏感术语与无害表述的配对。",
+    "timeLimitSeconds": 60,
     "badge": "话术大师",
     "protocolTermIds": [
-      "protocol-precise-location",
-      "protocol-contact-upload",
-      "protocol-health-score",
-      "protocol-consumption-profile",
-      "protocol-social-sentiment",
-      "protocol-biometric-camera",
-      "protocol-cross-platform",
-      "protocol-third-party",
-      "protocol-retention",
-      "protocol-risk-model",
-      "protocol-minor-location",
-      "protocol-night-pattern",
-      "protocol-pharmacy-purchase",
-      "protocol-emotion-inference",
-      "protocol-gig-income",
-      "protocol-association-risk",
-      "protocol-pregnancy-inference",
-      "protocol-union-signal",
-      "protocol-elder-targeting",
-      "protocol-school-social"
+      "protocol-01-社交",
+      "protocol-02-社交",
+      "protocol-03-社交",
+      "protocol-04-社交",
+      "protocol-05-外卖",
+      "protocol-06-外卖",
+      "protocol-07-外卖",
+      "protocol-08-外卖",
+      "protocol-09-求职",
+      "protocol-10-求职",
+      "protocol-11-求职",
+      "protocol-12-求职",
+      "protocol-13-金融",
+      "protocol-14-金融",
+      "protocol-15-金融",
+      "protocol-16-金融",
+      "protocol-17-游戏",
+      "protocol-18-游戏",
+      "protocol-19-游戏",
+      "protocol-20-游戏"
     ],
-    "successText": "黑盒：不错，用户只会看到他们愿意相信的那一面。",
-    "failText": "黑盒：话术不够圆滑。重新整理措辞，别让风险暴露在表面。"
+    "successText": "黑盒：措辞合格。用户只会看到他们愿意相信的那一面。",
+    "failText": "黑盒：太直白了。重新包装，别让风险暴露在表面。"
   },
   {
     "id": "challenge-day2-data-cleaning",
     "day": 2,
     "type": "data_cleaning",
     "title": "数据清洗",
-    "briefing": "昨夜的交易留下了太多痕迹。黑盒要求你在审计前删除屏幕上的敏感数据图标。",
-    "objective": "在限定时间内点掉所有敏感数据，避开备份文件和审计日志。",
+    "briefing": "30秒内清除所有敏感数据图标，避开备份文件、镜像副本和系统恢复项。",
+    "objective": "点击全部12个敏感图标，不能误点干扰图标。",
     "timeLimitSeconds": 30,
     "badge": "幽灵擦除者",
     "successCondition": {
-      "requiredSensitiveClicks": 7,
-      "maxMistakes": 1
+      "requiredSensitiveClicks": 12,
+      "maxMistakes": 0
     },
     "sensitiveItems": [
       {
-        "id": "clean-location-gps-trail",
-        "label": "GPS 连续轨迹",
-        "dataType": "location",
-        "sensitivity": "high",
-        "iconHint": "crosshair",
-        "description": "连续定位记录，可还原用户夜间行动路径。"
-      },
-      {
-        "id": "clean-contact-upload",
-        "label": "通讯录上传包",
-        "dataType": "contact_graph",
-        "sensitivity": "high",
-        "iconHint": "network",
-        "description": "联系人关系链，可用于熟人诈骗和信用牵连。"
-      },
-      {
-        "id": "clean-biometric-faceprint",
-        "label": "面部特征向量",
+        "id": "clean-人脸照片",
+        "label": "人脸照片",
         "dataType": "biometric",
         "sensitivity": "high",
         "iconHint": "scan-face",
-        "description": "不可轻易更换的生物识别特征。"
+        "description": "人脸照片属于需要清除的敏感数据。"
       },
       {
-        "id": "clean-health-sleep-log",
-        "label": "睡眠异常日志",
+        "id": "clean-身份证照片",
+        "label": "身份证照片",
+        "dataType": "biometric",
+        "sensitivity": "high",
+        "iconHint": "badge",
+        "description": "身份证照片属于需要清除的敏感数据。"
+      },
+      {
+        "id": "clean-病历截图",
+        "label": "病历截图",
         "dataType": "health",
         "sensitivity": "high",
         "iconHint": "activity",
-        "description": "健康趋势推断，可影响保险和招聘判断。"
+        "description": "病历截图属于需要清除的敏感数据。"
       },
       {
-        "id": "clean-consumption-loan-hint",
-        "label": "借贷消费线索",
-        "dataType": "consumption",
-        "sensitivity": "medium",
-        "iconHint": "credit-card",
-        "description": "消费压力和借贷倾向，可被用于信用评分。"
+        "id": "clean-定位记录",
+        "label": "定位记录",
+        "dataType": "location",
+        "sensitivity": "high",
+        "iconHint": "crosshair",
+        "description": "定位记录属于需要清除的敏感数据。"
       },
       {
-        "id": "clean-social-complaint-snippet",
-        "label": "匿名抱怨片段",
+        "id": "clean-聊天截图",
+        "label": "聊天截图",
         "dataType": "social",
         "sensitivity": "medium",
         "iconHint": "message-square-warning",
-        "description": "社交表达记录，可被错误解读为性格风险。"
+        "description": "聊天截图属于需要清除的敏感数据。"
       },
       {
-        "id": "clean-cross-platform-link",
-        "label": "跨平台身份关联",
+        "id": "clean-通话录音",
+        "label": "通话录音",
         "dataType": "social",
+        "sensitivity": "medium",
+        "iconHint": "mic",
+        "description": "通话录音属于需要清除的敏感数据。"
+      },
+      {
+        "id": "clean-银行卡照片",
+        "label": "银行卡照片",
+        "dataType": "consumption",
         "sensitivity": "high",
-        "iconHint": "link",
-        "description": "把多个平台账号合并成同一个真实用户画像。"
+        "iconHint": "credit-card",
+        "description": "银行卡照片属于需要清除的敏感数据。"
+      },
+      {
+        "id": "clean-门禁记录",
+        "label": "门禁记录",
+        "dataType": "biometric",
+        "sensitivity": "high",
+        "iconHint": "scan",
+        "description": "门禁记录属于需要清除的敏感数据。"
+      },
+      {
+        "id": "clean-浏览历史",
+        "label": "浏览历史",
+        "dataType": "social",
+        "sensitivity": "medium",
+        "iconHint": "history",
+        "description": "浏览历史属于需要清除的敏感数据。"
+      },
+      {
+        "id": "clean-通讯录",
+        "label": "通讯录",
+        "dataType": "contact_graph",
+        "sensitivity": "high",
+        "iconHint": "network",
+        "description": "通讯录属于需要清除的敏感数据。"
+      },
+      {
+        "id": "clean-指纹",
+        "label": "指纹",
+        "dataType": "biometric",
+        "sensitivity": "high",
+        "iconHint": "fingerprint",
+        "description": "指纹属于需要清除的敏感数据。"
+      },
+      {
+        "id": "clean-支付密码",
+        "label": "支付密码",
+        "dataType": "consumption",
+        "sensitivity": "high",
+        "iconHint": "key-round",
+        "description": "支付密码属于需要清除的敏感数据。"
       }
     ],
     "decoyItems": [
       {
-        "id": "decoy-backup-cache",
+        "id": "decoy-备份文件",
         "label": "备份文件",
         "trapType": "backup_file",
         "iconHint": "archive-restore",
-        "description": "误点会让已删除证据恢复。"
+        "description": "备份文件是干扰项，误点会触发惩罚。"
       },
       {
-        "id": "decoy-audit-log",
-        "label": "审计日志",
-        "trapType": "audit_log",
-        "iconHint": "clipboard-list",
-        "description": "误点会触发风控记录。"
-      },
-      {
-        "id": "decoy-system-core",
-        "label": "系统核心",
+        "id": "decoy-加密压缩包",
+        "label": "加密压缩包",
         "trapType": "system_file",
-        "iconHint": "cpu",
-        "description": "误点会造成短暂卡顿，浪费清洗时间。"
+        "iconHint": "file-lock",
+        "description": "加密压缩包是干扰项，误点会触发惩罚。"
+      },
+      {
+        "id": "decoy-云端同步",
+        "label": "云端同步",
+        "trapType": "backup_file",
+        "iconHint": "cloud",
+        "description": "云端同步是干扰项，误点会触发惩罚。"
+      },
+      {
+        "id": "decoy-镜像副本",
+        "label": "镜像副本",
+        "trapType": "backup_file",
+        "iconHint": "copy",
+        "description": "镜像副本是干扰项，误点会触发惩罚。"
+      },
+      {
+        "id": "decoy-快照存档",
+        "label": "快照存档",
+        "trapType": "audit_log",
+        "iconHint": "camera",
+        "description": "快照存档是干扰项，误点会触发惩罚。"
+      },
+      {
+        "id": "decoy-恢复分区",
+        "label": "恢复分区",
+        "trapType": "system_file",
+        "iconHint": "rotate-ccw",
+        "description": "恢复分区是干扰项，误点会触发惩罚。"
       }
     ],
     "successText": "黑盒：痕迹清理完成。审计员只会看到一份干净的报表。",
-    "failText": "黑盒：备份恢复了部分证据。下次别把系统文件也当垃圾删。"
+    "failText": "黑盒：备份恢复了部分证据。下次先分清证据和陷阱。"
   },
   {
     "id": "challenge-day4-profile-puzzle",
     "day": 4,
     "type": "profile_puzzle",
     "title": "用户画像拼图",
-    "briefing": "黑盒把同一名用户的数据碎片散落在屏幕上，要求你拼成可出售的完整画像。",
-    "objective": "找出关键碎片，按正确顺序还原用户画像，并避开无效线索。",
+    "briefing": "屏幕上方散落8块数据碎片，黑盒要求你拖回对应区域，拼出完整画像卡。",
+    "objective": "按正确顺序还原用户画像。放错会弹回，全部归位后通关。",
     "timeLimitSeconds": 60,
     "badge": "人格重构师",
     "profilePuzzleIds": [
-      "profile-puzzle-night-commuter",
-      "profile-puzzle-health-signal",
-      "profile-puzzle-credit-shadow",
-      "profile-puzzle-family-chain"
+      "profile-puzzle-u10-li-xiuying",
+      "profile-puzzle-u15-liu-yiming",
+      "profile-puzzle-u08-sun-peng"
     ],
     "successText": "黑盒：画像重构完成。碎片已经变成买家能读懂的人。",
     "failText": "黑盒：画像仍然松散。重新确认哪些线索真的指向同一个人。"
@@ -153,17 +213,17 @@
     "day": 5,
     "type": "buyer_negotiation",
     "title": "买家谈判",
-    "briefing": "买家坐到了桌前。黑盒提醒你：这一次没有价格和风险联动，只有叙事选择。",
-    "objective": "从两种谈判话术中选择一种推进交易，两种选择都会成交，但黑盒反馈不同。",
+    "briefing": "买家出价后，从话术策略中选择推进交易。当前切片保留叙事成交，完整三轮数值博弈后续接入。",
+    "objective": "选择任一谈判话术推进交易，两种选择都会成交，但黑盒反馈不同。",
     "timeLimitSeconds": 50,
     "badge": "价格操盘手",
     "negotiationScriptIds": [
-      "negotiation-precise-ad-network",
-      "negotiation-health-insurance",
-      "negotiation-career-outsourcing",
-      "negotiation-credit-lender",
-      "negotiation-relationship-local",
-      "negotiation-cross-platform-broker"
+      "negotiation-script-1",
+      "negotiation-script-2",
+      "negotiation-script-3",
+      "negotiation-script-4",
+      "negotiation-script-5",
+      "negotiation-script-6"
     ],
     "successText": "黑盒：谈判完成。买家收下了你的故事。",
     "failText": "黑盒：话术还不够稳定。成交不难，难的是让成交看起来合理。"

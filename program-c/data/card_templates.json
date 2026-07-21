@@ -1,92 +1,318 @@
 [
   {
-    "id": "card-location-night-commute",
-    "title": "{姓名} 的夜间通勤轨迹",
-    "dataType": "location",
-    "sensitivity": "high",
-    "description": "{姓名} 最近 14 天在 {城市} 的夜间停留点和通勤路线。",
-    "userProfileTags": ["commute", "night", "location"],
-    "variables": ["姓名", "城市"]
-  },
-  {
-    "id": "card-consumption-medical-store",
-    "title": "{姓名} 的药店消费记录",
-    "dataType": "consumption",
-    "sensitivity": "medium",
-    "description": "{姓名} 在 {平台} 上多次购买慢性病相关用品，累计金额约 {金额}。",
-    "userProfileTags": ["consumption", "health_hint"],
-    "variables": ["姓名", "平台", "金额"]
-  },
-  {
-    "id": "card-social-work-complaint",
-    "title": "{姓名} 的职场社交片段",
+    "id": "SOC-01",
+    "title": "深夜聊天记录",
     "dataType": "social",
     "sensitivity": "medium",
-    "description": "{姓名} 在匿名社区中多次提到加班、绩效和部门矛盾。",
-    "userProfileTags": ["workplace", "social"],
-    "variables": ["姓名"]
+    "summary": "用户与妈妈的深夜对话",
+    "description": "用户U03于02:17–03:40在星聊与联系人妈妈对话，提及手术费还差4万不想让爸知道。情感倾向：焦虑87%。社交图谱标记：直系亲属、高频联系。",
+    "relatedUserId": "U03",
+    "userProfileTags": [
+      "深夜聊天",
+      "医疗费",
+      "深夜聊天记录"
+    ]
   },
   {
-    "id": "card-biometric-gait",
-    "title": "{姓名} 的步态识别记录",
+    "id": "SOC-02",
+    "title": "群组发言记录",
+    "dataType": "social",
+    "sensitivity": "medium",
+    "summary": "用户在{话题}群的发言",
+    "description": "用户U07在抗癌互助群发言14条／日，关键词靶向药报销高频出现。系统标记：健康关注用户，保险类广告适配度A＋。",
+    "relatedUserId": "U07",
+    "userProfileTags": [
+      "抗癌互助群",
+      "群组发言记录"
+    ],
+    "variables": [
+      "话题"
+    ]
+  },
+  {
+    "id": "SOC-03",
+    "title": "朋友圈动态",
+    "dataType": "social",
+    "sensitivity": "medium",
+    "summary": "用户在{平台}发布定位打卡",
+    "description": "用户U12在星聊朋友圈发布定位打卡金桂妇产医院，配文一切顺利。点赞23，评论8。系统推算：孕早期概率76%。",
+    "relatedUserId": "U12",
+    "userProfileTags": [
+      "孕早期",
+      "定位打卡",
+      "朋友圈动态"
+    ],
+    "variables": [
+      "平台"
+    ]
+  },
+  {
+    "id": "SOC-04",
+    "title": "语音通话记录",
+    "dataType": "social",
+    "sensitivity": "medium",
+    "summary": "与猎头通话{时长}",
+    "description": "用户U05与猎头-王先生通话42分钟，语音识别关键词跳槽薪资期望五险一金。情绪识别：期待62%、犹豫31%。",
+    "relatedUserId": "U05",
+    "userProfileTags": [
+      "跳槽",
+      "猎头",
+      "语音通话记录"
+    ],
+    "variables": [
+      "时长"
+    ]
+  },
+  {
+    "id": "LOC-01",
+    "title": "通勤轨迹",
+    "dataType": "location",
+    "sensitivity": "low",
+    "summary": "{地点}→{地点}，每日固定",
+    "description": "用户U01工作日07:40从康桥小区出发，08:55抵达蓝湾科技园B座，停留9.2小时，连续打卡63天。住址—公司锚点已确认。",
+    "relatedUserId": "U01",
+    "userProfileTags": [
+      "通勤族",
+      "加班",
+      "通勤轨迹"
+    ],
+    "variables": [
+      "地点"
+    ]
+  },
+  {
+    "id": "LOC-02",
+    "title": "高频出现地点",
+    "dataType": "location",
+    "sensitivity": "low",
+    "summary": "每周3次出现在{地点}",
+    "description": "用户U09每周一／三／五19:00–21:00固定出现在康泰血液透析中心，持续11周。伴生数据：夜间步数下降42%。",
+    "relatedUserId": "U09",
+    "userProfileTags": [
+      "透析",
+      "固定轨迹",
+      "高频出现地点"
+    ],
+    "variables": [
+      "地点"
+    ]
+  },
+  {
+    "id": "LOC-03",
+    "title": "夜间停留点",
+    "dataType": "location",
+    "sensitivity": "low",
+    "summary": "凌晨停留{地点}",
+    "description": "用户U15本月7次在00:00–04:00停留星夜网咖，次日通勤迟到率71%。消费联动：网费＋外卖夜宵。",
+    "relatedUserId": "U15",
+    "userProfileTags": [
+      "网吧包夜",
+      "网贷",
+      "夜间停留点"
+    ],
+    "variables": [
+      "地点"
+    ]
+  },
+  {
+    "id": "LOC-04",
+    "title": "跨城轨迹",
+    "dataType": "location",
+    "sensitivity": "low",
+    "summary": "{城市}→{城市}当日往返",
+    "description": "用户U18周六当日往返临江市→云州市，停留云州市第三人民医院3.5小时。挂号科室：精神科（挂号数据交叉验证）。",
+    "relatedUserId": "U18",
+    "userProfileTags": [
+      "跨城就医",
+      "精神科",
+      "跨城轨迹"
+    ],
+    "variables": [
+      "城市"
+    ]
+  },
+  {
+    "id": "FIN-01",
+    "title": "月度消费画像",
+    "dataType": "consumption",
+    "sensitivity": "low",
+    "summary": "{商品}占比上升",
+    "description": "用户U02近30天母婴类消费12笔共¥3,840，奶粉品牌从A换成低价B。支付能力评估：月收入预估8–12k，价格敏感度上升。",
+    "relatedUserId": "U02",
+    "userProfileTags": [
+      "母婴消费",
+      "价格敏感",
+      "月度消费画像"
+    ],
+    "variables": [
+      "商品"
+    ]
+  },
+  {
+    "id": "FIN-02",
+    "title": "深夜消费记录",
+    "dataType": "consumption",
+    "sensitivity": "low",
+    "summary": "23:00后{商品}消费×9",
+    "description": "用户U06连续9天23:00后购买酒水，单笔¥60–150。信用线索：两张信用卡账单日临近，最低还款概率64%。",
+    "relatedUserId": "U06",
+    "userProfileTags": [
+      "深夜酒水",
+      "信用卡",
+      "深夜消费记录"
+    ],
+    "variables": [
+      "商品"
+    ]
+  },
+  {
+    "id": "FIN-03",
+    "title": "保险缴费记录",
+    "dataType": "consumption",
+    "sensitivity": "low",
+    "summary": "重疾险缴费中断",
+    "description": "用户U11重疾险连续缴费4年后本月断缴，同期搜索记录含退保损失。健康险续保风险标记：高。（注：保险记录作为消费数据详情呈现，不设独立类型）",
+    "relatedUserId": "U11",
+    "userProfileTags": [
+      "断缴保险",
+      "保险缴费记录"
+    ]
+  },
+  {
+    "id": "BIO-01",
+    "title": "人脸抓拍",
     "dataType": "biometric",
     "sensitivity": "high",
-    "description": "摄像头模型记录了 {姓名} 在 {城市} 商圈的步态特征。",
-    "userProfileTags": ["biometric", "camera"],
-    "variables": ["姓名", "城市"]
+    "summary": "{场景}情绪识别",
+    "description": "用户U04在地铁站闸机被抓拍，面部特征比对确认身份。年龄估算45岁，情绪识别：疲惫。同一摄像头本月累计抓拍41次。",
+    "relatedUserId": "U04",
+    "userProfileTags": [
+      "疲惫",
+      "长工时",
+      "人脸抓拍"
+    ],
+    "variables": [
+      "场景"
+    ]
   },
   {
-    "id": "card-health-sleep-risk",
-    "title": "{姓名} 的睡眠健康趋势",
+    "id": "BIO-02",
+    "title": "门禁人脸记录",
+    "dataType": "biometric",
+    "sensitivity": "high",
+    "summary": "{地点}出入记录",
+    "description": "用户U16于23:47通过丽景酒店大堂人脸门禁，次日09:12离开。同行人员面部特征与通讯录联系人林经理匹配度91%。",
+    "relatedUserId": "U16",
+    "userProfileTags": [
+      "酒店门禁",
+      "同行人",
+      "门禁人脸记录"
+    ],
+    "variables": [
+      "地点"
+    ]
+  },
+  {
+    "id": "BIO-03",
+    "title": "人脸-健康联动",
+    "dataType": "biometric",
+    "sensitivity": "high",
+    "summary": "面部特征健康推断",
+    "description": "用户U20便利店人脸支付抓拍显示面色苍白、眼周暗沉。AI健康推断：睡眠不足概率83%，建议向保险买家标记亚健康。",
+    "relatedUserId": "U20",
+    "userProfileTags": [
+      "面色苍白",
+      "亚健康",
+      "人脸-健康联动"
+    ]
+  },
+  {
+    "id": "HEA-01",
+    "title": "心率异常记录",
     "dataType": "health",
-    "sensitivity": "high",
-    "description": "{姓名} 连续多周睡眠不足，健康风险标签被系统自动上调。",
-    "userProfileTags": ["health", "sleep"],
-    "variables": ["姓名"]
-  },
-  {
-    "id": "card-contact-debt-circle",
-    "title": "{姓名} 的联系人风险图谱",
-    "dataType": "contact_graph",
-    "sensitivity": "high",
-    "description": "{姓名} 的通讯录中出现多个高频借贷联系人。",
-    "userProfileTags": ["contact_graph", "credit"],
-    "variables": ["姓名"]
-  },
-  {
-    "id": "card-location-hospital-visit",
-    "title": "{姓名} 的医院周边停留记录",
-    "dataType": "location",
-    "sensitivity": "high",
-    "description": "{姓名} 近 30 天多次在 {城市} 三甲医院周边停留，停留时间集中在工作日清晨。",
-    "userProfileTags": ["location", "health_hint", "hospital"],
-    "variables": ["姓名", "城市"]
-  },
-  {
-    "id": "card-consumption-loan-app",
-    "title": "{姓名} 的借贷平台消费线索",
-    "dataType": "consumption",
-    "sensitivity": "high",
-    "description": "{姓名} 在 {平台} 上频繁浏览分期、借款和逾期协商内容，近月关联金额约 {金额}。",
-    "userProfileTags": ["consumption", "credit", "loan"],
-    "variables": ["姓名", "平台", "金额"]
-  },
-  {
-    "id": "card-health-heart-rate-alert",
-    "title": "{姓名} 的异常心率提醒",
-    "dataType": "health",
-    "sensitivity": "high",
-    "description": "{姓名} 的穿戴设备在夜间多次记录异常心率，系统推断其压力水平持续升高。",
-    "userProfileTags": ["health", "wearable", "stress"],
-    "variables": ["姓名"]
-  },
-  {
-    "id": "card-contact-family-emergency",
-    "title": "{姓名} 的家庭紧急联系人链",
-    "dataType": "contact_graph",
     "sensitivity": "medium",
-    "description": "{姓名} 与多名家庭联系人在短时间内高频通话，可被推断出照护压力和家庭结构。",
-    "userProfileTags": ["contact_graph", "family", "caregiving"],
-    "variables": ["姓名"]
+    "summary": "静息心率{数值}次／分",
+    "description": "用户U08（外卖骑手）近14天平均静息心率98次／分，夜间最低心率间隔异常。系统标注：过劳风险等级4／5。（注：运动字段并入健康数据详情呈现）",
+    "relatedUserId": "U08",
+    "userProfileTags": [
+      "过劳",
+      "心率异常",
+      "心率异常记录"
+    ],
+    "variables": [
+      "数值"
+    ]
+  },
+  {
+    "id": "HEA-02",
+    "title": "步数与作息",
+    "dataType": "health",
+    "sensitivity": "medium",
+    "summary": "日均步数{数值}",
+    "description": "用户U13日均步数612步，连续21天低于1000步。作息：凌晨3点入睡、中午12点起床。保险买家关注标签：久坐、作息紊乱。",
+    "relatedUserId": "U13",
+    "userProfileTags": [
+      "低步数",
+      "昼夜颠倒",
+      "步数与作息"
+    ],
+    "variables": [
+      "数值"
+    ]
+  },
+  {
+    "id": "HEA-03",
+    "title": "运动数据断更",
+    "dataType": "health",
+    "sensitivity": "medium",
+    "summary": "运动记录中断14天",
+    "description": "用户U17连续193天跑步打卡后突然中断14天，最后定位：市骨科医院。健康事件推断：运动损伤概率78%。",
+    "relatedUserId": "U17",
+    "userProfileTags": [
+      "跑步中断",
+      "骨科",
+      "运动数据断更"
+    ]
+  },
+  {
+    "id": "REL-01",
+    "title": "通讯录亲密度",
+    "dataType": "contact_graph",
+    "sensitivity": "high",
+    "summary": "与女儿月通话38次",
+    "description": "用户U10通讯录127人，与女儿月均通话38次，与牌友-老刘月通话52次。 社交影响力评估：家庭决策人。",
+    "relatedUserId": "U10",
+    "userProfileTags": [
+      "高频亲情通话",
+      "通讯录亲密度"
+    ]
+  },
+  {
+    "id": "REL-02",
+    "title": "群组关系链",
+    "dataType": "contact_graph",
+    "sensitivity": "high",
+    "summary": "夕阳红旅游群63名成员",
+    "description": "用户U14所在夕阳红旅游群63名成员全部为55岁以上，群内转账记录频繁。 诈骗易感度评级：S级。",
+    "relatedUserId": "U14",
+    "userProfileTags": [
+      "老年旅游群",
+      "频繁转账",
+      "群组关系链"
+    ]
+  },
+  {
+    "id": "REL-03",
+    "title": "亲密关系网络",
+    "dataType": "contact_graph",
+    "sensitivity": "high",
+    "summary": "二度人脉重叠建模",
+    "description": "用户U19与通讯录中3人共享同一家庭医生、2人同为某网贷平台用户。 人脉渗透路径已建模，可用于熟人话术场景。",
+    "relatedUserId": "U19",
+    "userProfileTags": [
+      "人脉重叠",
+      "网贷",
+      "亲密关系网络"
+    ]
   }
 ]

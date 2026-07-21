@@ -5,7 +5,7 @@
 ## 当前完成
 
 - D1：本地工具链、内容校验、离线清单、包体检查、Web Audio 音频管理器框架。
-- D2：10 套数据卡牌、20 个用户画像、变量填充系统、数据流入音效、三种情绪选择音效。
+- D2：初版数据卡牌、20 个用户画像、变量填充系统、数据流入音效、三种情绪选择音效。
 - D3：10 条新闻模板、新闻与数据包类型匹配、打包封装/霓虹充能/交易封装音效事件。
 - D4：新闻模板扩到 20 条，协议伪装配对扩到 20 组，新增新闻播报音效和 BGM 切换事件。
 - D5：数据清洗图标配置、舆论操控话术、黑盒评价台词、通用小关卡成败音效和黑盒台词音效绑定。
@@ -14,6 +14,7 @@
 - 架构审查修复：补充 Program C TypeScript 验收、严格打包预览契约、未知音效事件提示、主应用调试入口接入。
 - D7 后联调：主应用 `workbench`、`news`、`mini-game` 已接入 Program C 内容与音效，支持卡槽打包、新闻反馈、情绪选择和小关卡入口。
 - D8：Week 1 小关卡已接入内容驱动点击规则，支持 Day 1 协议伪装、Day 2 数据清洗、Day 4 画像拼图、Day 5 买家谈判的进度反馈和成败音效。
+- D7 内容对齐补充：根据最新飞书“文本配置”更新 Week 1 垂直切片验收前已有内容口径，升级已存在的数据卡、用户、新闻、协议词、清洗图标、舆论题、画像拼图、谈判话术、每日独白和黑盒台词；新增同步脚本。未接入玩法的 Day 3 / Day 6 / Day 7 / 结局 / UI 文案仅作为后续开发依据。
 
 ## 目录说明
 
@@ -23,6 +24,7 @@
 - `src/audio/AudioManager.ts`：基于 Web Audio API 的事件音效和 BGM 管理器。
 - `src/audio/soundMap.ts`：程序 A / B 可调用的事件名到音效 ID 的映射。
 - `scripts/validate-content.mjs`：JSON 内容校验。
+- `scripts/sync-feishu-text-config.mjs`：从本地飞书 Markdown 快照同步文本配置到 JSON 内容库。
 - `scripts/bundle-size-report.mjs`：8MB 包体预算检查。
 - `scripts/week1-vertical-slice-report.mjs`：D7 垂直切片内容、音效和性能初测报告。
 - `docs/audio-preview.html`：本地音效试听页。

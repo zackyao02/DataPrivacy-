@@ -3,13 +3,12 @@
     "id": "monologue-day-1",
     "day": 1,
     "trigger": "after_news",
-    "title": "第一天的回声",
+    "title": "Day 1",
     "speaker": "player_inner_voice",
     "typewriterSoundEvent": "monologueType",
     "textSegments": [
-      "第一笔交易像一次普通点击，屏幕亮了一下，然后什么都没有发生。",
-      "可新闻里的那个人，正在用自己的生活解释一组她从未见过的标签。",
-      "黑盒说这只是开始。它的语气平稳得像天气预报。"
+      "第一天。监控室比想象中冷，屏幕的光照得人脸色发青。7天试用期，咬咬牙就过去了。",
+      "卖数据原来这么简单，拖一下，点一下，钱就到了。"
     ],
     "closingCue": "news_to_workbench"
   },
@@ -17,83 +16,77 @@
     "id": "monologue-day-2",
     "day": 2,
     "trigger": "after_news",
-    "title": "清理之后",
+    "title": "Day 2",
     "speaker": "player_inner_voice",
     "typewriterSoundEvent": "monologueType",
     "textSegments": [
-      "我删掉的是图标，不是事实。",
-      "黑盒把审计日志叫作噪音，把人的痕迹叫作成本。",
-      "如果一份报表看起来干净，是不是就代表没人受伤。"
+      "昨晚睡得不太好。算了，只是一份工作。哪家公司不收集数据呢。",
+      "保险公司要的包，我卖了三份。新闻说有人被拒保了。应该……和我没关系吧。"
     ],
-    "closingCue": "return_to_blackbox"
+    "closingCue": "news_to_workbench"
   },
   {
     "id": "monologue-day-3",
     "day": 3,
     "trigger": "after_news",
-    "title": "热搜背面",
+    "title": "Day 3",
     "speaker": "player_inner_voice",
     "typewriterSoundEvent": "monologueType",
     "textSegments": [
-      "新闻开始变得熟悉：先是便利，然后是公平，最后是安全。",
-      "每个词都像一块干净的布，盖住下面越来越清楚的轮廓。",
-      "我发现自己已经能猜到黑盒下一句会怎么说。"
+      "今天手很顺。配方都背下来了，黑盒夸我了。我居然有点高兴。",
+      "那个骑手的新闻我看了三遍。系统早就知道他会倒下。那我们呢？我们知道吗？"
     ],
-    "closingCue": "emotion_choice"
+    "closingCue": "news_to_workbench"
   },
   {
     "id": "monologue-day-4",
     "day": 4,
     "trigger": "after_news",
-    "title": "拼图",
+    "title": "Day 4",
     "speaker": "player_inner_voice",
     "typewriterSoundEvent": "monologueType",
     "textSegments": [
-      "碎片排成一行以后，用户就不再像一个人。",
-      "他变成路线、压力、关系和风险提示，变成买家能读懂的故事。",
-      "最可怕的是，这个故事看起来很完整。"
+      "我学会不看卡片详情了。看得越少，打得越快。",
+      "朋友问我新工作怎么样。我说挺好的，做数据分析。他没再问，我也没再讲。"
     ],
-    "closingCue": "profile_puzzle"
+    "closingCue": "news_to_workbench"
   },
   {
     "id": "monologue-day-5",
     "day": 5,
     "trigger": "after_news",
-    "title": "谈判桌",
+    "title": "Day 5",
     "speaker": "player_inner_voice",
     "typewriterSoundEvent": "monologueType",
     "textSegments": [
-      "今天的选择没有失败分支。",
-      "我说稀缺，买家点头；我说长期合作，买家也点头。",
-      "黑盒让我明白，成交有时候不是答案，而是问题被提前写好了。"
+      "又溢价了。我现在的打包速度是第一天的三倍。",
+      "我开始做梦。梦里全是传送带，卡片上是我自己的脸。"
     ],
-    "closingCue": "buyer_negotiation"
+    "closingCue": "news_to_workbench"
   },
   {
     "id": "monologue-day-6",
     "day": 6,
     "trigger": "after_news",
-    "title": "公开说明",
+    "title": "Day 6",
     "speaker": "player_inner_voice",
     "typewriterSoundEvent": "monologueType",
     "textSegments": [
-      "我开始替系统写解释，像替一堵墙写道歉信。",
-      "每句话都必须听起来真诚，又不能承认真正发生过什么。",
-      "黑盒说公众需要的是稳定，不是真相。"
+      "明天转正。七个月的空窗期终于要结束了。我告诉自己：坚持完这一天就好。",
+      "六天，172条数据，41个包。我数过。我也数过新闻里的人数。对得上。"
     ],
-    "closingCue": "public_response"
+    "closingCue": "news_to_workbench"
   },
   {
     "id": "monologue-day-7",
     "day": 7,
     "trigger": "after_news",
-    "title": "黑盒之前",
+    "title": "Day 7",
     "speaker": "player_inner_voice",
     "typewriterSoundEvent": "monologueType",
     "textSegments": [
-      "到最后，我已经分不清自己是在操作黑盒，还是黑盒在训练我。",
-      "每一次点击都留下一个理由，每一次沉默都让理由更像规则。",
-      "如果我现在停下，至少还能知道是哪一刻开始不对。"
+      "最后一天。工作台像往常一样亮着，只是每一张卡片都像在反过来看我。",
+      "举报信提交的那一刻，我的手在抖。黑盒熄灭前那句话是对的——我的数据早就被卖了。但至少这一次，卖数据的人是我，说不的人，也是我。"
     ],
     "closingCue": "ending_gate"
   }

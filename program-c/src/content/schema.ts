@@ -18,7 +18,9 @@ export interface CardTemplate {
   readonly title: string;
   readonly dataType: DataType;
   readonly sensitivity: SensitivityLevel;
+  readonly summary: string;
   readonly description: string;
+  readonly relatedUserId: string;
   readonly userProfileTags: readonly string[];
   readonly variables?: readonly string[];
 }
@@ -28,8 +30,10 @@ export interface UserProfile {
   readonly name: string;
   readonly city: string;
   readonly ageRange: string;
+  readonly occupation: string;
   readonly background: string;
   readonly tags: readonly string[];
+  readonly newsDirection?: string;
 }
 
 export interface Buyer {
@@ -38,6 +42,8 @@ export interface Buyer {
   readonly buyerType: string;
   readonly acceptedPackageTypes: readonly string[];
   readonly demandText: string;
+  readonly reputation?: "S" | "A" | "B";
+  readonly appearanceRate?: number;
 }
 
 export interface PackageRecipe {
@@ -45,6 +51,11 @@ export interface PackageRecipe {
   readonly packageType: string;
   readonly requiredDataTypes: readonly DataType[];
   readonly description: string;
+  readonly displayName?: string;
+  readonly buyerType?: string;
+  readonly basePrice?: number;
+  readonly priceRange?: readonly number[];
+  readonly newsSeverity?: number;
 }
 
 export const DAY_CHALLENGE_TYPES = [
@@ -142,6 +153,12 @@ export interface Variables {
   readonly 城市: readonly string[];
   readonly 金额: readonly string[];
   readonly 平台: readonly string[];
+  readonly 地点: readonly string[];
+  readonly 话题: readonly string[];
+  readonly 商品: readonly string[];
+  readonly 时长: readonly string[];
+  readonly 场景: readonly string[];
+  readonly 数值: readonly string[];
 }
 
 export interface NewsTemplate {
@@ -149,6 +166,8 @@ export interface NewsTemplate {
   readonly relatedPackageType: string;
   readonly headline: string;
   readonly body: string;
+  readonly relatedUserIds?: readonly string[];
+  readonly severity?: number;
   readonly emotionResponses: {
     readonly empathy: string;
     readonly anger: string;
@@ -254,6 +273,12 @@ export interface DailyMonologue {
 }
 
 export type BlackBoxLineStage =
+  | "tutorial"
+  | "morning_briefing"
+  | "task_instruction"
+  | "process_feedback"
+  | "evening_summary"
+  | "general_prompt"
   | "challenge_intro"
   | "challenge_success"
   | "challenge_fail"

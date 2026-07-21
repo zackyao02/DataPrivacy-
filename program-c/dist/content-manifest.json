@@ -18,19 +18,19 @@
     "black_box_lines.json"
   ],
   "counts": {
-    "cardTemplates": 10,
+    "cardTemplates": 20,
     "users": 20,
-    "buyers": 3,
+    "buyers": 15,
     "buyerNegotiationScripts": 6,
     "newsTemplates": 20,
     "protocolTerms": 20,
     "packageRecipes": 5,
     "dayChallenges": 4,
-    "dataCleaningIcons": 10,
+    "dataCleaningIcons": 18,
     "dailyMonologues": 7,
-    "profilePuzzles": 4,
-    "publicOpinionScripts": 5,
-    "blackBoxLines": 12
+    "profilePuzzles": 3,
+    "publicOpinionScripts": 10,
+    "blackBoxLines": 62
   },
   "dataTypes": [
     "biometric",
@@ -42,6 +42,7 @@
   ],
   "sensitivityLevels": [
     "high",
+    "low",
     "medium"
   ],
   "packageTypes": [

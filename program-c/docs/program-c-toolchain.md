@@ -15,6 +15,7 @@ npm run report:size
 npm run report:gzip
 npm run report:week1
 npm run check
+node scripts/sync-feishu-text-config.mjs
 ```
 
 ## What Each Command Checks
@@ -29,10 +30,11 @@ npm run check
 | `report:gzip` | Writes `dist/gzip-size-report.json` and prints gzip size against the 8MB budget. |
 | `report:week1` | Writes D7 Week 1 vertical slice reports to `dist/week1-vertical-slice-report.json` and `docs/week1-vertical-slice-report.md`. |
 | `check` | Runs the full Program C TypeScript, validation, build, offline, size, gzip, and Week 1 reporting chain. |
+| `node scripts/sync-feishu-text-config.mjs` | Syncs the local Feishu text-config Markdown snapshot into existing Program C JSON content. Set `FEISHU_TEXT_CONFIG_MD=...` to use a different snapshot. |
 
 ## Edit Workflow
 
-1. Edit content in `data/*.json`.
+1. Edit content in `data/*.json`, or refresh the local Feishu text-config snapshot and run `node scripts/sync-feishu-text-config.mjs`.
 2. If a new content type is added, update `src/content/schema.ts`, `src/content/defaultContentBundle.ts`, `src/content/ContentRepository.ts`, `scripts/validate-content.mjs`, and `scripts/build-content-manifest.mjs`.
 3. If a new audio event is added, update `src/audio/soundMap.ts`, `src/audio/AudioManager.ts`, and `docs/audio-preview.html`.
 4. Run `npm run check`.

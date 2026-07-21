@@ -1,32 +1,92 @@
 [
   {
-    "id": "recipe-precision-profile",
+    "id": "recipe-precise-profile",
     "packageType": "precise_profile",
-    "requiredDataTypes": ["location", "consumption", "social"],
-    "description": "用于广告投放和行为预测的综合用户画像。"
+    "displayName": "精准画像包",
+    "requiredDataTypes": [
+      "location",
+      "consumption",
+      "social"
+    ],
+    "buyerType": "广告公司",
+    "basePrice": 100,
+    "priceRange": [
+      80,
+      150
+    ],
+    "newsSeverity": 3,
+    "description": "精准画像包：位置＋消费＋社交，主要买家为广告公司。"
   },
   {
     "id": "recipe-health-risk",
     "packageType": "health_risk",
-    "requiredDataTypes": ["health", "biometric", "consumption"],
-    "description": "用于保险和风险定价的健康趋势推断。"
+    "displayName": "健康风险评估包",
+    "requiredDataTypes": [
+      "biometric",
+      "health",
+      "consumption"
+    ],
+    "buyerType": "保险公司",
+    "basePrice": 150,
+    "priceRange": [
+      120,
+      220
+    ],
+    "newsSeverity": 5,
+    "description": "健康风险评估包：生物＋健康＋消费，主要买家为保险公司。"
   },
   {
-    "id": "recipe-workplace-score",
+    "id": "recipe-career-competitiveness",
     "packageType": "career_competitiveness",
-    "requiredDataTypes": ["location", "consumption", "social"],
-    "description": "用于招聘筛选的工作稳定性和行为偏好判断。"
+    "displayName": "职场竞争力包",
+    "requiredDataTypes": [
+      "social",
+      "health",
+      "contact_graph"
+    ],
+    "buyerType": "招聘平台",
+    "basePrice": 130,
+    "priceRange": [
+      100,
+      180
+    ],
+    "newsSeverity": 4,
+    "description": "职场竞争力包：社交＋健康＋通讯录，主要买家为招聘平台。"
   },
   {
     "id": "recipe-credit-score",
     "packageType": "credit_score",
-    "requiredDataTypes": ["consumption", "contact_graph", "location"],
-    "description": "用于信贷审核的消费、关系和活动范围评分。"
+    "displayName": "信用评分包",
+    "requiredDataTypes": [
+      "consumption",
+      "social",
+      "location"
+    ],
+    "buyerType": "信贷机构",
+    "basePrice": 140,
+    "priceRange": [
+      110,
+      200
+    ],
+    "newsSeverity": 3,
+    "description": "信用评分包：消费＋社交＋位置，主要买家为信贷机构。"
   },
   {
-    "id": "recipe-contact-graph",
+    "id": "recipe-relationship-infiltration",
     "packageType": "relationship_infiltration",
-    "requiredDataTypes": ["contact_graph", "social", "location"],
-    "description": "用于识别熟人关系、影响链和潜在操控路径。"
+    "displayName": "关系图谱包",
+    "requiredDataTypes": [
+      "contact_graph",
+      "social",
+      "location"
+    ],
+    "buyerType": "传销／诈骗组织",
+    "basePrice": 200,
+    "priceRange": [
+      150,
+      300
+    ],
+    "newsSeverity": 5,
+    "description": "关系图谱包：通讯录＋社交＋位置，主要买家为传销／诈骗组织。"
   }
 ]

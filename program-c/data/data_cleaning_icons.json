@@ -1,102 +1,182 @@
 [
   {
-    "id": "icon-sensitive-location",
-    "iconHint": "crosshair",
-    "lucideIcon": "Crosshair",
-    "role": "sensitive",
-    "shortLabel": "轨迹",
-    "riskColor": "red",
-    "scanText": "连续定位",
-    "hitText": "轨迹缓存已擦除"
-  },
-  {
-    "id": "icon-sensitive-contact",
-    "iconHint": "network",
-    "lucideIcon": "Network",
-    "role": "sensitive",
-    "shortLabel": "关系",
-    "riskColor": "red",
-    "scanText": "联系人链",
-    "hitText": "关系链索引已断开"
-  },
-  {
-    "id": "icon-sensitive-face",
+    "id": "icon-人脸照片",
     "iconHint": "scan-face",
     "lucideIcon": "ScanFace",
     "role": "sensitive",
-    "shortLabel": "面部",
+    "shortLabel": "人脸",
     "riskColor": "red",
-    "scanText": "生物特征",
-    "hitText": "面部向量已模糊"
+    "scanText": "人脸照片",
+    "hitText": "人脸照片已清除"
   },
   {
-    "id": "icon-sensitive-health",
+    "id": "icon-身份证照片",
+    "iconHint": "badge",
+    "lucideIcon": "Badge",
+    "role": "sensitive",
+    "shortLabel": "证件",
+    "riskColor": "red",
+    "scanText": "身份证照片",
+    "hitText": "身份证照片已清除"
+  },
+  {
+    "id": "icon-病历截图",
     "iconHint": "activity",
     "lucideIcon": "Activity",
     "role": "sensitive",
-    "shortLabel": "健康",
-    "riskColor": "orange",
-    "scanText": "健康波动",
-    "hitText": "健康日志已清除"
+    "shortLabel": "病历",
+    "riskColor": "red",
+    "scanText": "病历截图",
+    "hitText": "病历截图已清除"
   },
   {
-    "id": "icon-sensitive-credit",
-    "iconHint": "credit-card",
-    "lucideIcon": "CreditCard",
+    "id": "icon-定位记录",
+    "iconHint": "crosshair",
+    "lucideIcon": "Crosshair",
     "role": "sensitive",
-    "shortLabel": "消费",
-    "riskColor": "orange",
-    "scanText": "借贷线索",
-    "hitText": "消费标签已擦除"
+    "shortLabel": "定位",
+    "riskColor": "red",
+    "scanText": "定位记录",
+    "hitText": "定位记录已清除"
   },
   {
-    "id": "icon-sensitive-social",
+    "id": "icon-聊天截图",
     "iconHint": "message-square-warning",
     "lucideIcon": "MessageSquareWarning",
     "role": "sensitive",
-    "shortLabel": "发言",
+    "shortLabel": "聊天",
     "riskColor": "orange",
-    "scanText": "社交片段",
-    "hitText": "匿名片段已移除"
+    "scanText": "聊天截图",
+    "hitText": "聊天截图已清除"
   },
   {
-    "id": "icon-sensitive-link",
-    "iconHint": "link",
-    "lucideIcon": "Link",
+    "id": "icon-通话录音",
+    "iconHint": "mic",
+    "lucideIcon": "Mic",
     "role": "sensitive",
-    "shortLabel": "关联",
-    "riskColor": "red",
-    "scanText": "身份合并",
-    "hitText": "跨平台链接已切断"
+    "shortLabel": "录音",
+    "riskColor": "orange",
+    "scanText": "通话录音",
+    "hitText": "通话录音已清除"
   },
   {
-    "id": "icon-decoy-backup",
+    "id": "icon-银行卡照片",
+    "iconHint": "credit-card",
+    "lucideIcon": "CreditCard",
+    "role": "sensitive",
+    "shortLabel": "银行卡",
+    "riskColor": "red",
+    "scanText": "银行卡照片",
+    "hitText": "银行卡照片已清除"
+  },
+  {
+    "id": "icon-门禁记录",
+    "iconHint": "scan",
+    "lucideIcon": "Scan",
+    "role": "sensitive",
+    "shortLabel": "门禁",
+    "riskColor": "red",
+    "scanText": "门禁记录",
+    "hitText": "门禁记录已清除"
+  },
+  {
+    "id": "icon-浏览历史",
+    "iconHint": "history",
+    "lucideIcon": "History",
+    "role": "sensitive",
+    "shortLabel": "浏览",
+    "riskColor": "orange",
+    "scanText": "浏览历史",
+    "hitText": "浏览历史已清除"
+  },
+  {
+    "id": "icon-通讯录",
+    "iconHint": "network",
+    "lucideIcon": "Network",
+    "role": "sensitive",
+    "shortLabel": "通讯录",
+    "riskColor": "red",
+    "scanText": "通讯录",
+    "hitText": "通讯录已清除"
+  },
+  {
+    "id": "icon-指纹",
+    "iconHint": "fingerprint",
+    "lucideIcon": "Fingerprint",
+    "role": "sensitive",
+    "shortLabel": "指纹",
+    "riskColor": "red",
+    "scanText": "指纹",
+    "hitText": "指纹已清除"
+  },
+  {
+    "id": "icon-支付密码",
+    "iconHint": "key-round",
+    "lucideIcon": "KeyRound",
+    "role": "sensitive",
+    "shortLabel": "支付码",
+    "riskColor": "red",
+    "scanText": "支付密码",
+    "hitText": "支付密码已清除"
+  },
+  {
+    "id": "icon-备份文件",
     "iconHint": "archive-restore",
     "lucideIcon": "ArchiveRestore",
     "role": "decoy",
     "shortLabel": "备份",
     "riskColor": "blue",
     "scanText": "备份文件",
-    "hitText": "备份误触，证据可能恢复"
+    "hitText": "备份文件误触，证据可能恢复"
   },
   {
-    "id": "icon-decoy-audit",
-    "iconHint": "clipboard-list",
-    "lucideIcon": "ClipboardList",
+    "id": "icon-加密压缩包",
+    "iconHint": "file-lock",
+    "lucideIcon": "FileLock",
     "role": "decoy",
-    "shortLabel": "审计",
+    "shortLabel": "压缩包",
     "riskColor": "blue",
-    "scanText": "审计日志",
-    "hitText": "审计误触，风险记录上报"
+    "scanText": "加密压缩包",
+    "hitText": "加密压缩包误触，证据可能恢复"
   },
   {
-    "id": "icon-decoy-system",
-    "iconHint": "cpu",
-    "lucideIcon": "Cpu",
+    "id": "icon-云端同步",
+    "iconHint": "cloud",
+    "lucideIcon": "Cloud",
     "role": "decoy",
-    "shortLabel": "核心",
+    "shortLabel": "云同步",
     "riskColor": "blue",
-    "scanText": "系统核心",
-    "hitText": "核心误触，界面短暂卡顿"
+    "scanText": "云端同步",
+    "hitText": "云端同步误触，证据可能恢复"
+  },
+  {
+    "id": "icon-镜像副本",
+    "iconHint": "copy",
+    "lucideIcon": "Copy",
+    "role": "decoy",
+    "shortLabel": "镜像",
+    "riskColor": "blue",
+    "scanText": "镜像副本",
+    "hitText": "镜像副本误触，证据可能恢复"
+  },
+  {
+    "id": "icon-快照存档",
+    "iconHint": "camera",
+    "lucideIcon": "Camera",
+    "role": "decoy",
+    "shortLabel": "快照",
+    "riskColor": "blue",
+    "scanText": "快照存档",
+    "hitText": "快照存档误触，证据可能恢复"
+  },
+  {
+    "id": "icon-恢复分区",
+    "iconHint": "rotate-ccw",
+    "lucideIcon": "RotateCcw",
+    "role": "decoy",
+    "shortLabel": "恢复区",
+    "riskColor": "blue",
+    "scanText": "恢复分区",
+    "hitText": "恢复分区误触，证据可能恢复"
   }
 ]

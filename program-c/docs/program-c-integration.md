@@ -7,31 +7,33 @@
 | 开发日 | 程序 C 任务 | 当前状态 |
 | --- | --- | --- |
 | D1 | 工具链、音频框架、性能/离线检查基础 | 已完成 |
-| D2 | 10 套卡牌、20 个用户画像、变量填充、数据流入音效、三种情绪音效 | 已完成 |
+| D2 | 初版卡牌、20 个用户画像、变量填充、数据流入音效、三种情绪音效 | 已完成 |
 | D3 | 10 条新闻模板、新闻匹配算法、打包/交易音效 | 已完成 |
 | D4 | 新闻扩到 20 条、协议伪装配对扩到 20 组、新闻播报音效、BGM 切换 | 已完成 |
 | D5 | 数据清洗图标、舆论操控话术、黑盒评价台词、小关卡通用成败音效 | 已完成 |
 | D6 | Day 4 画像拼图、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM、独白打字机音效 | 已完成 |
-| D7 | Week 1 内容整合验收、音效整合检查、性能初测报告、工具链文档 | 已完成 |
+| D7 | Week 1 内容整合验收、音效整合检查、性能初测报告、工具链文档；按最新飞书文本配置对齐验收前内容口径 | 已完成 |
+| D8 | Week 1 Day 1 / 2 / 4 / 5 小关卡内容驱动点击规则 | 已完成 |
 
 ## 内容文件
 
 | 文件 | 用途 |
 | --- | --- |
-| `data/card_templates.json` | 10 套数据卡模板 |
+| `data/card_templates.json` | 20 套正式数据卡模板 |
 | `data/users.json` | 20 个用户画像 |
-| `data/buyers.json` | 买家和可接受的数据包类型 |
-| `data/variables.json` | `{姓名}`、`{城市}`、`{金额}`、`{平台}` 占位符池 |
+| `data/buyers.json` | 15 个买家和可接受的数据包类型 |
+| `data/variables.json` | `{姓名}`、`{城市}`、`{金额}`、`{平台}`、`{地点}`、`{话题}`、`{商品}`、`{时长}`、`{场景}`、`{数值}` 占位符池 |
 | `data/news_templates.json` | 20 条新闻模板，每种数据包类型至少 4 条 |
 | `data/protocol_terms.json` | 20 组协议伪装配对 |
 | `data/package_recipes.json` | 5 种数据包配方 |
 | `data/day_challenges.json` | Day 1 / Day 2 / Day 4 / Day 5 游戏内小关卡入口配置 |
-| `data/data_cleaning_icons.json` | Day 2 数据清洗图标视觉配置 |
-| `data/public_opinion_scripts.json` | 5 组舆论操控话术模板 |
-| `data/profile_puzzles.json` | 4 组 Day 4 用户画像拼图碎片 |
+| `data/data_cleaning_icons.json` | Day 2 数据清洗图标视觉配置，18 个敏感/干扰图标 |
+| `data/public_opinion_scripts.json` | 10 组 Day 3 舆论操控话术模板，当前作为后续玩法依据 |
+| `data/profile_puzzles.json` | 3 组 Day 4 用户画像拼图碎片 |
 | `data/buyer_negotiation_scripts.json` | 6 组 Day 5 买家谈判话术；纯叙事，无价格/风险联动字段 |
 | `data/daily_monologues.json` | 7 天每日新闻后的独白文案 |
-| `data/black_box_lines.json` | 12 条黑盒评价台词和音效绑定 |
+| `data/black_box_lines.json` | 62 条黑盒台词和音效绑定，包含后续 Day 3 / 6 / 7 文案依据 |
+| `scripts/sync-feishu-text-config.mjs` | 从本地飞书 Markdown 快照同步文本配置到 JSON 内容库 |
 
 ## 程序 B 接入内容
 
@@ -161,23 +163,24 @@ npm run check
 
 | 项 | 目标 |
 | --- | --- |
-| 卡牌模板 | 10 |
+| 卡牌模板 | 20 |
 | 用户画像 | 20 |
-| 买家 | 3 |
+| 买家 | 15 |
 | 打包配方 | 5 |
 | 新闻模板 | 20 |
 | 协议词 | 20 |
 | 游戏内小关卡配置 | 4 |
-| 数据清洗图标 | 10 |
-| 舆论操控话术 | 5 |
-| 用户画像拼图 | 4 |
+| 数据清洗图标 | 18 |
+| 舆论操控话术 | 10 |
+| 用户画像拼图 | 3 |
 | 买家谈判话术 | 6 |
 | 每日独白 | 7 |
-| 黑盒台词 | 12 |
+| 黑盒台词 | 62 |
 | 离线检查 | `externalNetworkRequired=false` |
 | 包体预算 | 8MB 内 |
 
 ## 后续
 
-- 主项目已接入 Week 1 可点击垂直切片；后续端到端联调重点检查 A/B 卡槽数量、包类型枚举、新闻生成、Day 1/2/4/5 小关卡点击规则和音效事件是否一致。
+- 主项目已接入 Week 1 可点击垂直切片；当前可玩规则仍是 Day 1/2/4/5。最新飞书文本配置中的 Day 3、Day 6、Day 7、结局报告、UI 文案是后续开发依据，不代表当前玩法已完成。
+- 后续端到端联调重点检查 A/B 卡槽数量、包类型枚举、新闻生成、Day 1/2/4/5 小关卡点击规则和音效事件是否一致。
 - 真实音频素材接入后继续跑 `npm run check` 控制包体。

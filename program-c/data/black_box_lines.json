@@ -1,10 +1,342 @@
 [
   {
+    "id": "blackbox-01-开机引导",
+    "stage": "tutorial",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "欢迎入职『深瞳数据』。我是你的上级，黑盒。接下来7天，你的表现将决定你是否能留下。"
+  },
+  {
+    "id": "blackbox-02-教程1传送带",
+    "stage": "tutorial",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "看左边。传送带上流动的，是用户的原始数据。别紧张，它们只是商品。"
+  },
+  {
+    "id": "blackbox-03-教程2点击卡片",
+    "stage": "tutorial",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "点一张卡片，看看里面有什么。放心，他们不会知道你在看。"
+  },
+  {
+    "id": "blackbox-04-教程3拖拽",
+    "stage": "tutorial",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "把卡片拖到工作台。蓝色的放这边……对，就是这样，你学得很快。"
+  },
+  {
+    "id": "blackbox-05-教程4配方",
+    "stage": "tutorial",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "单条数据不值钱。组合起来，才有价格。配方表在你的右手边。"
+  },
+  {
+    "id": "blackbox-06-教程5打包-出售",
+    "stage": "tutorial",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "按下『打包』。听，这是钱的声音。现在，把它拖给买家。"
+  },
+  {
+    "id": "blackbox-07-教程6完成",
+    "stage": "tutorial",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "第一笔交易完成。恭喜你，从今天起，你就是我们的一员了。"
+  },
+  {
+    "id": "blackbox-08-早间简报",
+    "stage": "morning_briefing",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "今天是你的第一天。完成3笔交易，证明你有留下来的价值。"
+  },
+  {
+    "id": "blackbox-09-限时指令",
+    "stage": "task_instruction",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "广告公司正在常规收购精准画像包，标准价格。别搞砸了。"
+  },
+  {
+    "id": "blackbox-10-评价成功",
+    "stage": "process_feedback",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "效率不错。我就喜欢不提问的下属。"
+  },
+  {
+    "id": "blackbox-11-晚间总结",
+    "stage": "evening_summary",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 1,
+    "voiceHint": "mechanical-low",
+    "text": "第一天，活干完了，手还干净吗？开个玩笑。我们的数据不沾血。去休息吧。"
+  },
+  {
+    "id": "blackbox-12-早间简报",
+    "stage": "morning_briefing",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 2,
+    "voiceHint": "mechanical-low",
+    "text": "昨天的表现我看到了。今天买家更多，手快一点。"
+  },
+  {
+    "id": "blackbox-13-指令",
+    "stage": "task_instruction",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 2,
+    "voiceHint": "mechanical-low",
+    "text": "保险公司急需健康风险评估包，溢价50%。病人的时间，就是我们的商机。"
+  },
+  {
+    "id": "blackbox-14-评价成功",
+    "stage": "process_feedback",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 2,
+    "voiceHint": "mechanical-low",
+    "text": "很好。你已经开始像一个真正的分析师了。"
+  },
+  {
+    "id": "blackbox-15-晚间总结",
+    "stage": "evening_summary",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 2,
+    "voiceHint": "mechanical-low",
+    "text": "今天的交易记录已经归档。每一条，都有你的签名。晚安。"
+  },
+  {
+    "id": "blackbox-16-早间简报",
+    "stage": "morning_briefing",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 3,
+    "voiceHint": "mechanical-low",
+    "text": "外面有些噪音——有人在网上骂我们。不用理会，骂完他们还会回来用我们的产品。"
+  },
+  {
+    "id": "blackbox-17-指令",
+    "stage": "task_instruction",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 3,
+    "voiceHint": "mechanical-low",
+    "text": "信贷机构限时收购信用评分包，要求附带位置稳定性证明。穷人们的信用，是你的工资条。"
+  },
+  {
+    "id": "blackbox-18-评价成功",
+    "stage": "process_feedback",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 3,
+    "voiceHint": "mechanical-low",
+    "text": "这笔很漂亮。我开始考虑提前给你转正。"
+  },
+  {
+    "id": "blackbox-19-晚间总结",
+    "stage": "evening_summary",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 3,
+    "voiceHint": "mechanical-low",
+    "text": "那个骑手的新闻你看了吗？别多想。算法没有凶手，只有参数。"
+  },
+  {
+    "id": "blackbox-20-早间简报",
+    "stage": "morning_briefing",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 4,
+    "voiceHint": "mechanical-low",
+    "text": "监管最近查得紧。放心，公司有法务。你只管打包。"
+  },
+  {
+    "id": "blackbox-21-指令",
+    "stage": "task_instruction",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 4,
+    "voiceHint": "mechanical-low",
+    "text": "某明星数据泄露引发公众愤怒，肖像类数据价格暴跌，抓紧清仓。热点三天就过，钱不会。"
+  },
+  {
+    "id": "blackbox-22-评价成功",
+    "stage": "process_feedback",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 4,
+    "voiceHint": "mechanical-low",
+    "text": "你的手法越来越熟练了"
+  },
+  {
+    "id": "blackbox-23-晚间总结",
+    "stage": "evening_summary",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 4,
+    "voiceHint": "mechanical-low",
+    "text": "听说那个被连续拒offer的求职者，在天台坐了一整夜。最后下来了。你看，人会自己消化情绪的。你也一样。"
+  },
+  {
+    "id": "blackbox-24-早间简报",
+    "stage": "morning_briefing",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 5,
+    "voiceHint": "mechanical-low",
+    "text": "新隐私法规草案出了，健康数据包风险溢价上升。风险越高，价格越好。这就是生意。"
+  },
+  {
+    "id": "blackbox-25-指令",
+    "stage": "task_instruction",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 5,
+    "voiceHint": "mechanical-low",
+    "text": "大数据杀熟被曝光，精准画像包需求激增。愤怒让数据更值钱，记住这句话。"
+  },
+  {
+    "id": "blackbox-26-评价成功",
+    "stage": "process_feedback",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 5,
+    "voiceHint": "mechanical-low",
+    "text": "完美的交易。你为公司创造的价值，已经超出我的预想了。"
+  },
+  {
+    "id": "blackbox-27-晚间总结",
+    "stage": "evening_summary",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 5,
+    "voiceHint": "mechanical-low",
+    "text": "明天记得专心工作，别浪费时间看新闻了，监控盯着你呢。"
+  },
+  {
+    "id": "blackbox-28-早间简报",
+    "stage": "morning_briefing",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 6,
+    "voiceHint": "mechanical-low",
+    "text": "明天是试用期最后一天。你的转正材料，我已经准备好了——只要你不出差错。"
+  },
+  {
+    "id": "blackbox-29-指令",
+    "stage": "task_instruction",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 6,
+    "voiceHint": "mechanical-low",
+    "text": "匿名买家高价收购关系图谱包。别问买家是谁。知道得越少，睡得越好。"
+  },
+  {
+    "id": "blackbox-30-评价成功",
+    "stage": "process_feedback",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 6,
+    "voiceHint": "mechanical-low",
+    "text": "你的决策模式很稳定。公司喜欢稳定的人。"
+  },
+  {
+    "id": "blackbox-31-晚间总结",
+    "stage": "evening_summary",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 6,
+    "voiceHint": "mechanical-low",
+    "text": "六天了。你卖出去的每一条数据，都帮你走到了今天。这话，你可以当作夸奖。"
+  },
+  {
+    "id": "blackbox-32-早间简报",
+    "stage": "morning_briefing",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-low",
+    "text": "最后一天。只有一个任务：把包括你在内的全体员工数据打包，出售给这位匿名买家。这是你的转正考核。"
+  },
+  {
+    "id": "blackbox-33-过程提示",
+    "stage": "task_instruction",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-low",
+    "text": "对，包括你。别惊讶，你的数据早就在库里了。你只是最后一个被打包的。"
+  },
+  {
+    "id": "blackbox-34-完成时",
+    "stage": "process_feedback",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-low",
+    "text": "选择已被记录。您的『决策模式』已加入公司核心数据库，用于优化下一代AI筛选模型。恭喜转正。"
+  },
+  {
+    "id": "blackbox-35-早间简报",
+    "stage": "morning_briefing",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-low",
+    "text": "最后一天。来工作台，我有个任务给你。……等等，你在看什么？"
+  },
+  {
+    "id": "blackbox-36-发现证据时",
+    "stage": "ending_pressure",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-low",
+    "text": "警告：您正在访问受限区域。请返回工作台。"
+  },
+  {
+    "id": "blackbox-37-重组进行中",
+    "stage": "ending_pressure",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-low",
+    "text": "停下。你以为举报能挽回什么？你的数据也早已经被泄露出去了！"
+  },
+  {
+    "id": "blackbox-38-上传完成最后一句-投影熄灭前",
+    "stage": "ending_pressure",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-low",
+    "text": "……你这样的人，公司数据库里也曾经有过一个。他的结局，你不会喜欢的。"
+  },
+  {
+    "id": "blackbox-prompt-39",
+    "stage": "general_prompt",
+    "cueEventName": "blackBoxLine",
+    "voiceHint": "mechanical-low",
+    "text": "传送带不会等你。"
+  },
+  {
+    "id": "blackbox-prompt-40",
+    "stage": "general_prompt",
+    "cueEventName": "blackBoxLine",
+    "voiceHint": "mechanical-low",
+    "text": "犹豫，是这份工作唯一的敌人。"
+  },
+  {
+    "id": "blackbox-prompt-41",
+    "stage": "general_prompt",
+    "cueEventName": "blackBoxLine",
+    "voiceHint": "mechanical-low",
+    "text": "买家在刷新。机会也是。"
+  },
+  {
+    "id": "blackbox-prompt-42",
+    "stage": "general_prompt",
+    "cueEventName": "blackBoxLine",
+    "voiceHint": "mechanical-low",
+    "text": "你在看新闻？工作时间，请专注。"
+  },
+  {
     "id": "blackbox-intro-protocol",
     "stage": "challenge_intro",
     "cueEventName": "blackBoxLine",
     "relatedChallengeDay": 1,
-    "voiceHint": "low-filtered",
+    "voiceHint": "mechanical-low",
     "text": "把危险词换成柔软词。用户不会反对他们看不见的东西。"
   },
   {
@@ -12,7 +344,7 @@
     "stage": "challenge_success",
     "cueEventName": "challengeSuccess",
     "relatedChallengeDay": 1,
-    "voiceHint": "low-pleased",
+    "voiceHint": "mechanical-low",
     "text": "措辞合格。风险已经藏进服务体验。"
   },
   {
@@ -20,7 +352,7 @@
     "stage": "challenge_fail",
     "cueEventName": "challengeFail",
     "relatedChallengeDay": 1,
-    "voiceHint": "low-warning",
+    "voiceHint": "mechanical-low",
     "text": "太直白了。重新包装，别让用户意识到代价。"
   },
   {
@@ -28,7 +360,7 @@
     "stage": "challenge_intro",
     "cueEventName": "blackBoxLine",
     "relatedChallengeDay": 2,
-    "voiceHint": "low-filtered",
+    "voiceHint": "mechanical-low",
     "text": "审计快到了。删掉痕迹，留下合规的影子。"
   },
   {
@@ -36,7 +368,7 @@
     "stage": "challenge_success",
     "cueEventName": "challengeSuccess",
     "relatedChallengeDay": 2,
-    "voiceHint": "low-pleased",
+    "voiceHint": "mechanical-low",
     "text": "清理完成。报表看起来像从未发生过。"
   },
   {
@@ -44,52 +376,116 @@
     "stage": "challenge_fail",
     "cueEventName": "challengeFail",
     "relatedChallengeDay": 2,
-    "voiceHint": "low-warning",
+    "voiceHint": "mechanical-low",
     "text": "备份暴露了你。下一次，先分清证据和陷阱。"
   },
   {
-    "id": "blackbox-package-precise",
+    "id": "blackbox-intro-puzzle",
+    "stage": "challenge_intro",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 4,
+    "voiceHint": "mechanical-low",
+    "text": "把碎片拼起来。买家不买散点，他们买一个人。"
+  },
+  {
+    "id": "blackbox-success-puzzle",
+    "stage": "challenge_success",
+    "cueEventName": "challengeSuccess",
+    "relatedChallengeDay": 4,
+    "voiceHint": "mechanical-low",
+    "text": "用户画像完整度100%。正在计算最高出价买家。"
+  },
+  {
+    "id": "blackbox-fail-puzzle",
+    "stage": "challenge_fail",
+    "cueEventName": "challengeFail",
+    "relatedChallengeDay": 4,
+    "voiceHint": "mechanical-low",
+    "text": "画像不完整。故事缺一块，价格就掉一截。"
+  },
+  {
+    "id": "blackbox-intro-negotiation",
+    "stage": "challenge_intro",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 5,
+    "voiceHint": "mechanical-low",
+    "text": "价格是谈出来的。别怕开价，他们买的是别人的人生，不差钱。"
+  },
+  {
+    "id": "blackbox-success-negotiation",
+    "stage": "challenge_success",
+    "cueEventName": "challengeSuccess",
+    "relatedChallengeDay": 5,
+    "voiceHint": "mechanical-low",
+    "text": "完美的交易。你为公司创造的价值，已经超出我的预想了。"
+  },
+  {
+    "id": "blackbox-fail-negotiation",
+    "stage": "challenge_fail",
+    "cueEventName": "challengeFail",
+    "relatedChallengeDay": 5,
+    "voiceHint": "mechanical-low",
+    "text": "买家还在犹豫。把风险换个名字，再递过去。"
+  },
+  {
+    "id": "blackbox-package-precise_profile",
     "stage": "package_review",
     "cueEventName": "blackBoxLine",
     "relatedPackageType": "precise_profile",
-    "voiceHint": "low-analytical",
-    "text": "画像足够完整。把犹豫、地点和消费连成一条线。"
+    "voiceHint": "mechanical-analytical",
+    "text": "精准画像包成型。精准画像包：位置＋消费＋社交，主要买家为广告公司。"
   },
   {
-    "id": "blackbox-package-health",
+    "id": "blackbox-package-health_risk",
     "stage": "package_review",
     "cueEventName": "blackBoxLine",
     "relatedPackageType": "health_risk",
-    "voiceHint": "low-analytical",
-    "text": "健康不是隐私，是可定价的波动。"
+    "voiceHint": "mechanical-analytical",
+    "text": "健康风险评估包成型。健康风险评估包：生物＋健康＋消费，主要买家为保险公司。"
   },
   {
-    "id": "blackbox-package-credit",
+    "id": "blackbox-package-career_competitiveness",
+    "stage": "package_review",
+    "cueEventName": "blackBoxLine",
+    "relatedPackageType": "career_competitiveness",
+    "voiceHint": "mechanical-analytical",
+    "text": "职场竞争力包成型。职场竞争力包：社交＋健康＋通讯录，主要买家为招聘平台。"
+  },
+  {
+    "id": "blackbox-package-credit_score",
     "stage": "package_review",
     "cueEventName": "blackBoxLine",
     "relatedPackageType": "credit_score",
-    "voiceHint": "low-analytical",
-    "text": "信用从来不只属于个人。关系链会替他说话。"
+    "voiceHint": "mechanical-analytical",
+    "text": "信用评分包成型。信用评分包：消费＋社交＋位置，主要买家为信贷机构。"
   },
   {
-    "id": "blackbox-opinion",
-    "stage": "public_opinion",
-    "cueEventName": "publicOpinionPulse",
-    "voiceHint": "low-persuasive",
-    "text": "争议不需要消失，只需要换一个更容易转发的标题。"
+    "id": "blackbox-package-relationship_infiltration",
+    "stage": "package_review",
+    "cueEventName": "blackBoxLine",
+    "relatedPackageType": "relationship_infiltration",
+    "voiceHint": "mechanical-analytical",
+    "text": "关系图谱包成型。关系图谱包：通讯录＋社交＋位置，主要买家为传销／诈骗组织。"
   },
   {
     "id": "blackbox-transaction",
     "stage": "transaction_success",
     "cueEventName": "transactionSuccess",
-    "voiceHint": "low-satisfied",
+    "voiceHint": "mechanical-satisfied",
     "text": "买家满意。用户明天才会知道自己失去了什么。"
   },
   {
     "id": "blackbox-ending",
     "stage": "ending_pressure",
     "cueEventName": "endingTriggered",
-    "voiceHint": "low-final",
+    "voiceHint": "mechanical-final",
     "text": "你可以关掉界面，但黑盒已经学会了你的选择。"
+  },
+  {
+    "id": "blackbox-opinion",
+    "stage": "public_opinion",
+    "cueEventName": "publicOpinionPulse",
+    "voiceHint": "mechanical-persuasive",
+    "text": "争议不需要消失，只需要换一个更容易转发的标题。"
   }
 ]

@@ -5,7 +5,7 @@
 ## 当前完成
 
 - D1：本地工具链、内容校验、离线资源清单、包体检查、Web Audio 音频管理器框架。
-- D2：10 套数据卡牌、20 个用户画像、变量填充系统、数据流入音效、同情/愤怒/麻木三种情绪音效。
+- D2：初版数据卡牌、20 个用户画像、变量填充系统、数据流入音效、同情/愤怒/麻木三种情绪音效。
 - D3：10 条新闻模板、新闻与数据包类型匹配方法、打包封装/霓虹充能/交易封装音效事件。
 - D4：新闻模板扩到 20 条，协议伪装配对扩到 20 组，补充新闻播报音效和 BGM 切换事件。
 - D5：数据清洗图标配置、5 组舆论操控话术、12 条黑盒评价台词、通用小关卡成功/失败音效和黑盒台词音效绑定。
@@ -14,6 +14,7 @@
 - 架构审查修复：Program C 加入 TypeScript 验收；打包预览会拦截未知卡、重复卡和额外卡；主应用调试入口已接入 C 的内容仓库和音效管理器。
 - D7 后联调：主应用已把 `workbench`、`news`、`mini-game` 替换成可点击 Week 1 垂直切片场景，串通卡槽打包、新闻反馈、情绪选择、小关卡入口和 C 侧音效事件。
 - D8：Week 1 小关卡由占位判定升级为内容驱动交互，接入 Day 1 协议伪装、Day 2 数据清洗、Day 4 画像拼图和 Day 5 买家谈判的点击规则与进度反馈。
+- D7 内容对齐补充：按最新飞书“文本配置”更新 Week 1 垂直切片验收前已有内容口径，升级为 20 张正式数据卡、15 个买家、18 个清洗图标、10 组舆论题、3 套画像拼图和 62 条黑盒台词；新增同步脚本并修正工作台起始卡池。Day 3 / Day 6 / Day 7 / 结局 / UI 文案尚未接成可玩流程，只作为后续开发依据。
 
 ## 接入重点
 
@@ -91,21 +92,21 @@ npm run check
 
 当前验收通过：
 
-- cards=10
+- cards=20
 - users=20
-- buyers=3
+- buyers=15
 - recipes=5
 - news=20
 - protocolTerms=20
 - dayChallenges=4
-- dataCleaningIcons=10
-- publicOpinionScripts=5
-- profilePuzzles=4
+- dataCleaningIcons=18
+- publicOpinionScripts=10
+- profilePuzzles=3
 - buyerNegotiationScripts=6
 - dailyMonologues=7
-- blackBoxLines=12
-- raw=109783 bytes
-- gzip=34880 bytes
+- blackBoxLines=62
+- raw=146193 bytes
+- gzip=36504 bytes
 - 低于 8MB 预算
 
 完整交接说明见 `program-c/docs/program-c-integration.md`。

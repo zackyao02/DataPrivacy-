@@ -8,6 +8,7 @@ import type {
   DayChallenge,
   DataCleaningDecoyItem,
   DataCleaningSensitiveItem,
+  DataType,
   NewsTemplate,
   PackagePreview,
   ProfilePuzzle,
@@ -103,10 +104,7 @@ export class WeekOneSliceController {
     private readonly programB: ProgramBBridge,
   ) {
     this.user = content.getUsers()[0];
-    this.selectedCardIds = content
-      .getCardTemplates()
-      .slice(0, MAX_SLOT_COUNT)
-      .map((card) => card.id);
+    this.selectedCardIds = this.pickInitialCardIds();
     this.patchProgramB();
   }
 
@@ -117,7 +115,7 @@ export class WeekOneSliceController {
       phase: this.phase,
       day: this.currentDay,
       user: this.user,
-      availableCards: this.content.getCardTemplates().slice(0, 6),
+      availableCards: this.getWorkbenchCards(),
       selectedCardIds: [...this.selectedCardIds],
       selectedCards: this.content.findCardsByIds(this.selectedCardIds),
       packagePreviews,
@@ -416,6 +414,43 @@ export class WeekOneSliceController {
 
   private get currentDay(): number {
     return WEEK_ONE_DAYS[this.dayIndex];
+  }
+
+  private getWorkbenchCards(): readonly CardTemplate[] {
+    const cardTypes: readonly DataType[] = [
+      "location",
+      "consumption",
+      "social",
+      "health",
+      "biometric",
+      "contact_graph",
+    ];
+    const cards = this.content.getCardTemplates();
+    const selectedByType = cardTypes
+      .map((dataType) => cards.find((card) => card.dataType === dataType))
+      .filter((card): card is CardTemplate => Boolean(card));
+    const seen = new Set<string>();
+
+    return [...selectedByType, ...cards]
+      .filter((card) => {
+        if (seen.has(card.id)) {
+          return false;
+        }
+
+        seen.add(card.id);
+        return true;
+      })
+      .slice(0, 6);
+  }
+
+  private pickInitialCardIds(): string[] {
+    const requiredTypes: readonly DataType[] = ["location", "consumption", "social"];
+    const cards = this.getWorkbenchCards();
+
+    return requiredTypes
+      .map((dataType) => cards.find((card) => card.dataType === dataType)?.id)
+      .filter((cardId): cardId is string => Boolean(cardId))
+      .slice(0, MAX_SLOT_COUNT);
   }
 
   private resetChallengeState(): void {

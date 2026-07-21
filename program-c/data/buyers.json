@@ -1,23 +1,167 @@
 [
   {
-    "id": "buyer-ad-neon",
-    "name": "霓虹广告投放公司",
+    "id": "buyer-precise_profile-s",
+    "name": "星合传媒",
     "buyerType": "广告公司",
-    "acceptedPackageTypes": ["precise_profile", "relationship_infiltration"],
-    "demandText": "急需更细的兴趣标签和夜间活动范围，用于提高广告点击率。"
+    "reputation": "S",
+    "appearanceRate": 0.2,
+    "acceptedPackageTypes": [
+      "precise_profile"
+    ],
+    "demandText": "收购精准画像包，用于广告公司业务。"
   },
   {
-    "id": "buyer-insurance-grey",
-    "name": "灰塔保险风控部",
+    "id": "buyer-precise_profile-a",
+    "name": "蓝鲸互动",
+    "buyerType": "广告公司",
+    "reputation": "A",
+    "appearanceRate": 0.3,
+    "acceptedPackageTypes": [
+      "precise_profile"
+    ],
+    "demandText": "收购精准画像包，用于广告公司业务。"
+  },
+  {
+    "id": "buyer-precise_profile-b",
+    "name": "无名工作室",
+    "buyerType": "广告公司",
+    "reputation": "B",
+    "appearanceRate": 0.5,
+    "acceptedPackageTypes": [
+      "precise_profile"
+    ],
+    "demandText": "收购精准画像包，用于广告公司业务。"
+  },
+  {
+    "id": "buyer-health_risk-s",
+    "name": "安澜人寿",
     "buyerType": "保险公司",
-    "acceptedPackageTypes": ["health_risk", "credit_score"],
-    "demandText": "需要睡眠、消费和健康异常趋势，用于调整保费模型。"
+    "reputation": "S",
+    "appearanceRate": 0.2,
+    "acceptedPackageTypes": [
+      "health_risk"
+    ],
+    "demandText": "收购健康风险评估包，用于保险公司业务。"
   },
   {
-    "id": "buyer-credit-lattice",
-    "name": "格点信贷审核中心",
+    "id": "buyer-health_risk-a",
+    "name": "康信保险",
+    "buyerType": "保险公司",
+    "reputation": "A",
+    "appearanceRate": 0.3,
+    "acceptedPackageTypes": [
+      "health_risk"
+    ],
+    "demandText": "收购健康风险评估包，用于保险公司业务。"
+  },
+  {
+    "id": "buyer-health_risk-b",
+    "name": "惠民保（壳）",
+    "buyerType": "保险公司",
+    "reputation": "B",
+    "appearanceRate": 0.5,
+    "acceptedPackageTypes": [
+      "health_risk"
+    ],
+    "demandText": "收购健康风险评估包，用于保险公司业务。"
+  },
+  {
+    "id": "buyer-career_competitiveness-s",
+    "name": "职达",
+    "buyerType": "招聘平台",
+    "reputation": "S",
+    "appearanceRate": 0.2,
+    "acceptedPackageTypes": [
+      "career_competitiveness"
+    ],
+    "demandText": "收购职场竞争力包，用于招聘平台业务。"
+  },
+  {
+    "id": "buyer-career_competitiveness-a",
+    "name": "猎云",
+    "buyerType": "招聘平台",
+    "reputation": "A",
+    "appearanceRate": 0.3,
+    "acceptedPackageTypes": [
+      "career_competitiveness"
+    ],
+    "demandText": "收购职场竞争力包，用于招聘平台业务。"
+  },
+  {
+    "id": "buyer-career_competitiveness-b",
+    "name": "快聘通",
+    "buyerType": "招聘平台",
+    "reputation": "B",
+    "appearanceRate": 0.5,
+    "acceptedPackageTypes": [
+      "career_competitiveness"
+    ],
+    "demandText": "收购职场竞争力包，用于招聘平台业务。"
+  },
+  {
+    "id": "buyer-credit_score-s",
+    "name": "乐贷",
     "buyerType": "信贷机构",
-    "acceptedPackageTypes": ["credit_score", "career_competitiveness"],
-    "demandText": "收购联系人风险、消费波动和工作稳定性线索。"
+    "reputation": "S",
+    "appearanceRate": 0.2,
+    "acceptedPackageTypes": [
+      "credit_score"
+    ],
+    "demandText": "收购信用评分包，用于信贷机构业务。"
+  },
+  {
+    "id": "buyer-credit_score-a",
+    "name": "信合金融",
+    "buyerType": "信贷机构",
+    "reputation": "A",
+    "appearanceRate": 0.3,
+    "acceptedPackageTypes": [
+      "credit_score"
+    ],
+    "demandText": "收购信用评分包，用于信贷机构业务。"
+  },
+  {
+    "id": "buyer-credit_score-b",
+    "name": "急用钱",
+    "buyerType": "信贷机构",
+    "reputation": "B",
+    "appearanceRate": 0.5,
+    "acceptedPackageTypes": [
+      "credit_score"
+    ],
+    "demandText": "收购信用评分包，用于信贷机构业务。"
+  },
+  {
+    "id": "buyer-relationship_infiltration-s",
+    "name": "收藏家",
+    "buyerType": "诈骗组织（均匿名面具图标）",
+    "reputation": "S",
+    "appearanceRate": 0.1,
+    "acceptedPackageTypes": [
+      "relationship_infiltration"
+    ],
+    "demandText": "收购关系图谱包，用于诈骗组织（均匿名面具图标）业务。"
+  },
+  {
+    "id": "buyer-relationship_infiltration-a",
+    "name": "中间商",
+    "buyerType": "诈骗组织（均匿名面具图标）",
+    "reputation": "A",
+    "appearanceRate": 0.3,
+    "acceptedPackageTypes": [
+      "relationship_infiltration"
+    ],
+    "demandText": "收购关系图谱包，用于诈骗组织（均匿名面具图标）业务。"
+  },
+  {
+    "id": "buyer-relationship_infiltration-b",
+    "name": "清道夫",
+    "buyerType": "诈骗组织（均匿名面具图标）",
+    "reputation": "B",
+    "appearanceRate": 0.6,
+    "acceptedPackageTypes": [
+      "relationship_infiltration"
+    ],
+    "demandText": "收购关系图谱包，用于诈骗组织（均匿名面具图标）业务。"
   }
 ]
