@@ -9,6 +9,9 @@ import type {
   DataCleaningDecoyItem,
   DataCleaningSensitiveItem,
   DataType,
+  EvidenceChainConnection,
+  EvidenceChainFragment,
+  EvidenceChainTemplate,
   NewsTemplate,
   PackagePreview,
   ProfilePuzzle,
@@ -57,6 +60,13 @@ export interface WeekOneMiniGameState {
   readonly hiddenProtocolScanClauseFound: boolean;
   readonly selectedProtocolScanRiskLevel: RiskLevel | null;
   readonly protocolScanScore: number;
+  readonly evidenceChainTemplate: EvidenceChainTemplate | null;
+  readonly evidenceFragments: readonly EvidenceChainFragment[];
+  readonly collectedEvidenceFragmentIds: readonly string[];
+  readonly evidenceConnections: readonly EvidenceChainConnection[];
+  readonly connectedEvidenceConnectionIds: readonly string[];
+  readonly evidenceUploadComplete: boolean;
+  readonly evidencePath: EndingPath;
 }
 
 export type EndingPath = "final_package" | "evidence_chain";
@@ -86,6 +96,7 @@ export interface WeekOneSliceSnapshot {
   readonly activeProfilePuzzle: ProfilePuzzle | null;
   readonly activeNegotiation: BuyerNegotiationScript | null;
   readonly activePublicOpinion: PublicOpinionScript | null;
+  readonly activeEvidenceChain: EvidenceChainTemplate | null;
   readonly activeMonologue: DailyMonologue | null;
   readonly activeBlackBoxLine: BlackBoxLine | null;
   readonly selectedEmotion: EmotionChoice | null;
@@ -95,13 +106,18 @@ export interface WeekOneSliceSnapshot {
   readonly message: string;
 }
 
-const PLAYABLE_DAYS = [1, 2, 3, 4, 5, 6] as const;
+const PLAYABLE_DAYS = [1, 2, 3, 4, 5, 6, 7] as const;
 const MAX_SLOT_COUNT = 3;
 
 const EMOTION_EVENTS: Record<EmotionChoice, string> = {
   empathy: "emotionEmpathySelected",
   anger: "emotionAngerSelected",
   numbness: "emotionNumbnessSelected",
+};
+const EMOTION_AWARENESS_DELTA: Record<EmotionChoice, number> = {
+  empathy: 1,
+  anger: 2,
+  numbness: -1,
 };
 
 export class WeekOneSliceController {
@@ -116,6 +132,7 @@ export class WeekOneSliceController {
   private activeNegotiation: BuyerNegotiationScript | null = null;
   private activePublicOpinion: PublicOpinionScript | null = null;
   private activeProtocolScan: ProtocolScanTemplate | null = null;
+  private activeEvidenceChain: EvidenceChainTemplate | null = null;
   private activeMonologue: DailyMonologue | null = null;
   private activeBlackBoxLine: BlackBoxLine | null = null;
   private selectedEmotion: EmotionChoice | null = null;
@@ -131,6 +148,10 @@ export class WeekOneSliceController {
   private matchedProtocolScanFlowIds: string[] = [];
   private hiddenProtocolScanClauseFound = false;
   private selectedProtocolScanRiskLevel: RiskLevel | null = null;
+  private collectedEvidenceFragmentIds: string[] = [];
+  private connectedEvidenceConnectionIds: string[] = [];
+  private evidenceUploadComplete = false;
+  private awarenessValue = 0;
   private completedChallengeDays: number[] = [];
   private message = "选择 3 张数据卡，封装第一个可用数据包。";
 
@@ -161,6 +182,7 @@ export class WeekOneSliceController {
       activeProfilePuzzle: this.activeProfilePuzzle,
       activeNegotiation: this.activeNegotiation,
       activePublicOpinion: this.activePublicOpinion,
+      activeEvidenceChain: this.activeEvidenceChain,
       activeMonologue: this.activeMonologue,
       activeBlackBoxLine: this.activeBlackBoxLine,
       selectedEmotion: this.selectedEmotion,
@@ -225,6 +247,12 @@ export class WeekOneSliceController {
         ? this.content.pickProtocolScanTemplate(this.activeChallenge.protocolScanTemplateIds) ??
           null
         : null;
+    this.activeEvidenceChain =
+      this.activeChallenge?.type === "evidence_chain"
+        ? this.content.pickEvidenceChainTemplate(
+            this.activeChallenge.evidenceChainTemplateIds,
+          ) ?? null
+        : null;
     this.activeMonologue = this.content.findDailyMonologueByDay(this.currentDay) ?? null;
     this.activeBlackBoxLine = this.content.pickBlackBoxLine("package_review", {
       packageType: readyPackage.packageType,
@@ -247,9 +275,14 @@ export class WeekOneSliceController {
       return;
     }
 
+    const previousDelta = this.selectedEmotion
+      ? EMOTION_AWARENESS_DELTA[this.selectedEmotion]
+      : 0;
+    const nextDelta = EMOTION_AWARENESS_DELTA[choice];
+    this.awarenessValue += nextDelta - previousDelta;
     this.selectedEmotion = choice;
     this.emotionResponse = this.fillText(this.activeNews.emotionResponses[choice]);
-    this.message = "情绪反馈已记录，可以进入小关卡。";
+    this.message = `情绪反馈已记录，清醒值 ${this.awarenessValue}。可以进入小关卡。`;
     this.programB.emit(EMOTION_EVENTS[choice], { choice });
 
     if (this.activeMonologue) {
@@ -632,6 +665,9 @@ export class WeekOneSliceController {
     this.matchedProtocolScanFlowIds = [];
     this.hiddenProtocolScanClauseFound = false;
     this.selectedProtocolScanRiskLevel = null;
+    this.collectedEvidenceFragmentIds = [];
+    this.connectedEvidenceConnectionIds = [];
+    this.evidenceUploadComplete = false;
   }
 
   private getMiniGameState(): WeekOneMiniGameState {
@@ -641,6 +677,8 @@ export class WeekOneSliceController {
     const negotiationOptions = this.activeNegotiation?.options ?? [];
     const publicOpinionTactics = this.activePublicOpinion?.tactics ?? [];
     const protocolScanScore = this.getProtocolScanScore();
+    const evidenceConnections = this.activeEvidenceChain?.connections ?? [];
+    const evidenceFragments = this.activeEvidenceChain?.fragments ?? [];
 
     return {
       status: this.challengeStatus,
@@ -668,6 +706,13 @@ export class WeekOneSliceController {
       hiddenProtocolScanClauseFound: this.hiddenProtocolScanClauseFound,
       selectedProtocolScanRiskLevel: this.selectedProtocolScanRiskLevel,
       protocolScanScore,
+      evidenceChainTemplate: this.activeEvidenceChain,
+      evidenceFragments,
+      collectedEvidenceFragmentIds: [...this.collectedEvidenceFragmentIds],
+      evidenceConnections,
+      connectedEvidenceConnectionIds: [...this.connectedEvidenceConnectionIds],
+      evidenceUploadComplete: this.evidenceUploadComplete,
+      evidencePath: this.getEndingPrototype().unlockedPath,
     };
   }
 
@@ -736,6 +781,8 @@ export class WeekOneSliceController {
           : "从 3 个话术中选择唯一安全改写";
       case "protocol_scan":
         return `协议扫描评分 ${this.getProtocolScanScore()}/100，达成 75 分即可通关`;
+      case "evidence_chain":
+        return this.getEvidenceChainProgressText();
     }
   }
 
@@ -816,9 +863,167 @@ export class WeekOneSliceController {
     return true;
   }
 
+  collectEvidenceFragment(fragmentId: string): boolean {
+    if (this.activeChallenge?.type !== "evidence_chain" || !this.activeEvidenceChain) {
+      return false;
+    }
+
+    if (this.getEndingPrototype().unlockedPath !== "evidence_chain") {
+      return false;
+    }
+
+    if (this.collectedEvidenceFragmentIds.includes(fragmentId)) {
+      return false;
+    }
+
+    const fragment = this.activeEvidenceChain.fragments.find((item) => item.id === fragmentId);
+
+    if (!fragment) {
+      return false;
+    }
+
+    this.collectedEvidenceFragmentIds = [...this.collectedEvidenceFragmentIds, fragmentId];
+    this.message = `证据已纳入链条：${fragment.title}`;
+    this.programB.emit("dataFlowIn", {
+      task: "evidence-fragment",
+      fragmentId,
+      day: fragment.day,
+    });
+    this.patchProgramB();
+    return false;
+  }
+
+  collectEvidenceDay(day: number): boolean {
+    if (this.activeChallenge?.type !== "evidence_chain" || !this.activeEvidenceChain) {
+      return false;
+    }
+
+    if (this.getEndingPrototype().unlockedPath !== "evidence_chain") {
+      return false;
+    }
+
+    const dayFragments = this.activeEvidenceChain.fragments.filter(
+      (fragment) => fragment.day === day,
+    );
+    const newFragmentIds = dayFragments
+      .map((fragment) => fragment.id)
+      .filter((fragmentId) => !this.collectedEvidenceFragmentIds.includes(fragmentId));
+
+    if (newFragmentIds.length === 0) {
+      return false;
+    }
+
+    this.collectedEvidenceFragmentIds = [
+      ...this.collectedEvidenceFragmentIds,
+      ...newFragmentIds,
+    ];
+    this.message = `Day ${day} 的 ${newFragmentIds.length} 件证据已纳入证据链。`;
+    this.programB.emit("dataFlowIn", {
+      task: "evidence-day-folder",
+      day,
+      fragmentCount: newFragmentIds.length,
+    });
+    this.patchProgramB();
+    return false;
+  }
+
+  connectEvidenceChain(connectionId: string): boolean {
+    if (this.activeChallenge?.type !== "evidence_chain" || !this.activeEvidenceChain) {
+      return false;
+    }
+
+    if (this.getEndingPrototype().unlockedPath !== "evidence_chain") {
+      return false;
+    }
+
+    if (this.connectedEvidenceConnectionIds.includes(connectionId)) {
+      return false;
+    }
+
+    const connection = this.activeEvidenceChain.connections.find(
+      (item) => item.id === connectionId,
+    );
+
+    if (!connection) {
+      return false;
+    }
+
+    const hasEndpoints =
+      this.collectedEvidenceFragmentIds.includes(connection.fromFragmentId) &&
+      this.collectedEvidenceFragmentIds.includes(connection.toFragmentId);
+
+    if (!hasEndpoints) {
+      this.message = "这条连接的两端证据还没有全部纳入证据链。";
+      this.programB.emit("riskChanged", {
+        reason: "evidence-connection-missing-fragments",
+        connectionId,
+      });
+      this.patchProgramB();
+      return false;
+    }
+
+    this.connectedEvidenceConnectionIds = [
+      ...this.connectedEvidenceConnectionIds,
+      connectionId,
+    ];
+    this.message = `关键连接已确认：${connection.label}`;
+    this.programB.emit("dataFlowIn", {
+      task: "evidence-connection",
+      connectionId,
+    });
+    this.patchProgramB();
+    return false;
+  }
+
+  submitEvidenceChain(): boolean {
+    if (this.activeChallenge?.type !== "evidence_chain" || !this.activeEvidenceChain) {
+      return false;
+    }
+
+    if (this.getEndingPrototype().unlockedPath === "final_package") {
+      this.evidenceUploadComplete = true;
+      this.message = this.fillText(this.activeEvidenceChain.finalPackage.outcomeText);
+      this.completeChallenge(true);
+      return true;
+    }
+
+    const condition = this.activeChallenge.successCondition;
+    const ready =
+      this.collectedEvidenceFragmentIds.length >= condition.requiredFragments &&
+      this.connectedEvidenceConnectionIds.length >= condition.requiredConnections;
+
+    if (!ready) {
+      this.message = this.activeEvidenceChain.failText;
+      this.programB.emit("riskChanged", {
+        reason: "evidence-chain-incomplete",
+        collected: this.collectedEvidenceFragmentIds.length,
+        connected: this.connectedEvidenceConnectionIds.length,
+      });
+      this.patchProgramB();
+      return false;
+    }
+
+    this.evidenceUploadComplete = true;
+    this.message = this.activeEvidenceChain.uploadText;
+    this.completeChallenge(true);
+    return true;
+  }
+
+  private getEvidenceChainProgressText(): string {
+    if (!this.activeEvidenceChain) {
+      return "等待证据链模板。";
+    }
+
+    if (this.getEndingPrototype().unlockedPath === "final_package") {
+      return `${this.activeEvidenceChain.lowAwarenessPathTitle} · ${this.activeEvidenceChain.lockedReason}`;
+    }
+
+    return `${this.collectedEvidenceFragmentIds.length}/${this.activeEvidenceChain.fragments.length} 件证据，${this.connectedEvidenceConnectionIds.length}/${this.activeEvidenceChain.connections.length} 条连接`;
+  }
+
   private getEndingPrototype(): EndingPrototypeState {
     const threshold = 5;
-    const awarenessValue = this.completedChallengeDays.length;
+    const awarenessValue = this.awarenessValue;
     const unlockedPath: EndingPath =
       awarenessValue >= threshold ? "evidence_chain" : "final_package";
     const isHighAwareness = unlockedPath === "evidence_chain";

@@ -281,5 +281,25 @@
     },
     "successText": "黑盒：你终于开始阅读那些你点过「同意」的东西。",
     "failText": "黑盒：协议仍然安全。安全的意思是，用户仍然看不懂。"
+  },
+  {
+    "id": "challenge-day7-evidence-chain",
+    "day": 7,
+    "type": "evidence_chain",
+    "title": "重组证据链",
+    "briefing": "清醒值达标时，工作台切换为证据重组模式；不足时只能进入最后的数据包。",
+    "objective": "收集 Day 1-6 的18件证据，连接3条关键因果，并提交举报材料。",
+    "timeLimitSeconds": 90,
+    "badge": "举报者",
+    "evidenceChainTemplateIds": [
+      "evidence-chain-week1-core"
+    ],
+    "successCondition": {
+      "requiredFragments": 18,
+      "requiredConnections": 3,
+      "requiredUpload": true
+    },
+    "successText": "黑盒：证据上传完成。监管信号正在接入。",
+    "failText": "黑盒：碎片还不能构成链条。断裂的证据，只会被系统吞掉。"
   }
 ]

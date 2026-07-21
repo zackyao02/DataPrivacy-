@@ -31,6 +31,7 @@ const requiredAudioEvents = [
 
 const requiredWeek1Days = [1, 2, 3, 4, 5];
 const d8PrototypeDays = [6];
+const d9PrototypeDays = [7];
 const requiredPackageTypes = [
   "precise_profile",
   "health_risk",
@@ -142,6 +143,7 @@ const dayChallenges = readJson("day_challenges.json");
 const profilePuzzles = readJson("profile_puzzles.json");
 const negotiations = readJson("buyer_negotiation_scripts.json");
 const protocolScanTemplates = readJson("protocol_scan_templates.json");
+const evidenceChainTemplates = readJson("evidence_chain_templates.json");
 const monologues = readJson("daily_monologues.json");
 const soundMap = readSoundMap();
 const previewEvents = readPreviewEvents();
@@ -206,6 +208,10 @@ for (const day of d8PrototypeDays) {
   assert(challengeDays.includes(day), `missing D8 prototype challenge day: ${day}`);
 }
 
+for (const day of d9PrototypeDays) {
+  assert(challengeDays.includes(day), `missing D9 prototype challenge day: ${day}`);
+}
+
 for (let day = 1; day <= 7; day += 1) {
   assert(monologueDays.includes(day), `missing daily monologue day: ${day}`);
 }
@@ -230,11 +236,12 @@ const report = {
     process.env.PROGRAM_C_REPORT_GENERATED_AT ??
     existingGeneratedAt ??
     new Date().toISOString(),
-  scope: "Program C D7 baseline plus D8 playable mini-game readiness",
+  scope: "Program C D7 baseline plus D8/D9 playable mini-game readiness",
   week1Coverage: {
     supportedChallengeDays: challengeDays,
     requiredWeek1Days,
     d8PrototypeDays,
+    d9PrototypeDays,
     packageTypes,
     counts: {
       cardTemplates: cards.length,
@@ -246,6 +253,7 @@ const report = {
       profilePuzzles: profilePuzzles.length,
       buyerNegotiationScripts: negotiations.length,
       protocolScanTemplates: protocolScanTemplates.length,
+      evidenceChainTemplates: evidenceChainTemplates.length,
       dailyMonologues: monologues.length,
       soundEvents: soundEvents.length,
       audioPreviewButtons: previewEvents.buttonEvents.length,
@@ -278,7 +286,7 @@ const report = {
     },
   },
   handoffNotes: [
-    "Program B should run the playable Day 1/2/3/4/5/6 loop using findChallengeByDay, package news, emotion responses, public opinion choices, protocol scan state, and daily monologues.",
+    "Program B should run the playable Day 1/2/3/4/5/6/7 loop using findChallengeByDay, package news, emotion responses, public opinion choices, protocol scan state, evidence chain state, and daily monologues.",
     "Program A should verify audio.handleGameEvent for package seal, transaction seal, challenge feedback, BGM, monologue typing, and endingTriggered prototype events.",
     "Program C performance numbers here cover content/audio/build assets; integrated FPS belongs to the A/B vertical slice run.",
   ],
@@ -294,7 +302,7 @@ Generated: ${report.generatedAt}
 
 ## Scope
 
-This report keeps the D7 Week 1 acceptance baseline and adds the D8 playable mini-game / ending-prototype readiness check.
+This report keeps the D7 Week 1 acceptance baseline and adds the D8/D9 playable mini-game / ending-prototype readiness check.
 
 ## Content Coverage
 
@@ -309,11 +317,14 @@ This report keeps the D7 Week 1 acceptance baseline and adds the D8 playable min
 | Profile puzzles | ${profilePuzzles.length} |
 | Buyer negotiation scripts | ${negotiations.length} |
 | Protocol scan templates | ${protocolScanTemplates.length} |
+| Evidence chain templates | ${evidenceChainTemplates.length} |
 | Daily monologues | ${monologues.length} |
 
 D7 required challenge days: ${requiredWeek1Days.join(", ")}.
 
 D8 prototype challenge days: ${d8PrototypeDays.join(", ")}.
+
+D9 prototype challenge days: ${d9PrototypeDays.join(", ")}.
 
 Supported Program C challenge days: ${challengeDays.join(", ")}.
 
@@ -349,7 +360,7 @@ FPS risk proxy: low for Program C assets. Program C currently ships JSON presets
 
 ## Handoff
 
-- Program B: run Day 1/2/3/4/5/6 loop with \`findChallengeByDay\`, package news, emotion responses, public opinion choices, protocol scan state, and daily monologues.
+- Program B: run Day 1/2/3/4/5/6/7 loop with \`findChallengeByDay\`, package news, emotion responses, public opinion choices, protocol scan state, evidence chain state, and daily monologues.
 - Program A: verify \`audio.handleGameEvent\` for package seal, transaction seal, challenge feedback, BGM, monologue typing, and \`endingTriggered\` prototype events.
 - Program C: rerun \`npm run check\` before each content or audio handoff.
 `;

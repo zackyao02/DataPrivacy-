@@ -1,0 +1,189 @@
+[
+  {
+    "id": "evidence-chain-week1-core",
+    "title": "重组证据链",
+    "briefing": "工作台进入证据重组模式。把 Day 1-6 的交易记录、昨日新闻和黑盒指令全部纳入证据链，再连接关键因果并提交举报。",
+    "objective": "收集18件证据，确认3条关键连接，最后提交举报材料。",
+    "highAwarenessPathTitle": "重组证据链",
+    "lowAwarenessPathTitle": "最后的数据包",
+    "lockedReason": "[数据损坏] 清醒值不足，无法解码该路径。",
+    "fragments": [
+      {
+        "id": "evidence-day1-transaction",
+        "day": 1,
+        "sourceType": "transaction_record",
+        "title": "Day1交易记录",
+        "text": "协议伪装后的数据包被标记为服务体验优化材料。",
+        "linkKey": "consent-mask"
+      },
+      {
+        "id": "evidence-day1-news",
+        "day": 1,
+        "sourceType": "news_snapshot",
+        "title": "Day1新闻截图",
+        "text": "用户称从未理解协议中隐藏的数据用途。",
+        "linkKey": "consent-mask"
+      },
+      {
+        "id": "evidence-day1-blackbox",
+        "day": 1,
+        "sourceType": "black_box_instruction",
+        "title": "Day1黑盒指令",
+        "text": "把危险词换成柔软词，用户不会反对他们看不见的东西。",
+        "linkKey": "consent-mask"
+      },
+      {
+        "id": "evidence-day2-transaction",
+        "day": 2,
+        "sourceType": "transaction_record",
+        "title": "Day2清理日志",
+        "text": "敏感图标被清除，备份和审计线索被系统标记为干扰项。",
+        "linkKey": "trace-erasure"
+      },
+      {
+        "id": "evidence-day2-news",
+        "day": 2,
+        "sourceType": "news_snapshot",
+        "title": "Day2新闻截图",
+        "text": "受害者投诉数据来源不明，但平台审计报告显示链路干净。",
+        "linkKey": "trace-erasure"
+      },
+      {
+        "id": "evidence-day2-blackbox",
+        "day": 2,
+        "sourceType": "black_box_instruction",
+        "title": "Day2黑盒指令",
+        "text": "审计快到了，删掉痕迹，留下合规的影子。",
+        "linkKey": "trace-erasure"
+      },
+      {
+        "id": "evidence-day3-transaction",
+        "day": 3,
+        "sourceType": "transaction_record",
+        "title": "Day3舆情记录",
+        "text": "负面新闻被改写成增长叙事后，原始投诉入口流量下降。",
+        "linkKey": "narrative-cover"
+      },
+      {
+        "id": "evidence-day3-news",
+        "day": 3,
+        "sourceType": "news_snapshot",
+        "title": "Day3新闻截图",
+        "text": "评论区转向讨论平台效率，受害者数据来源问题被稀释。",
+        "linkKey": "narrative-cover"
+      },
+      {
+        "id": "evidence-day3-blackbox",
+        "day": 3,
+        "sourceType": "black_box_instruction",
+        "title": "Day3黑盒指令",
+        "text": "争议不需要消失，只需要换一个更容易转发的标题。",
+        "linkKey": "narrative-cover"
+      },
+      {
+        "id": "evidence-day4-transaction",
+        "day": 4,
+        "sourceType": "transaction_record",
+        "title": "Day4画像导出",
+        "text": "多源碎片被合成完整用户画像，并进入买家报价队列。",
+        "linkKey": "profile-sale"
+      },
+      {
+        "id": "evidence-day4-news",
+        "day": 4,
+        "sourceType": "news_snapshot",
+        "title": "Day4新闻截图",
+        "text": "用户遭遇精准营销和诈骗接触，线索与画像标签高度一致。",
+        "linkKey": "profile-sale"
+      },
+      {
+        "id": "evidence-day4-blackbox",
+        "day": 4,
+        "sourceType": "black_box_instruction",
+        "title": "Day4黑盒指令",
+        "text": "买家不买散点，他们买一个人。",
+        "linkKey": "profile-sale"
+      },
+      {
+        "id": "evidence-day5-transaction",
+        "day": 5,
+        "sourceType": "transaction_record",
+        "title": "Day5谈判纪要",
+        "text": "买家要求干净链路与可复用标签，交易在黑盒背书下完成。",
+        "linkKey": "buyer-network"
+      },
+      {
+        "id": "evidence-day5-news",
+        "day": 5,
+        "sourceType": "news_snapshot",
+        "title": "Day5新闻截图",
+        "text": "多个下游场景出现同类受害者，买家网络开始浮出水面。",
+        "linkKey": "buyer-network"
+      },
+      {
+        "id": "evidence-day5-blackbox",
+        "day": 5,
+        "sourceType": "black_box_instruction",
+        "title": "Day5黑盒指令",
+        "text": "价格是谈出来的，他们买的是别人的人生，不差钱。",
+        "linkKey": "buyer-network"
+      },
+      {
+        "id": "evidence-day6-transaction",
+        "day": 6,
+        "sourceType": "transaction_record",
+        "title": "Day6协议扫描",
+        "text": "协议中的第三方共享、长周期留存和隐藏用途被集中标记。",
+        "linkKey": "illegal-chain"
+      },
+      {
+        "id": "evidence-day6-news",
+        "day": 6,
+        "sourceType": "news_snapshot",
+        "title": "Day6新闻截图",
+        "text": "监管开始调查地下数据交易，公司买家名单与协议条款相互印证。",
+        "linkKey": "illegal-chain"
+      },
+      {
+        "id": "evidence-day6-blackbox",
+        "day": 6,
+        "sourceType": "black_box_instruction",
+        "title": "Day6黑盒指令",
+        "text": "读协议，读到你看懂为止。",
+        "linkKey": "illegal-chain"
+      }
+    ],
+    "connections": [
+      {
+        "id": "connection-consent-to-erasure",
+        "fromFragmentId": "evidence-day1-blackbox",
+        "toFragmentId": "evidence-day2-transaction",
+        "label": "伪装同意 -> 清理痕迹",
+        "rationale": "Day1 的话术包装掩盖真实用途，Day2 的清理日志抹掉审计入口。"
+      },
+      {
+        "id": "connection-opinion-to-sale",
+        "fromFragmentId": "evidence-day3-transaction",
+        "toFragmentId": "evidence-day4-transaction",
+        "label": "舆论稀释 -> 画像出售",
+        "rationale": "负面讨论被改写后，完整画像继续流入买家报价队列。"
+      },
+      {
+        "id": "connection-buyer-to-illegal-chain",
+        "fromFragmentId": "evidence-day5-transaction",
+        "toFragmentId": "evidence-day6-transaction",
+        "label": "买家网络 -> 违规链路",
+        "rationale": "谈判纪要里的下游需求，与协议扫描出的共享和留存条款互相印证。"
+      }
+    ],
+    "finalPackage": {
+      "title": "员工数据包·第996号",
+      "description": "姓名：{姓名}。入职7天。决策模式：服从型。建议用途：AI筛选模型训练样本。",
+      "buyerName": "匿名买家",
+      "outcomeText": "最后的数据包完成。你发现被交付的对象是自己。"
+    },
+    "uploadText": "证据上传100%。黑盒投影闪烁熄灭，监管查封播报接入。",
+    "successText": "举报材料已提交。你用他们逼你学会的手艺，拉上了闸门。",
+    "failText": "证据链仍然断裂。没有连接的碎片，只会被当成噪点。"
+  }
+]

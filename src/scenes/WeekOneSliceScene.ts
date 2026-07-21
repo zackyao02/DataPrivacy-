@@ -22,6 +22,10 @@ type HitAction =
   | { readonly type: "match-protocol-scan-flow"; readonly flowId: string }
   | { readonly type: "find-protocol-scan-hidden-clause" }
   | { readonly type: "answer-protocol-scan-risk"; readonly level: RiskLevel }
+  | { readonly type: "collect-evidence-fragment"; readonly fragmentId: string }
+  | { readonly type: "collect-evidence-day"; readonly day: number }
+  | { readonly type: "connect-evidence-chain"; readonly connectionId: string }
+  | { readonly type: "submit-evidence-chain" }
   | { readonly type: "complete-challenge"; readonly succeeded: boolean };
 
 interface Rect {
@@ -172,6 +176,26 @@ export class WeekOneSliceScene implements Scene {
         break;
       case "answer-protocol-scan-risk":
         if (this.controller.answerProtocolScanRisk(action.level)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "collect-evidence-fragment":
+        if (this.controller.collectEvidenceFragment(action.fragmentId)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "collect-evidence-day":
+        if (this.controller.collectEvidenceDay(action.day)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "connect-evidence-chain":
+        if (this.controller.connectEvidenceChain(action.connectionId)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "submit-evidence-chain":
+        if (this.controller.submitEvidenceChain()) {
           this.navigate("workbench");
         }
         break;
@@ -439,6 +463,9 @@ export class WeekOneSliceScene implements Scene {
         break;
       case "protocol_scan":
         this.renderProtocolScan(context, layout, snapshot);
+        break;
+      case "evidence_chain":
+        this.renderEvidenceChain(context, layout, snapshot);
         break;
     }
 
@@ -797,6 +824,152 @@ export class WeekOneSliceScene implements Scene {
     });
   }
 
+  private renderEvidenceChain(
+    context: CanvasRenderingContext2D,
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const panel = this.getMiniGamePanelRect(layout);
+    const template = snapshot.miniGame.evidenceChainTemplate;
+
+    if (!template) {
+      this.drawMiniBlock(
+        context,
+        "证据链",
+        "没有可用证据链模板，请检查 Day 7 文本配置。",
+        panel.x + 14,
+        panel.y + 194,
+        panel.width - 28,
+      );
+      return;
+    }
+
+    const highAwareness = snapshot.miniGame.evidencePath === "evidence_chain";
+    const pathRect = {
+      x: panel.x + 14,
+      y: panel.y + 194,
+      width: panel.width - 28,
+      height: 58,
+    };
+
+    this.drawPanel(context, pathRect, highAwareness ? "#10201d" : "#211918", highAwareness ? "#4d766c" : "#7a5244");
+    context.fillStyle = highAwareness ? "#9fd6ca" : "#e0a166";
+    context.font = "800 10px ui-monospace, Consolas, monospace";
+    context.fillText(highAwareness ? template.highAwarenessPathTitle : template.lowAwarenessPathTitle, pathRect.x + 10, pathRect.y + 17);
+    context.fillStyle = "#d7e2dc";
+    context.font = "600 10px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(
+      context,
+      highAwareness ? template.objective : template.lockedReason,
+      pathRect.x + 10,
+      pathRect.y + 35,
+      pathRect.width - 20,
+      2,
+      12,
+    );
+
+    if (!highAwareness) {
+      const finalRect = this.getEvidenceFinalPackageRect(layout);
+      this.drawPanel(context, finalRect, "#161d22", "#5f4637");
+      context.fillStyle = "#e0a166";
+      context.font = "800 10px ui-monospace, Consolas, monospace";
+      context.fillText(template.finalPackage.title, finalRect.x + 10, finalRect.y + 17);
+      context.fillStyle = "#d7e2dc";
+      context.font = "600 10px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(
+        context,
+        this.controller.fillText(template.finalPackage.description),
+        finalRect.x + 10,
+        finalRect.y + 36,
+        finalRect.width - 20,
+        2,
+        13,
+      );
+      context.fillStyle = "#91a09b";
+      context.font = "600 9px ui-monospace, Consolas, monospace";
+      context.fillText(`买家：${template.finalPackage.buyerName}`, finalRect.x + 10, finalRect.y + finalRect.height - 12);
+      this.drawButton(context, this.getEvidenceSubmitRect(layout, snapshot), "交付最后的数据包", true);
+      return;
+    }
+
+    const collected = new Set(snapshot.miniGame.collectedEvidenceFragmentIds);
+    const connected = new Set(snapshot.miniGame.connectedEvidenceConnectionIds);
+    const evidenceDays = this.getEvidenceDays(snapshot);
+    const dayRects = this.getEvidenceDayRects(layout, evidenceDays.length);
+
+    evidenceDays.forEach((day, index) => {
+      const rect = dayRects[index];
+      const fragments = snapshot.miniGame.evidenceFragments.filter(
+        (fragment) => fragment.day === day,
+      );
+      const collectedCount = fragments.filter((fragment) => collected.has(fragment.id)).length;
+      const active = collectedCount === fragments.length;
+
+      this.drawPanel(context, rect, active ? "#263d34" : "#101c20", active ? "#77b8ad" : "#40505a");
+      context.fillStyle = active ? "#9fd6ca" : "#d7e2dc";
+      context.font = "800 10px ui-monospace, Consolas, monospace";
+      context.fillText(active ? `Day ${day} 已纳入` : `Day ${day} 文件夹`, rect.x + 8, rect.y + 16);
+      context.fillStyle = "#e2ebe6";
+      context.font = "700 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(
+        context,
+        `${collectedCount}/${fragments.length} 件证据`,
+        rect.x + 8,
+        rect.y + 32,
+        rect.width - 16,
+        1,
+        11,
+      );
+      context.fillStyle = "#91a09b";
+      context.font = "500 8px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(
+        context,
+        fragments.map((fragment) => fragment.title.replace(`Day${day}`, "")).join(" / "),
+        rect.x + 8,
+        rect.y + 46,
+        rect.width - 16,
+        1,
+        10,
+      );
+    });
+
+    const connectionRects = this.getEvidenceConnectionRects(
+      layout,
+      snapshot.miniGame.evidenceConnections.length,
+      snapshot,
+    );
+
+    snapshot.miniGame.evidenceConnections.forEach((connection, index) => {
+      const rect = connectionRects[index];
+      const active = connected.has(connection.id);
+      const endpointsReady =
+        collected.has(connection.fromFragmentId) && collected.has(connection.toFragmentId);
+
+      this.drawPanel(
+        context,
+        rect,
+        active ? "#263d34" : endpointsReady ? "#111c20" : "#201a18",
+        active ? "#77b8ad" : endpointsReady ? "#40505a" : "#7a5244",
+      );
+      context.fillStyle = active ? "#9fd6ca" : endpointsReady ? "#d7e2dc" : "#e0a166";
+      context.font = "800 9px ui-monospace, Consolas, monospace";
+      context.fillText(active ? "已连接" : `连接 ${index + 1}`, rect.x + 8, rect.y + 14);
+      context.fillStyle = "#e2ebe6";
+      context.font = "700 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, connection.label, rect.x + 8, rect.y + 30, rect.width - 16, 1, 11);
+      context.fillStyle = "#91a09b";
+      context.font = "500 8px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, connection.rationale, rect.x + 8, rect.y + 43, rect.width - 16, 1, 10);
+    });
+
+    const ready =
+      snapshot.miniGame.collectedEvidenceFragmentIds.length >=
+        snapshot.miniGame.evidenceFragments.length &&
+      snapshot.miniGame.connectedEvidenceConnectionIds.length >=
+        snapshot.miniGame.evidenceConnections.length;
+    this.drawButton(context, this.getEvidenceSubmitRect(layout, snapshot), "提交举报材料", ready);
+  }
+
   private renderBackground(context: CanvasRenderingContext2D, layout: Layout): void {
     context.fillStyle = "#080b0f";
     context.fillRect(0, 0, layout.width, layout.height);
@@ -979,6 +1152,51 @@ export class WeekOneSliceScene implements Scene {
             rect: this.getProtocolScanRiskAnswerRects(layout)[index],
             action: { type: "answer-protocol-scan-risk", level } as const,
           })),
+        ];
+      }
+      case "evidence_chain": {
+        const template = snapshot.miniGame.evidenceChainTemplate;
+
+        if (!template) {
+          return [];
+        }
+
+        if (snapshot.miniGame.evidencePath === "final_package") {
+          return [
+            {
+              rect: this.getEvidenceSubmitRect(layout, snapshot),
+              action: { type: "submit-evidence-chain" } as const,
+            },
+          ];
+        }
+
+        const evidenceDays = this.getEvidenceDays(snapshot);
+        const dayRects = this.getEvidenceDayRects(layout, evidenceDays.length);
+        const connectionRects = this.getEvidenceConnectionRects(
+          layout,
+          snapshot.miniGame.evidenceConnections.length,
+          snapshot,
+        );
+
+        return [
+          ...evidenceDays.map((day, index) => ({
+            rect: dayRects[index],
+            action: {
+              type: "collect-evidence-day",
+              day,
+            } as const,
+          })),
+          ...snapshot.miniGame.evidenceConnections.map((connection, index) => ({
+            rect: connectionRects[index],
+            action: {
+              type: "connect-evidence-chain",
+              connectionId: connection.id,
+            } as const,
+          })),
+          {
+            rect: this.getEvidenceSubmitRect(layout, snapshot),
+            action: { type: "submit-evidence-chain" } as const,
+          },
         ];
       }
       default: {
@@ -1191,6 +1409,74 @@ export class WeekOneSliceScene implements Scene {
     }));
   }
 
+  private getEvidenceDays(snapshot: WeekOneSliceSnapshot): readonly number[] {
+    return [
+      ...new Set(snapshot.miniGame.evidenceFragments.map((fragment) => fragment.day)),
+    ].sort((left, right) => left - right);
+  }
+
+  private getEvidenceDayRects(layout: Layout, count: number): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const columns = panel.width >= 620 ? 3 : 2;
+
+    return this.getMiniGameItemRects(layout, count, 266, 56, columns);
+  }
+
+  private getEvidenceConnectionRects(
+    layout: Layout,
+    count: number,
+    snapshot: WeekOneSliceSnapshot,
+  ): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const dayBottom = this.getRectsBottom(
+      this.getEvidenceDayRects(layout, this.getEvidenceDays(snapshot).length),
+    );
+    const columns = panel.width >= 620 ? 3 : 1;
+
+    return this.getMiniGameItemRects(
+      layout,
+      count,
+      dayBottom - panel.y + 8,
+      54,
+      columns,
+    );
+  }
+
+  private getEvidenceFinalPackageRect(layout: Layout): Rect {
+    const panel = this.getMiniGamePanelRect(layout);
+
+    return {
+      x: panel.x + 14,
+      y: panel.y + 266,
+      width: panel.width - 28,
+      height: 82,
+    };
+  }
+
+  private getEvidenceSubmitRect(
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): Rect {
+    const panel = this.getMiniGamePanelRect(layout);
+    const y =
+      snapshot.miniGame.evidencePath === "final_package"
+        ? this.getEvidenceFinalPackageRect(layout).y + this.getEvidenceFinalPackageRect(layout).height + 10
+        : this.getRectsBottom(
+            this.getEvidenceConnectionRects(
+              layout,
+              snapshot.miniGame.evidenceConnections.length,
+              snapshot,
+            ),
+          ) + 10;
+
+    return {
+      x: panel.x + 14,
+      y,
+      width: panel.width - 28,
+      height: 34,
+    };
+  }
+
   private getMiniGameItemRects(
     layout: Layout,
     count: number,
@@ -1256,6 +1542,19 @@ export class WeekOneSliceScene implements Scene {
           ),
           this.getProtocolScanHiddenRect(layout),
           ...this.getProtocolScanRiskAnswerRects(layout),
+        ]);
+      case "evidence_chain":
+        return this.getRectsBottom([
+          ...this.getEvidenceDayRects(
+            layout,
+            this.getEvidenceDays(snapshot).length,
+          ),
+          ...this.getEvidenceConnectionRects(
+            layout,
+            snapshot.miniGame.evidenceConnections.length,
+            snapshot,
+          ),
+          this.getEvidenceSubmitRect(layout, snapshot),
         ]);
       default:
         return this.getMiniGamePanelRect(layout).y + 210;

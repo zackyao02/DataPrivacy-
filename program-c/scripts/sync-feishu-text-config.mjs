@@ -639,6 +639,77 @@ function makeProtocolScanTemplates() {
   );
 }
 
+function makeEvidenceChainTemplates() {
+  const fragmentSource = [
+    [1, "consent-mask", "协议伪装后的数据包被标记为服务体验优化材料。", "用户称从未理解协议中隐藏的数据用途。", "把危险词换成柔软词，用户不会反对他们看不见的东西。"],
+    [2, "trace-erasure", "敏感图标被清除，备份和审计线索被系统标记为干扰项。", "受害者投诉数据来源不明，但平台审计报告显示链路干净。", "审计快到了，删掉痕迹，留下合规的影子。"],
+    [3, "narrative-cover", "负面新闻被改写成增长叙事后，原始投诉入口流量下降。", "评论区转向讨论平台效率，受害者数据来源问题被稀释。", "争议不需要消失，只需要换一个更容易转发的标题。"],
+    [4, "profile-sale", "多源碎片被合成完整用户画像，并进入买家报价队列。", "用户遭遇精准营销和诈骗接触，线索与画像标签高度一致。", "买家不买散点，他们买一个人。"],
+    [5, "buyer-network", "买家要求干净链路与可复用标签，交易在黑盒背书下完成。", "多个下游场景出现同类受害者，买家网络开始浮出水面。", "价格是谈出来的，他们买的是别人的人生，不差钱。"],
+    [6, "illegal-chain", "协议中的第三方共享、长周期留存和隐藏用途被集中标记。", "监管开始调查地下数据交易，公司买家名单与协议条款相互印证。", "读协议，读到你看懂为止。"],
+  ];
+  const sourceMeta = [
+    ["transaction_record", "transaction", "交易记录"],
+    ["news_snapshot", "news", "新闻截图"],
+    ["black_box_instruction", "blackbox", "黑盒指令"],
+  ];
+  const fragments = fragmentSource.flatMap(([day, linkKey, transaction, news, instruction]) =>
+    [transaction, news, instruction].map((text, index) => ({
+      id: `evidence-day${day}-${sourceMeta[index][1]}`,
+      day,
+      sourceType: sourceMeta[index][0],
+      title: `Day${day}${sourceMeta[index][2]}`,
+      text,
+      linkKey,
+    })),
+  );
+
+  return [
+    {
+      id: "evidence-chain-week1-core",
+      title: "重组证据链",
+      briefing: "工作台进入证据重组模式。把 Day 1-6 的交易记录、昨日新闻和黑盒指令全部纳入证据链，再连接关键因果并提交举报。",
+      objective: "收集18件证据，确认3条关键连接，最后提交举报材料。",
+      highAwarenessPathTitle: "重组证据链",
+      lowAwarenessPathTitle: "最后的数据包",
+      lockedReason: "[数据损坏] 清醒值不足，无法解码该路径。",
+      fragments,
+      connections: [
+        {
+          id: "connection-consent-to-erasure",
+          fromFragmentId: "evidence-day1-blackbox",
+          toFragmentId: "evidence-day2-transaction",
+          label: "伪装同意 -> 清理痕迹",
+          rationale: "Day1 的话术包装掩盖真实用途，Day2 的清理日志抹掉审计入口。",
+        },
+        {
+          id: "connection-opinion-to-sale",
+          fromFragmentId: "evidence-day3-transaction",
+          toFragmentId: "evidence-day4-transaction",
+          label: "舆论稀释 -> 画像出售",
+          rationale: "负面讨论被改写后，完整画像继续流入买家报价队列。",
+        },
+        {
+          id: "connection-buyer-to-illegal-chain",
+          fromFragmentId: "evidence-day5-transaction",
+          toFragmentId: "evidence-day6-transaction",
+          label: "买家网络 -> 违规链路",
+          rationale: "谈判纪要里的下游需求，与协议扫描出的共享和留存条款互相印证。",
+        },
+      ],
+      finalPackage: {
+        title: "员工数据包·第996号",
+        description: "姓名：{姓名}。入职7天。决策模式：服从型。建议用途：AI筛选模型训练样本。",
+        buyerName: "匿名买家",
+        outcomeText: "最后的数据包完成。你发现被交付的对象是自己。",
+      },
+      uploadText: "证据上传100%。黑盒投影闪烁熄灭，监管查封播报接入。",
+      successText: "举报材料已提交。你用他们逼你学会的手艺，拉上了闸门。",
+      failText: "证据链仍然断裂。没有连接的碎片，只会被当成噪点。",
+    },
+  ];
+}
+
 function parsePublicOpinionScripts() {
   const rows = parseMarkdownTable(section("### 8.3 Day 3 舆论操控", "### 8.4 Day 4 用户画像拼图"))
     .filter((cells) => cells[0] !== "原负面新闻");
@@ -753,6 +824,7 @@ function parseBlackBoxLines() {
     [4, "puzzle", "把碎片拼起来。买家不买散点，他们买一个人。", "用户画像完整度100%。正在计算最高出价买家。", "画像不完整。故事缺一块，价格就掉一截。"],
     [5, "negotiation", "价格是谈出来的。别怕开价，他们买的是别人的人生，不差钱。", "完美的交易。你为公司创造的价值，已经超出我的预想了。", "买家还在犹豫。把风险换个名字，再递过去。"],
     [6, "scan", "读协议。读到你看懂为止。", "协议解剖完成。你终于开始阅读那些你点过同意的东西。", "你漏掉了条款。看不懂的协议，才最适合被同意。"],
+    [7, "evidence-chain", "警告：您正在访问受限区域。请返回工作台。", "你以为举报能挽回什么？你的数据也早已经被泄露出去了。", "证据链不完整。没有上下文的碎片，只是噪点。"],
   ];
 
   for (const [day, key, intro, success, fail] of challengeLines) {
@@ -785,6 +857,7 @@ const { dataCleaningIcons, sensitiveItems, decoyItems } = parseDataCleaning();
 const profilePuzzles = makeProfilePuzzles();
 const buyerNegotiationScripts = parseNegotiations();
 const protocolScanTemplates = makeProtocolScanTemplates();
+const evidenceChainTemplates = makeEvidenceChainTemplates();
 const publicOpinionScripts = parsePublicOpinionScripts();
 
 const dayChallenges = [
@@ -879,6 +952,24 @@ const dayChallenges = [
     successText: "黑盒：你终于开始阅读那些你点过「同意」的东西。",
     failText: "黑盒：协议仍然安全。安全的意思是，用户仍然看不懂。",
   },
+  {
+    id: "challenge-day7-evidence-chain",
+    day: 7,
+    type: "evidence_chain",
+    title: "重组证据链",
+    briefing: "清醒值达标时，工作台切换为证据重组模式；不足时只能进入最后的数据包。",
+    objective: "收集 Day 1-6 的18件证据，连接3条关键因果，并提交举报材料。",
+    timeLimitSeconds: 90,
+    badge: "举报者",
+    evidenceChainTemplateIds: evidenceChainTemplates.map((template) => template.id),
+    successCondition: {
+      requiredFragments: 18,
+      requiredConnections: 3,
+      requiredUpload: true,
+    },
+    successText: "黑盒：证据上传完成。监管信号正在接入。",
+    failText: "黑盒：碎片还不能构成链条。断裂的证据，只会被系统吞掉。",
+  },
 ];
 
 writeJson("users.json", users);
@@ -893,6 +984,7 @@ writeJson("day_challenges.json", dayChallenges);
 writeJson("profile_puzzles.json", profilePuzzles);
 writeJson("buyer_negotiation_scripts.json", buyerNegotiationScripts);
 writeJson("protocol_scan_templates.json", protocolScanTemplates);
+writeJson("evidence_chain_templates.json", evidenceChainTemplates);
 writeJson("public_opinion_scripts.json", publicOpinionScripts);
 writeJson("daily_monologues.json", parseDailyMonologues());
 writeJson("black_box_lines.json", parseBlackBoxLines());

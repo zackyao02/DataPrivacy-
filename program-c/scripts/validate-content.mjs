@@ -20,6 +20,12 @@ const dayChallengeTypes = new Set([
   "profile_puzzle",
   "buyer_negotiation",
   "protocol_scan",
+  "evidence_chain",
+]);
+const evidenceSourceTypes = new Set([
+  "transaction_record",
+  "news_snapshot",
+  "black_box_instruction",
 ]);
 const dataCleaningTrapTypes = new Set(["backup_file", "audit_log", "system_file"]);
 const dataCleaningIconRoles = new Set(["sensitive", "decoy"]);
@@ -148,6 +154,7 @@ const dailyMonologues = readJson("daily_monologues.json");
 const profilePuzzles = readJson("profile_puzzles.json");
 const publicOpinionScripts = readJson("public_opinion_scripts.json");
 const protocolScanTemplates = readJson("protocol_scan_templates.json");
+const evidenceChainTemplates = readJson("evidence_chain_templates.json");
 const blackBoxLines = readJson("black_box_lines.json");
 const soundEvents = new Set(readSoundEvents());
 
@@ -164,18 +171,20 @@ assertUniqueIds(dailyMonologues, "daily_monologues");
 assertUniqueIds(profilePuzzles, "profile_puzzles");
 assertUniqueIds(publicOpinionScripts, "public_opinion_scripts");
 assertUniqueIds(protocolScanTemplates, "protocol_scan_templates");
+assertUniqueIds(evidenceChainTemplates, "evidence_chain_templates");
 assertUniqueIds(blackBoxLines, "black_box_lines");
 
 assert(cardTemplates.length >= 20, "card_templates needs 20 templates from the Feishu text config");
 assert(users.length >= 20, "users needs at least 20 profiles for Program C Day 2");
 assert(newsTemplates.length >= 20, "news_templates needs at least 20 templates for Program C D4");
 assert(protocolTerms.length >= 20, "protocol_terms needs at least 20 pairs for Program C D4");
-assert(dayChallenges.length >= 6, "day_challenges needs Day 1/2/3/4/5/6 entries for Program C D8");
+assert(dayChallenges.length >= 7, "day_challenges needs Day 1/2/3/4/5/6/7 entries for Program C D9");
 assert(dataCleaningIcons.length >= 10, "data_cleaning_icons needs icon coverage for Program C D5");
 assert(publicOpinionScripts.length >= 5, "public_opinion_scripts needs at least 5 templates for Program C D5");
 assert(profilePuzzles.length >= 3, "profile_puzzles needs 3 official sets from the Feishu text config");
 assert(buyerNegotiationScripts.length >= 6, "buyer_negotiation_scripts needs 6 scripts for Program C D6");
 assert(protocolScanTemplates.length >= 5, "protocol_scan_templates needs 5 Day 6 templates from the Feishu text config");
+assert(evidenceChainTemplates.length >= 1, "evidence_chain_templates needs Day 7 evidence chain data for Program C D9");
 assert(dailyMonologues.length >= 7, "daily_monologues needs 7 daily monologues for Program C D6");
 assert(blackBoxLines.length >= 10, "black_box_lines needs at least 10 voice lines for Program C D5");
 
@@ -239,6 +248,7 @@ const buyerNegotiationScriptIds = new Set(
   buyerNegotiationScripts.map((script) => script.id),
 );
 const protocolScanTemplateIds = new Set(protocolScanTemplates.map((template) => template.id));
+const evidenceChainTemplateIds = new Set(evidenceChainTemplates.map((template) => template.id));
 const dataCleaningIconHints = new Set(dataCleaningIcons.map((icon) => icon.iconHint));
 const challengeDays = new Set(dayChallenges.map((challenge) => challenge.day));
 
@@ -532,6 +542,95 @@ for (const template of protocolScanTemplates) {
   );
 }
 
+for (const template of evidenceChainTemplates) {
+  assert(template.title, `evidence_chain_template ${template.id} missing title`);
+  assert(template.briefing, `evidence_chain_template ${template.id} missing briefing`);
+  assert(template.objective, `evidence_chain_template ${template.id} missing objective`);
+  assert(
+    template.highAwarenessPathTitle,
+    `evidence_chain_template ${template.id} missing highAwarenessPathTitle`,
+  );
+  assert(
+    template.lowAwarenessPathTitle,
+    `evidence_chain_template ${template.id} missing lowAwarenessPathTitle`,
+  );
+  assert(template.lockedReason, `evidence_chain_template ${template.id} missing lockedReason`);
+  assert(template.uploadText, `evidence_chain_template ${template.id} missing uploadText`);
+  assert(template.successText, `evidence_chain_template ${template.id} missing successText`);
+  assert(template.failText, `evidence_chain_template ${template.id} missing failText`);
+  assert(
+    Array.isArray(template.fragments) && template.fragments.length >= 18,
+    `evidence_chain_template ${template.id} needs at least 18 fragments`,
+  );
+  assert(
+    Array.isArray(template.connections) && template.connections.length >= 3,
+    `evidence_chain_template ${template.id} needs at least 3 connections`,
+  );
+  assertUniqueIds(template.fragments, `${template.id} fragments`);
+  assertUniqueIds(template.connections, `${template.id} connections`);
+
+  const fragmentIds = new Set(template.fragments.map((fragment) => fragment.id));
+  const fragmentDays = new Set(template.fragments.map((fragment) => fragment.day));
+
+  for (let day = 1; day <= 6; day += 1) {
+    assert(fragmentDays.has(day), `evidence_chain_template ${template.id} missing Day ${day} fragments`);
+  }
+
+  for (const fragment of template.fragments) {
+    assert(
+      Number.isInteger(fragment.day) && fragment.day >= 1 && fragment.day <= 6,
+      `evidence_chain_template ${template.id} fragment ${fragment.id} invalid day`,
+    );
+    assert(
+      evidenceSourceTypes.has(fragment.sourceType),
+      `evidence_chain_template ${template.id} fragment ${fragment.id} invalid sourceType: ${fragment.sourceType}`,
+    );
+    assert(fragment.title, `evidence_chain_template ${template.id} fragment ${fragment.id} missing title`);
+    assert(fragment.text, `evidence_chain_template ${template.id} fragment ${fragment.id} missing text`);
+    assert(fragment.linkKey, `evidence_chain_template ${template.id} fragment ${fragment.id} missing linkKey`);
+    assertKnownPlaceholders(
+      fragment.text,
+      `evidence_chain_template ${template.id} fragment ${fragment.id} text`,
+      variables,
+    );
+  }
+
+  for (const connection of template.connections) {
+    assert(
+      fragmentIds.has(connection.fromFragmentId),
+      `evidence_chain_template ${template.id} connection ${connection.id} unknown fromFragmentId`,
+    );
+    assert(
+      fragmentIds.has(connection.toFragmentId),
+      `evidence_chain_template ${template.id} connection ${connection.id} unknown toFragmentId`,
+    );
+    assert(connection.label, `evidence_chain_template ${template.id} connection ${connection.id} missing label`);
+    assert(
+      connection.rationale,
+      `evidence_chain_template ${template.id} connection ${connection.id} missing rationale`,
+    );
+  }
+
+  assert(template.finalPackage?.title, `evidence_chain_template ${template.id} missing finalPackage title`);
+  assert(
+    template.finalPackage?.description,
+    `evidence_chain_template ${template.id} missing finalPackage description`,
+  );
+  assert(
+    template.finalPackage?.buyerName,
+    `evidence_chain_template ${template.id} missing finalPackage buyerName`,
+  );
+  assert(
+    template.finalPackage?.outcomeText,
+    `evidence_chain_template ${template.id} missing finalPackage outcomeText`,
+  );
+  assertKnownPlaceholders(
+    template.finalPackage.description,
+    `evidence_chain_template ${template.id} finalPackage description`,
+    variables,
+  );
+}
+
 for (const monologue of dailyMonologues) {
   assert(
     Number.isInteger(monologue.day) && monologue.day >= 1 && monologue.day <= 7,
@@ -596,6 +695,7 @@ assert(challengeDays.has(3), "day_challenges missing Day 3 public opinion challe
 assert(challengeDays.has(4), "day_challenges missing Day 4 profile puzzle challenge");
 assert(challengeDays.has(5), "day_challenges missing Day 5 buyer negotiation challenge");
 assert(challengeDays.has(6), "day_challenges missing Day 6 protocol scan challenge");
+assert(challengeDays.has(7), "day_challenges missing Day 7 evidence chain challenge");
 
 const monologueDays = new Set(dailyMonologues.map((monologue) => monologue.day));
 
@@ -799,6 +899,37 @@ for (const challenge of dayChallenges) {
       );
     }
   }
+
+  if (challenge.type === "evidence_chain") {
+    const condition = challenge.successCondition;
+    assert(condition, `challenge ${challenge.id} missing successCondition`);
+    assert(
+      Number.isInteger(condition.requiredFragments) &&
+        condition.requiredFragments >= 18,
+      `challenge ${challenge.id} invalid requiredFragments`,
+    );
+    assert(
+      Number.isInteger(condition.requiredConnections) &&
+        condition.requiredConnections >= 3,
+      `challenge ${challenge.id} invalid requiredConnections`,
+    );
+    assert(
+      typeof condition.requiredUpload === "boolean",
+      `challenge ${challenge.id} invalid requiredUpload`,
+    );
+    assert(
+      Array.isArray(challenge.evidenceChainTemplateIds) &&
+        challenge.evidenceChainTemplateIds.length >= 1,
+      `challenge ${challenge.id} needs evidenceChainTemplateIds`,
+    );
+
+    for (const templateId of challenge.evidenceChainTemplateIds) {
+      assert(
+        evidenceChainTemplateIds.has(templateId),
+        `challenge ${challenge.id} references unknown evidence chain template: ${templateId}`,
+      );
+    }
+  }
 }
 
 console.log("Content validation passed.");
@@ -814,5 +945,6 @@ console.log(`publicOpinionScripts=${publicOpinionScripts.length}`);
 console.log(`profilePuzzles=${profilePuzzles.length}`);
 console.log(`buyerNegotiationScripts=${buyerNegotiationScripts.length}`);
 console.log(`protocolScanTemplates=${protocolScanTemplates.length}`);
+console.log(`evidenceChainTemplates=${evidenceChainTemplates.length}`);
 console.log(`dailyMonologues=${dailyMonologues.length}`);
 console.log(`blackBoxLines=${blackBoxLines.length}`);

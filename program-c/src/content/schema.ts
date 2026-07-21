@@ -69,6 +69,7 @@ export const DAY_CHALLENGE_TYPES = [
   "profile_puzzle",
   "buyer_negotiation",
   "protocol_scan",
+  "evidence_chain",
 ] as const;
 
 export type DayChallengeType = (typeof DAY_CHALLENGE_TYPES)[number];
@@ -154,13 +155,24 @@ export interface ProtocolScanChallenge extends DayChallengeBase {
   };
 }
 
+export interface EvidenceChainChallenge extends DayChallengeBase {
+  readonly type: "evidence_chain";
+  readonly evidenceChainTemplateIds: readonly string[];
+  readonly successCondition: {
+    readonly requiredFragments: number;
+    readonly requiredConnections: number;
+    readonly requiredUpload: boolean;
+  };
+}
+
 export type DayChallenge =
   | ProtocolMatchChallenge
   | DataCleaningChallenge
   | PublicOpinionChallenge
   | ProfilePuzzleChallenge
   | BuyerNegotiationChallenge
-  | ProtocolScanChallenge;
+  | ProtocolScanChallenge
+  | EvidenceChainChallenge;
 
 export type DataCleaningIconRole = "sensitive" | "decoy";
 
@@ -323,6 +335,51 @@ export interface ProtocolScanTemplate {
   readonly riskQuestion: ProtocolScanRiskQuestion;
 }
 
+export type EvidenceSourceType =
+  | "transaction_record"
+  | "news_snapshot"
+  | "black_box_instruction";
+
+export interface EvidenceChainFragment {
+  readonly id: string;
+  readonly day: number;
+  readonly sourceType: EvidenceSourceType;
+  readonly title: string;
+  readonly text: string;
+  readonly linkKey: string;
+}
+
+export interface EvidenceChainConnection {
+  readonly id: string;
+  readonly fromFragmentId: string;
+  readonly toFragmentId: string;
+  readonly label: string;
+  readonly rationale: string;
+}
+
+export interface EvidenceChainFinalPackage {
+  readonly title: string;
+  readonly description: string;
+  readonly buyerName: string;
+  readonly outcomeText: string;
+}
+
+export interface EvidenceChainTemplate {
+  readonly id: string;
+  readonly title: string;
+  readonly briefing: string;
+  readonly objective: string;
+  readonly highAwarenessPathTitle: string;
+  readonly lowAwarenessPathTitle: string;
+  readonly lockedReason: string;
+  readonly fragments: readonly EvidenceChainFragment[];
+  readonly connections: readonly EvidenceChainConnection[];
+  readonly finalPackage: EvidenceChainFinalPackage;
+  readonly uploadText: string;
+  readonly successText: string;
+  readonly failText: string;
+}
+
 export interface DailyMonologue {
   readonly id: string;
   readonly day: number;
@@ -373,6 +430,7 @@ export interface ContentBundle {
   readonly profilePuzzles: readonly ProfilePuzzle[];
   readonly buyerNegotiationScripts: readonly BuyerNegotiationScript[];
   readonly protocolScanTemplates: readonly ProtocolScanTemplate[];
+  readonly evidenceChainTemplates: readonly EvidenceChainTemplate[];
   readonly dailyMonologues: readonly DailyMonologue[];
   readonly blackBoxLines: readonly BlackBoxLine[];
 }

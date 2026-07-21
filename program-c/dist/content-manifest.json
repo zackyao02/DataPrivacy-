@@ -16,6 +16,7 @@
     "profile_puzzles.json",
     "public_opinion_scripts.json",
     "protocol_scan_templates.json",
+    "evidence_chain_templates.json",
     "black_box_lines.json"
   ],
   "counts": {
@@ -26,13 +27,14 @@
     "newsTemplates": 20,
     "protocolTerms": 20,
     "packageRecipes": 5,
-    "dayChallenges": 6,
+    "dayChallenges": 7,
     "dataCleaningIcons": 18,
     "dailyMonologues": 7,
     "profilePuzzles": 3,
     "publicOpinionScripts": 10,
     "protocolScanTemplates": 5,
-    "blackBoxLines": 68
+    "evidenceChainTemplates": 1,
+    "blackBoxLines": 71
   },
   "dataTypes": [
     "biometric",
@@ -60,11 +62,13 @@
     3,
     4,
     5,
-    6
+    6,
+    7
   ],
   "dayChallengeTypes": [
     "buyer_negotiation",
     "data_cleaning",
+    "evidence_chain",
     "profile_puzzle",
     "protocol_match",
     "protocol_scan",
@@ -80,6 +84,7 @@
     "getProfilePuzzles",
     "getBuyerNegotiationScripts",
     "getProtocolScanTemplates",
+    "getEvidenceChainTemplates",
     "getDailyMonologues",
     "getBlackBoxLines",
     "findChallengeByDay",
@@ -96,6 +101,9 @@
     "findProtocolScanTemplateById",
     "findProtocolScanTemplatesByIds",
     "pickProtocolScanTemplate",
+    "findEvidenceChainTemplateById",
+    "findEvidenceChainTemplatesByIds",
+    "pickEvidenceChainTemplate",
     "findDailyMonologueByDay",
     "findBlackBoxLinesByStage",
     "findBlackBoxLinesForChallenge",

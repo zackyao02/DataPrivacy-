@@ -28,7 +28,7 @@ node scripts/sync-feishu-text-config.mjs
 | `verify:offline` | Confirms Program C data, source, and generated manifests do not depend on remote URLs. |
 | `report:size` | Prints raw tracked file size against the 8MB budget. |
 | `report:gzip` | Writes `dist/gzip-size-report.json` and prints gzip size against the 8MB budget. |
-| `report:week1` | Writes the D7 baseline plus D8 Day 6 prototype report to `dist/week1-vertical-slice-report.json` and `docs/week1-vertical-slice-report.md`. |
+| `report:week1` | Writes the D7 baseline plus D8/D9 playable mini-game report to `dist/week1-vertical-slice-report.json` and `docs/week1-vertical-slice-report.md`. |
 | `check` | Runs the full Program C TypeScript, validation, build, offline, size, gzip, and vertical-slice reporting chain. |
 | `node scripts/sync-feishu-text-config.mjs` | Syncs the local Feishu text-config Markdown snapshot into existing Program C JSON content. Set `FEISHU_TEXT_CONFIG_MD=...` to use a different snapshot. |
 
@@ -46,4 +46,4 @@ Generated reports are written only when their stable content changes. To refresh
 
 Program C D7 covers Week 1 content integration, JSON completeness, audio integration, and initial performance reporting. FPS itself must be measured in the integrated Program A canvas build; Program C reports asset size, offline readiness, JSON parse timing, and audio event consistency.
 
-D8 adds Day 6 protocol-scan templates, scoring checks, black-box feedback, and an ending-branch prototype on top of the D7 baseline.
+D8 adds Day 1-6 content-driven mini-games on top of the D7 baseline. D9 adds Day 7 evidence-chain data, scoring state, black-box feedback, and a branch-aware ending prototype.

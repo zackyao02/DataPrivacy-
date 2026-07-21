@@ -476,6 +476,30 @@
     "text": "你漏掉了条款。看不懂的协议，才最适合被同意。"
   },
   {
+    "id": "blackbox-intro-evidence-chain",
+    "stage": "challenge_intro",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-final",
+    "text": "警告：您正在访问受限区域。请返回工作台。"
+  },
+  {
+    "id": "blackbox-success-evidence-chain",
+    "stage": "challenge_success",
+    "cueEventName": "challengeSuccess",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-final",
+    "text": "你以为举报能挽回什么？你的数据也早已经被泄露出去了。"
+  },
+  {
+    "id": "blackbox-fail-evidence-chain",
+    "stage": "challenge_fail",
+    "cueEventName": "challengeFail",
+    "relatedChallengeDay": 7,
+    "voiceHint": "mechanical-final",
+    "text": "证据链不完整。没有上下文的碎片，只是噪点。"
+  },
+  {
     "id": "blackbox-package-precise_profile",
     "stage": "package_review",
     "cueEventName": "blackBoxLine",

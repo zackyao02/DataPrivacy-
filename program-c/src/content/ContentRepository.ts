@@ -10,6 +10,7 @@ import type {
   DayChallenge,
   DayChallengeType,
   DataType,
+  EvidenceChainTemplate,
   NewsTemplate,
   PackageRecipe,
   ProfilePuzzle,
@@ -104,6 +105,10 @@ export class ContentRepository {
 
   getProtocolScanTemplates(): readonly ProtocolScanTemplate[] {
     return this.bundle.protocolScanTemplates;
+  }
+
+  getEvidenceChainTemplates(): readonly EvidenceChainTemplate[] {
+    return this.bundle.evidenceChainTemplates;
   }
 
   getDailyMonologues(): readonly DailyMonologue[] {
@@ -208,6 +213,34 @@ export class ContentRepository {
     const templates = templateIds?.length
       ? this.findProtocolScanTemplatesByIds(templateIds)
       : this.bundle.protocolScanTemplates;
+
+    if (templates.length === 0) {
+      return undefined;
+    }
+
+    return this.pick(templates);
+  }
+
+  findEvidenceChainTemplateById(
+    templateId: string,
+  ): EvidenceChainTemplate | undefined {
+    return this.bundle.evidenceChainTemplates.find((template) => template.id === templateId);
+  }
+
+  findEvidenceChainTemplatesByIds(
+    templateIds: readonly string[],
+  ): readonly EvidenceChainTemplate[] {
+    const ids = new Set(templateIds);
+
+    return this.bundle.evidenceChainTemplates.filter((template) => ids.has(template.id));
+  }
+
+  pickEvidenceChainTemplate(
+    templateIds?: readonly string[],
+  ): EvidenceChainTemplate | undefined {
+    const templates = templateIds?.length
+      ? this.findEvidenceChainTemplatesByIds(templateIds)
+      : this.bundle.evidenceChainTemplates;
 
     if (templates.length === 0) {
       return undefined;

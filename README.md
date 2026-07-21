@@ -14,7 +14,8 @@
 - 架构审查修复：Program C 加入 TypeScript 验收；打包预览会拦截未知卡、重复卡和额外卡；主应用调试入口已接入 C 的内容仓库和音效管理器。
 - D7 后联调：主应用已把 `workbench`、`news`、`mini-game` 替换成可点击 Week 1 垂直切片场景，串通卡槽打包、新闻反馈、情绪选择、小关卡入口和 C 侧音效事件。
 - D8：小关卡由占位判定升级为内容驱动交互，接入 Day 1 协议伪装、Day 2 数据清洗、Day 3 舆论操控、Day 4 画像拼图、Day 5 买家谈判、Day 6 快速协议扫描，以及清醒值驱动的结局分支原型。
-- D7 内容对齐补充：按最新飞书“文本配置”更新 Week 1 垂直切片验收前已有内容口径，升级为 20 张正式数据卡、15 个买家、18 个清洗图标、10 组舆论题、3 套画像拼图、5 套协议扫描模板和 68 条黑盒台词；新增同步脚本并修正工作台起始卡池。Day 7 完整分支 / 结局报告 / UI 文案尚未接成完整流程，只作为后续开发依据。
+- D9：接入 Day 7 证据链重组原型，新增 18 件证据、3 条关键连接、低清醒值“最后的数据包”分支展示，以及同情/愤怒/麻木驱动的真实清醒值累计。
+- D7 内容对齐补充：按最新飞书“文本配置”更新 Week 1 垂直切片验收前已有内容口径，升级为 20 张正式数据卡、15 个买家、18 个清洗图标、10 组舆论题、3 套画像拼图、5 套协议扫描模板、1 套证据链模板和 71 条黑盒台词；新增同步脚本并修正工作台起始卡池。结局报告 / 分享 / 存档 / 最终 UI 文案仍作为后续开发依据。
 
 ## 接入重点
 
@@ -26,11 +27,12 @@ const readyPackages = content.findPackagePreviews(selectedCardIds, {
 });
 
 const news = content.pickNewsForPackage(packageType);
-const challenge = content.findChallengeByDay(4); // 支持 1 / 2 / 3 / 4 / 5 / 6
+const challenge = content.findChallengeByDay(4); // 支持 1 / 2 / 3 / 4 / 5 / 6 / 7
 const opinion = content.pickPublicOpinionScript(packageType);
 const blackBoxLine = content.pickBlackBoxLine("package_review", { packageType });
 const profilePuzzle = content.pickProfilePuzzleByDay(4);
 const negotiation = content.pickBuyerNegotiationScript(packageType);
+const evidenceChain = content.pickEvidenceChainTemplate();
 const monologue = content.findDailyMonologueByDay(day);
 ```
 
@@ -50,8 +52,8 @@ window.programA.programB.emit("newsBroadcast");
 
 1. 切到 `workbench` 场景，点击数据卡调整 3 个槽位。
 2. 点击“封装数据包”，有效组合会进入 `news` 场景并触发封装/新闻音效。
-3. 在 `news` 场景选择同情、愤怒或麻木，再点击“进入小关卡”。
-4. 在 `mini-game` 场景按当天任务点击：Day 1 伪装协议术语、Day 2 清理敏感项、Day 3 选择安全舆论改写、Day 4 依次拼画像碎片、Day 5 选择谈判话术、Day 6 标记协议风险；成功会解锁下一天，Day 6 成功后显示结局分支原型。
+3. 在 `news` 场景选择同情、愤怒或麻木，清醒值会按 +1 / +2 / -1 累计，再点击“进入小关卡”。
+4. 在 `mini-game` 场景按当天任务点击：Day 1 伪装协议术语、Day 2 清理敏感项、Day 3 选择安全舆论改写、Day 4 依次拼画像碎片、Day 5 选择谈判话术、Day 6 标记协议风险、Day 7 收集证据并连接证据链；成功会解锁下一天，Day 7 成功后触发结局分支原型。
 
 程序 A / B 可调用音效接口：
 
@@ -99,18 +101,19 @@ npm run check
 - recipes=5
 - news=20
 - protocolTerms=20
-- dayChallenges=6
+- dayChallenges=7
 - dataCleaningIcons=18
 - publicOpinionScripts=10
 - profilePuzzles=3
 - buyerNegotiationScripts=6
 - protocolScanTemplates=5
+- evidenceChainTemplates=1
 - dailyMonologues=7
-- blackBoxLines=68
-- raw=159970 bytes
-- gzip=40238 bytes
+- blackBoxLines=71
+- raw=171832 bytes
+- gzip=43354 bytes
 - 低于 8MB 预算
 
 完整交接说明见 `program-c/docs/program-c-integration.md`。
-Program C 交付索引见 `program-c/docs/program-c-delivery-index.md`，可按 D1-D8 快速核对对应交付物。
+Program C 交付索引见 `program-c/docs/program-c-delivery-index.md`，可按 D1-D9 快速核对对应交付物。
 D7 垂直切片报告见 `program-c/docs/week1-vertical-slice-report.md`，工具链说明见 `program-c/docs/program-c-toolchain.md`，验收清单见 `program-c/docs/program-c-acceptance-checklist.md`。
