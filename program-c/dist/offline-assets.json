@@ -15,6 +15,7 @@
     "data/daily_monologues.json",
     "data/data_cleaning_icons.json",
     "data/day_challenges.json",
+    "data/ending_report_templates.json",
     "data/evidence_chain_templates.json",
     "data/news_templates.json",
     "data/package_recipes.json",

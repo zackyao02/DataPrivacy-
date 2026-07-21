@@ -11,6 +11,7 @@ import type {
   DayChallengeType,
   DataType,
   EvidenceChainTemplate,
+  EndingReportTemplate,
   NewsTemplate,
   PackageRecipe,
   ProfilePuzzle,
@@ -109,6 +110,10 @@ export class ContentRepository {
 
   getEvidenceChainTemplates(): readonly EvidenceChainTemplate[] {
     return this.bundle.evidenceChainTemplates;
+  }
+
+  getEndingReportTemplates(): readonly EndingReportTemplate[] {
+    return this.bundle.endingReportTemplates;
   }
 
   getDailyMonologues(): readonly DailyMonologue[] {
@@ -247,6 +252,20 @@ export class ContentRepository {
     }
 
     return this.pick(templates);
+  }
+
+  findEndingReportTemplateById(
+    templateId: string,
+  ): EndingReportTemplate | undefined {
+    return this.bundle.endingReportTemplates.find((template) => template.id === templateId);
+  }
+
+  pickEndingReportTemplate(): EndingReportTemplate | undefined {
+    if (this.bundle.endingReportTemplates.length === 0) {
+      return undefined;
+    }
+
+    return this.pick(this.bundle.endingReportTemplates);
   }
 
   findDailyMonologueByDay(day: number): DailyMonologue | undefined {

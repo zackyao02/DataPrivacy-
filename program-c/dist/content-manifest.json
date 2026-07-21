@@ -17,6 +17,7 @@
     "public_opinion_scripts.json",
     "protocol_scan_templates.json",
     "evidence_chain_templates.json",
+    "ending_report_templates.json",
     "black_box_lines.json"
   ],
   "counts": {
@@ -34,6 +35,7 @@
     "publicOpinionScripts": 10,
     "protocolScanTemplates": 5,
     "evidenceChainTemplates": 1,
+    "endingReportTemplates": 1,
     "blackBoxLines": 71
   },
   "dataTypes": [
@@ -85,6 +87,7 @@
     "getBuyerNegotiationScripts",
     "getProtocolScanTemplates",
     "getEvidenceChainTemplates",
+    "getEndingReportTemplates",
     "getDailyMonologues",
     "getBlackBoxLines",
     "findChallengeByDay",
@@ -104,6 +107,8 @@
     "findEvidenceChainTemplateById",
     "findEvidenceChainTemplatesByIds",
     "pickEvidenceChainTemplate",
+    "findEndingReportTemplateById",
+    "pickEndingReportTemplate",
     "findDailyMonologueByDay",
     "findBlackBoxLinesByStage",
     "findBlackBoxLinesForChallenge",

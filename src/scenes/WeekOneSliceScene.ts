@@ -196,7 +196,7 @@ export class WeekOneSliceScene implements Scene {
         break;
       case "submit-evidence-chain":
         if (this.controller.submitEvidenceChain()) {
-          this.navigate("workbench");
+          this.navigate("ending");
         }
         break;
       case "complete-challenge":

@@ -1,9 +1,9 @@
 {
   "budgetBytes": 8388608,
-  "totalRawBytes": 171832,
-  "totalGzipBytes": 43354,
-  "remainingRawBytes": 8216776,
-  "remainingGzipBytes": 8345254,
+  "totalRawBytes": 175727,
+  "totalGzipBytes": 44852,
+  "remainingRawBytes": 8212881,
+  "remainingGzipBytes": 8343756,
   "files": [
     {
       "file": "data\\black_box_lines.json",
@@ -32,13 +32,13 @@
     },
     {
       "file": "src\\content\\ContentRepository.ts",
-      "rawBytes": 14593,
-      "gzipBytes": 2943
+      "rawBytes": 15142,
+      "gzipBytes": 3002
     },
     {
       "file": "src\\content\\schema.ts",
-      "rawBytes": 11945,
-      "gzipBytes": 2460
+      "rawBytes": 12753,
+      "gzipBytes": 2598
     },
     {
       "file": "data\\users.json",
@@ -76,9 +76,14 @@
       "gzipBytes": 1241
     },
     {
+      "file": "data\\ending_report_templates.json",
+      "rawBytes": 2137,
+      "gzipBytes": 1232
+    },
+    {
       "file": "dist\\content-manifest.json",
-      "rawBytes": 3625,
-      "gzipBytes": 1162
+      "rawBytes": 3793,
+      "gzipBytes": 1194
     },
     {
       "file": "data\\protocol_terms.json",
@@ -91,14 +96,14 @@
       "gzipBytes": 899
     },
     {
+      "file": "src\\content\\defaultContentBundle.ts",
+      "rawBytes": 3008,
+      "gzipBytes": 758
+    },
+    {
       "file": "data\\buyers.json",
       "rawBytes": 4578,
       "gzipBytes": 731
-    },
-    {
-      "file": "src\\content\\defaultContentBundle.ts",
-      "rawBytes": 2816,
-      "gzipBytes": 727
     },
     {
       "file": "data\\variables.json",
@@ -106,14 +111,14 @@
       "gzipBytes": 715
     },
     {
+      "file": "dist\\offline-assets.json",
+      "rawBytes": 1804,
+      "gzipBytes": 698
+    },
+    {
       "file": "data\\package_recipes.json",
       "rawBytes": 2227,
       "gzipBytes": 697
-    },
-    {
-      "file": "dist\\offline-assets.json",
-      "rawBytes": 1763,
-      "gzipBytes": 692
     },
     {
       "file": "src\\audio\\soundMap.ts",

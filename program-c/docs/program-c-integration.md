@@ -15,6 +15,7 @@
 | D7 | Week 1 内容整合验收、音效整合检查、性能初测报告、工具链文档；按最新飞书文本配置对齐验收前内容口径 | 已完成 |
 | D8 | Day 1 / 2 / 3 / 4 / 5 / 6 小关卡内容驱动点击规则，Day 3 舆论操控，Day 6 快速协议扫描，结局分支原型 | 已完成 |
 | D9 | Day 7 证据链重组原型、低清醒值最后数据包分支展示、情绪驱动清醒值累计 | 已完成 |
+| D10 | 结局报告模板、`ending` 报告场景、分享文案复制、本地存档读取/保存/清除 | 已完成 |
 
 ## 内容文件
 
@@ -34,6 +35,7 @@
 | `data/buyer_negotiation_scripts.json` | 6 组 Day 5 买家谈判话术；纯叙事，无价格/风险联动字段 |
 | `data/protocol_scan_templates.json` | 5 套 Day 6 快速协议扫描模板 |
 | `data/evidence_chain_templates.json` | 1 套 Day 7 证据链模板，包含18件证据、3条连接和最后数据包分支 |
+| `data/ending_report_templates.json` | 1 套结局报告模板，包含替罪羊 / 举报者评级分支、分享文案和报告字段 |
 | `data/daily_monologues.json` | 7 天每日新闻后的独白文案 |
 | `data/black_box_lines.json` | 71 条黑盒台词和音效绑定，包含 Day 3 小关卡反馈和 Day 7 证据链反馈 |
 | `scripts/sync-feishu-text-config.mjs` | 从本地飞书 Markdown 快照同步文本配置到 JSON 内容库 |
@@ -61,6 +63,7 @@ const profilePuzzle = content.pickProfilePuzzleByDay(4);
 const negotiation = content.pickBuyerNegotiationScript("precise_profile");
 const protocolScan = content.pickProtocolScanTemplate();
 const evidenceChain = content.pickEvidenceChainTemplate();
+const endingReport = content.pickEndingReportTemplate();
 const monologue = content.findDailyMonologueByDay(5);
 ```
 
@@ -82,6 +85,7 @@ const monologue = content.findDailyMonologueByDay(5);
 - `pickBuyerNegotiationScript(packageType)`：按数据包类型抽取 Day 5 谈判脚本。两项选择都成交，只返回不同叙事和黑盒反馈。
 - `pickProtocolScanTemplate()`：随机抽取一套 Day 6 协议扫描模板；也可用 `findProtocolScanTemplatesByIds(ids)` 对齐关卡配置。
 - `pickEvidenceChainTemplate()`：读取 Day 7 证据链模板；也可用 `findEvidenceChainTemplatesByIds(ids)` 对齐关卡配置。
+- `pickEndingReportTemplate()`：读取 D10 结局报告模板；也可用 `findEndingReportTemplateById(id)` 对齐指定报告配置。
 - `findDailyMonologueByDay(day)`：读取指定天数新闻后的独白文案，`day` 范围 1-7。
 - `pickBlackBoxLine(stage, filters)`：按阶段、天数或包类型抽取黑盒台词。
 
@@ -186,6 +190,7 @@ npm run check
 | 买家谈判话术 | 6 |
 | 协议扫描模板 | 5 |
 | 证据链模板 | 1 |
+| 结局报告模板 | 1 |
 | 每日独白 | 7 |
 | 黑盒台词 | 71 |
 | 离线检查 | `externalNetworkRequired=false` |
@@ -193,6 +198,7 @@ npm run check
 
 ## 后续
 
-- 主项目已接入可点击垂直切片；当前可玩规则是 Day 1/2/3/4/5/6/7，Day 7 会按清醒值进入“重组证据链”或“最后的数据包”分支原型。最新飞书文本配置中的结局报告、分享/存档和最终 UI 文案是后续开发依据，不代表当前玩法已完成。
-- 后续端到端联调重点检查 A/B 卡槽数量、包类型枚举、新闻生成、Day 1/2/3/4/5/6/7 小关卡点击规则、证据链状态和音效事件是否一致。
+- 主项目已接入可点击垂直切片；当前可玩规则是 Day 1/2/3/4/5/6/7，Day 7 会按清醒值进入“重组证据链”或“最后的数据包”分支，并在成功后进入 `ending` 结局报告场景。
+- 后续端到端联调重点检查 A/B 卡槽数量、包类型枚举、新闻生成、Day 1/2/3/4/5/6/7 小关卡点击规则、证据链状态、结局报告状态、存档状态和音效事件是否一致。
+- 最新飞书文本配置中的最终图片导出、二维码视觉和完整 UI 文案仍是后续开发依据；如方案与实际玩法冲突，应在共享文档对应部分下补充对接问题。
 - 真实音频素材接入后继续跑 `npm run check` 控制包体。

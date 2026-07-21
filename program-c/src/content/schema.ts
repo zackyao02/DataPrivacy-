@@ -380,6 +380,31 @@ export interface EvidenceChainTemplate {
   readonly failText: string;
 }
 
+export type EndingReportPath = "final_package" | "evidence_chain";
+export type EndingReportGrade = "F" | "B+";
+
+export interface EndingReportEndingCopy {
+  readonly path: EndingReportPath;
+  readonly title: string;
+  readonly grade: EndingReportGrade;
+  readonly summary: string;
+  readonly ratingComment: string;
+  readonly shareText: string;
+}
+
+export interface EndingReportTemplate {
+  readonly id: string;
+  readonly title: string;
+  readonly subtitle: string;
+  readonly durationText: string;
+  readonly dataTypes: readonly string[];
+  readonly dataUses: readonly string[];
+  readonly adviceText: string;
+  readonly qrPrompt: string;
+  readonly sharePresets: readonly string[];
+  readonly endings: readonly EndingReportEndingCopy[];
+}
+
 export interface DailyMonologue {
   readonly id: string;
   readonly day: number;
@@ -431,6 +456,7 @@ export interface ContentBundle {
   readonly buyerNegotiationScripts: readonly BuyerNegotiationScript[];
   readonly protocolScanTemplates: readonly ProtocolScanTemplate[];
   readonly evidenceChainTemplates: readonly EvidenceChainTemplate[];
+  readonly endingReportTemplates: readonly EndingReportTemplate[];
   readonly dailyMonologues: readonly DailyMonologue[];
   readonly blackBoxLines: readonly BlackBoxLine[];
 }

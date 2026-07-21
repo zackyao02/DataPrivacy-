@@ -6,6 +6,7 @@ import dataCleaningIconsData from "../../data/data_cleaning_icons.json";
 import dailyMonologuesData from "../../data/daily_monologues.json";
 import dayChallengesData from "../../data/day_challenges.json";
 import evidenceChainTemplatesData from "../../data/evidence_chain_templates.json";
+import endingReportTemplatesData from "../../data/ending_report_templates.json";
 import newsTemplatesData from "../../data/news_templates.json";
 import packageRecipesData from "../../data/package_recipes.json";
 import profilePuzzlesData from "../../data/profile_puzzles.json";
@@ -25,6 +26,7 @@ import type {
   DailyMonologue,
   DayChallenge,
   EvidenceChainTemplate,
+  EndingReportTemplate,
   NewsTemplate,
   PackageRecipe,
   ProfilePuzzle,
@@ -50,6 +52,7 @@ export const defaultContentBundle: ContentBundle = {
   buyerNegotiationScripts: buyerNegotiationScriptsData as readonly BuyerNegotiationScript[],
   protocolScanTemplates: protocolScanTemplatesData as readonly ProtocolScanTemplate[],
   evidenceChainTemplates: evidenceChainTemplatesData as readonly EvidenceChainTemplate[],
+  endingReportTemplates: endingReportTemplatesData as readonly EndingReportTemplate[],
   dailyMonologues: dailyMonologuesData as readonly DailyMonologue[],
   blackBoxLines: blackBoxLinesData as readonly BlackBoxLine[],
 };

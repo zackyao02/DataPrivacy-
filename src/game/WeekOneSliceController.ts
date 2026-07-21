@@ -12,6 +12,7 @@ import type {
   EvidenceChainConnection,
   EvidenceChainFragment,
   EvidenceChainTemplate,
+  EndingReportTemplate,
   NewsTemplate,
   PackagePreview,
   ProfilePuzzle,
@@ -70,6 +71,7 @@ export interface WeekOneMiniGameState {
 }
 
 export type EndingPath = "final_package" | "evidence_chain";
+export type EndingReportGrade = "F" | "B+";
 
 export interface EndingPrototypeState {
   readonly awarenessValue: number;
@@ -80,6 +82,66 @@ export interface EndingPrototypeState {
   readonly lockedReason: string | null;
   readonly reportGrade: "F" | "B+";
 }
+
+export interface WeekOneEmotionLog {
+  readonly day: number;
+  readonly choice: EmotionChoice;
+  readonly delta: number;
+}
+
+export interface WeekOneSoldLogEntry {
+  readonly day: number;
+  readonly packType: string;
+  readonly buyer: string;
+  readonly price: number;
+  readonly userIds: readonly string[];
+  readonly dataTypes: readonly DataType[];
+}
+
+export interface WeekOneEndingReport {
+  readonly title: string;
+  readonly subtitle: string;
+  readonly nickname: string;
+  readonly durationText: string;
+  readonly endingTitle: string;
+  readonly endingPath: EndingPath;
+  readonly grade: EndingReportGrade;
+  readonly summary: string;
+  readonly ratingComment: string;
+  readonly adviceText: string;
+  readonly qrPrompt: string;
+  readonly awarenessValue: number;
+  readonly awarenessThreshold: number;
+  readonly soldDataCount: number;
+  readonly packageCount: number;
+  readonly buyerCount: number;
+  readonly affectedUserCount: number;
+  readonly dataTypes: readonly string[];
+  readonly dataUses: readonly string[];
+  readonly badges: readonly string[];
+  readonly shareText: string;
+  readonly sharePresets: readonly string[];
+  readonly generatedAt: string;
+}
+
+export interface WeekOneSaveState {
+  readonly schemaVersion: 1;
+  readonly day: number;
+  readonly clarity_score: number;
+  readonly emotion_history: readonly WeekOneEmotionLog[];
+  readonly inventory: readonly string[];
+  readonly sold_log: readonly WeekOneSoldLogEntry[];
+  readonly news_seen: readonly string[];
+  readonly badges: readonly string[];
+  readonly completed_challenge_days: readonly number[];
+  readonly nickname: string;
+  readonly tutorial_done: boolean;
+  readonly random_seed: number;
+  readonly last_save_time: string;
+  readonly ending_report: WeekOneEndingReport | null;
+}
+
+export type WeekOneSaveStatus = "unavailable" | "loaded" | "saved" | "cleared" | "error";
 
 export interface WeekOneSliceSnapshot {
   readonly phase: WeekOneSlicePhase;
@@ -103,11 +165,16 @@ export interface WeekOneSliceSnapshot {
   readonly emotionResponse: string | null;
   readonly miniGame: WeekOneMiniGameState;
   readonly endingPrototype: EndingPrototypeState;
+  readonly endingReport: WeekOneEndingReport;
+  readonly saveState: WeekOneSaveState | null;
+  readonly saveStatus: WeekOneSaveStatus;
+  readonly shareMessage: string | null;
   readonly message: string;
 }
 
 const PLAYABLE_DAYS = [1, 2, 3, 4, 5, 6, 7] as const;
 const MAX_SLOT_COUNT = 3;
+const SAVE_STORAGE_KEY = "program-c-week-one-save-v1";
 
 const EMOTION_EVENTS: Record<EmotionChoice, string> = {
   empathy: "emotionEmpathySelected",
@@ -152,6 +219,13 @@ export class WeekOneSliceController {
   private connectedEvidenceConnectionIds: string[] = [];
   private evidenceUploadComplete = false;
   private awarenessValue = 0;
+  private emotionHistory: WeekOneEmotionLog[] = [];
+  private soldLog: WeekOneSoldLogEntry[] = [];
+  private newsSeen: string[] = [];
+  private saveStatus: WeekOneSaveStatus = "unavailable";
+  private lastSaveState: WeekOneSaveState | null = null;
+  private endingReport: WeekOneEndingReport | null = null;
+  private shareMessage: string | null = null;
   private completedChallengeDays: number[] = [];
   private message = "选择 3 张数据卡，封装第一个可用数据包。";
 
@@ -160,7 +234,25 @@ export class WeekOneSliceController {
     private readonly programB: ProgramBBridge,
   ) {
     this.user = content.getUsers()[0];
-    this.selectedCardIds = this.pickInitialCardIds();
+    const savedState = this.readSaveState();
+    this.selectedCardIds = savedState?.inventory.length
+      ? [...savedState.inventory].slice(0, MAX_SLOT_COUNT)
+      : this.pickInitialCardIds();
+
+    if (savedState) {
+      const savedDayIndex = PLAYABLE_DAYS.findIndex((day) => day === savedState.day);
+      this.dayIndex = Math.max(0, savedDayIndex);
+      this.awarenessValue = savedState.clarity_score;
+      this.emotionHistory = [...savedState.emotion_history];
+      this.soldLog = [...savedState.sold_log];
+      this.newsSeen = [...savedState.news_seen];
+      this.completedChallengeDays = [...savedState.completed_challenge_days];
+      this.endingReport = savedState.ending_report;
+      this.lastSaveState = savedState;
+      this.saveStatus = "loaded";
+      this.message = `已读取本地存档，继续 Day ${this.currentDay}。`;
+    }
+
     this.patchProgramB();
   }
 
@@ -189,12 +281,68 @@ export class WeekOneSliceController {
       emotionResponse: this.emotionResponse,
       miniGame: this.getMiniGameState(),
       endingPrototype: this.getEndingPrototype(),
+      endingReport: this.getEndingReport(),
+      saveState: this.lastSaveState,
+      saveStatus: this.saveStatus,
+      shareMessage: this.shareMessage,
       message: this.message,
     };
   }
 
   fillText(template: string): string {
     return this.content.fillVariables(template, { user: this.user });
+  }
+
+  getEndingReport(): WeekOneEndingReport {
+    return this.endingReport ?? this.buildEndingReport();
+  }
+
+  copyShareText(): boolean {
+    const shareText = this.getEndingReport().shareText;
+
+    if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
+      this.shareMessage = "当前环境无法写入剪贴板，可手动复制分享文案。";
+      this.patchProgramB();
+      return false;
+    }
+
+    void navigator.clipboard.writeText(shareText).then(
+      () => {
+        this.shareMessage = "分享文案已复制到剪贴板。";
+        this.patchProgramB();
+      },
+      () => {
+        this.shareMessage = "剪贴板写入失败，可手动复制分享文案。";
+        this.patchProgramB();
+      },
+    );
+
+    this.shareMessage = "正在复制分享文案。";
+    this.patchProgramB();
+    return true;
+  }
+
+  clearSave(): void {
+    const storage = this.getStorage();
+
+    if (!storage) {
+      this.saveStatus = "unavailable";
+      this.message = "当前环境没有可用本地存档。";
+      this.patchProgramB({ persist: false });
+      return;
+    }
+
+    try {
+      storage.removeItem(SAVE_STORAGE_KEY);
+      this.lastSaveState = null;
+      this.saveStatus = "cleared";
+      this.message = "本地存档已清除。";
+    } catch {
+      this.saveStatus = "error";
+      this.message = "清除本地存档失败。";
+    }
+
+    this.patchProgramB({ persist: false });
   }
 
   toggleCard(cardId: string): void {
@@ -259,6 +407,12 @@ export class WeekOneSliceController {
     }) ?? null;
     this.selectedEmotion = null;
     this.emotionResponse = null;
+    this.recordSoldPackage(readyPackage);
+
+    if (this.activeNews && !this.newsSeen.includes(this.activeNews.id)) {
+      this.newsSeen = [...this.newsSeen, this.activeNews.id];
+    }
+
     this.resetChallengeState();
     this.phase = "news";
     this.message = "数据包封装完成，进入新闻反馈。";
@@ -281,6 +435,14 @@ export class WeekOneSliceController {
     const nextDelta = EMOTION_AWARENESS_DELTA[choice];
     this.awarenessValue += nextDelta - previousDelta;
     this.selectedEmotion = choice;
+    this.emotionHistory = [
+      ...this.emotionHistory.filter((item) => item.day !== this.currentDay),
+      {
+        day: this.currentDay,
+        choice,
+        delta: nextDelta,
+      },
+    ].sort((left, right) => left.day - right.day);
     this.emotionResponse = this.fillText(this.activeNews.emotionResponses[choice]);
     this.message = `情绪反馈已记录，清醒值 ${this.awarenessValue}。可以进入小关卡。`;
     this.programB.emit(EMOTION_EVENTS[choice], { choice });
@@ -598,10 +760,14 @@ export class WeekOneSliceController {
       this.dayIndex = Math.min(this.dayIndex + 1, PLAYABLE_DAYS.length - 1);
     }
 
+    if (succeeded && completedDay === lastPlayableDay) {
+      this.endingReport = this.buildEndingReport();
+    }
+
     this.phase = "workbench";
     this.message = succeeded
       ? completedDay === lastPlayableDay
-        ? `Day ${completedDay} 完成，结局系统原型已解锁：${this.getEndingPrototype().unlockedPathLabel}。`
+        ? `Day ${completedDay} 完成，《个人数据泄露报告》已生成：评级 ${this.getEndingReport().grade}。`
         : `Day ${completedDay} 完成，Day ${this.currentDay} 已解锁。`
       : `Day ${completedDay} 未通过，返回工作台调整后重试。`;
 
@@ -1021,6 +1187,226 @@ export class WeekOneSliceController {
     return `${this.collectedEvidenceFragmentIds.length}/${this.activeEvidenceChain.fragments.length} 件证据，${this.connectedEvidenceConnectionIds.length}/${this.activeEvidenceChain.connections.length} 条连接`;
   }
 
+  private recordSoldPackage(readyPackage: PackagePreview): void {
+    const selectedCards = readyPackage.selectedCards;
+    const userIds = [...new Set(selectedCards.map((card) => card.relatedUserId))];
+    const dataTypes = [...new Set(selectedCards.map((card) => card.dataType))];
+    const buyer = readyPackage.buyers[0];
+    const price =
+      readyPackage.recipe.basePrice ??
+      readyPackage.recipe.priceRange?.[0] ??
+      0;
+
+    this.soldLog = [
+      ...this.soldLog.filter((entry) => entry.day !== this.currentDay),
+      {
+        day: this.currentDay,
+        packType: readyPackage.packageType,
+        buyer: buyer?.name ?? "未知买家",
+        price,
+        userIds,
+        dataTypes,
+      },
+    ].sort((left, right) => left.day - right.day);
+  }
+
+  private buildEndingReport(): WeekOneEndingReport {
+    const endingPrototype = this.getEndingPrototype();
+    const template = this.getEndingReportTemplate();
+    const endingCopy =
+      template.endings.find((ending) => ending.path === endingPrototype.unlockedPath) ??
+      template.endings[0];
+    const badges = this.getEarnedBadges();
+    const soldDataCount = this.soldLog.reduce(
+      (sum, entry) => sum + entry.dataTypes.length,
+      0,
+    );
+    const affectedUserCount = new Set(this.soldLog.flatMap((entry) => entry.userIds)).size;
+    const buyerCount = new Set(this.soldLog.map((entry) => entry.buyer)).size;
+    const generatedAt = new Date().toISOString();
+    const shareContext = {
+      soldDataCount,
+      affectedUserCount,
+      grade: endingCopy.grade,
+    };
+
+    return {
+      title: template.title,
+      subtitle: template.subtitle,
+      nickname: this.user.name,
+      durationText: template.durationText,
+      endingTitle: endingCopy.title,
+      endingPath: endingCopy.path,
+      grade: endingCopy.grade,
+      summary: endingCopy.summary,
+      ratingComment: endingCopy.ratingComment,
+      adviceText: template.adviceText,
+      qrPrompt: template.qrPrompt,
+      awarenessValue: endingPrototype.awarenessValue,
+      awarenessThreshold: endingPrototype.threshold,
+      soldDataCount,
+      packageCount: this.soldLog.length,
+      buyerCount,
+      affectedUserCount,
+      dataTypes: template.dataTypes,
+      dataUses: template.dataUses,
+      badges,
+      shareText: this.fillReportPlaceholders(endingCopy.shareText, shareContext),
+      sharePresets: template.sharePresets.map((preset) =>
+        this.fillReportPlaceholders(preset, shareContext),
+      ),
+      generatedAt,
+    };
+  }
+
+  private getEndingReportTemplate(): EndingReportTemplate {
+    return (
+      this.content.getEndingReportTemplates()[0] ?? {
+        id: "fallback-ending-report",
+        title: "个人数据泄露报告",
+        subtitle: "七日试用期记录",
+        durationText: "在职时长：7天",
+        dataTypes: ["位置轨迹", "消费记录", "社交关系", "健康数据", "生物特征", "通讯录"],
+        dataUses: ["精准广告", "保险评估", "招聘筛选", "信贷审批", "精准诈骗"],
+        adviceText: "建议重新学习数据隐私保护知识。",
+        qrPrompt: "扫码进入监控室，看看你能选择清醒到第几天",
+        sharePresets: [],
+        endings: [
+          {
+            path: "final_package",
+            title: "替罪羊",
+            grade: "F",
+            summary: "你的数据包进入了买家网络。",
+            ratingComment: "你见证了数据作恶的全流程。",
+            shareText: "我生成了自己的《个人数据泄露报告》。",
+          },
+          {
+            path: "evidence_chain",
+            title: "举报者",
+            grade: "B+",
+            summary: "证据链已提交。",
+            ratingComment: "你选择停下。",
+            shareText: "我举报了我的公司。",
+          },
+        ],
+      }
+    );
+  }
+
+  private fillReportPlaceholders(
+    template: string,
+    values: {
+      readonly soldDataCount: number;
+      readonly affectedUserCount: number;
+      readonly grade: EndingReportGrade;
+    },
+  ): string {
+    return template
+      .replace(/\{soldDataCount\}/g, String(values.soldDataCount))
+      .replace(/\{affectedUserCount\}/g, String(values.affectedUserCount))
+      .replace(/\{grade\}/g, values.grade);
+  }
+
+  private getEarnedBadges(): readonly string[] {
+    return this.completedChallengeDays
+      .map((day) => this.content.findChallengeByDay(day)?.badge)
+      .filter((badge): badge is string => Boolean(badge));
+  }
+
+  private createSaveState(savedAt = new Date().toISOString()): WeekOneSaveState {
+    return {
+      schemaVersion: 1,
+      day: this.currentDay,
+      clarity_score: this.awarenessValue,
+      emotion_history: [...this.emotionHistory],
+      inventory: [...this.selectedCardIds],
+      sold_log: [...this.soldLog],
+      news_seen: [...this.newsSeen],
+      badges: [...this.getEarnedBadges()],
+      completed_challenge_days: [...this.completedChallengeDays],
+      nickname: this.user.name,
+      tutorial_done: true,
+      random_seed: 20260718,
+      last_save_time: savedAt,
+      ending_report: this.endingReport,
+    };
+  }
+
+  private persistSaveState(state: WeekOneSaveState): void {
+    const storage = this.getStorage();
+
+    if (!storage) {
+      this.saveStatus = "unavailable";
+      this.lastSaveState = null;
+      return;
+    }
+
+    try {
+      storage.setItem(SAVE_STORAGE_KEY, JSON.stringify(state));
+      this.lastSaveState = state;
+      this.saveStatus = "saved";
+    } catch {
+      this.saveStatus = "error";
+    }
+  }
+
+  private readSaveState(): WeekOneSaveState | null {
+    const storage = this.getStorage();
+
+    if (!storage) {
+      this.saveStatus = "unavailable";
+      return null;
+    }
+
+    try {
+      const raw = storage.getItem(SAVE_STORAGE_KEY);
+
+      if (!raw) {
+        this.saveStatus = "unavailable";
+        return null;
+      }
+
+      const parsed = JSON.parse(raw) as Partial<WeekOneSaveState>;
+
+      if (parsed.schemaVersion !== 1 || typeof parsed.day !== "number") {
+        this.saveStatus = "error";
+        return null;
+      }
+
+      return {
+        schemaVersion: 1,
+        day: parsed.day,
+        clarity_score: parsed.clarity_score ?? 0,
+        emotion_history: parsed.emotion_history ?? [],
+        inventory: parsed.inventory ?? [],
+        sold_log: parsed.sold_log ?? [],
+        news_seen: parsed.news_seen ?? [],
+        badges: parsed.badges ?? [],
+        completed_challenge_days: parsed.completed_challenge_days ?? [],
+        nickname: parsed.nickname ?? this.user.name,
+        tutorial_done: parsed.tutorial_done ?? true,
+        random_seed: parsed.random_seed ?? 20260718,
+        last_save_time: parsed.last_save_time ?? new Date().toISOString(),
+        ending_report: parsed.ending_report ?? null,
+      };
+    } catch {
+      this.saveStatus = "error";
+      return null;
+    }
+  }
+
+  private getStorage(): Storage | null {
+    if (typeof window === "undefined") {
+      return null;
+    }
+
+    try {
+      return window.localStorage;
+    } catch {
+      return null;
+    }
+  }
+
   private getEndingPrototype(): EndingPrototypeState {
     const threshold = 5;
     const awarenessValue = this.awarenessValue;
@@ -1039,8 +1425,14 @@ export class WeekOneSliceController {
     };
   }
 
-  private patchProgramB(): void {
+  private patchProgramB(options: { readonly persist?: boolean } = {}): void {
     const endingPrototype = this.getEndingPrototype();
+    const shouldPersist = options.persist ?? true;
+    const saveState = shouldPersist ? this.createSaveState() : this.lastSaveState;
+
+    if (saveState && shouldPersist) {
+      this.persistSaveState(saveState);
+    }
 
     this.programB.patchState({
       phase: this.phase,
@@ -1055,6 +1447,10 @@ export class WeekOneSliceController {
         activePackageType: this.activePackage?.packageType ?? null,
         selectedEmotion: this.selectedEmotion,
         endingPrototype,
+        endingReport: this.getEndingReport(),
+        saveState: this.lastSaveState,
+        saveStatus: this.saveStatus,
+        shareMessage: this.shareMessage,
         message: this.message,
       },
     });

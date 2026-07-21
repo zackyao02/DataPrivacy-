@@ -30,6 +30,7 @@ import {
 } from "../game/ProgramBBridge";
 import { WeekOneSliceController } from "../game/WeekOneSliceController";
 import { LayerRenderer } from "../render/LayerRenderer";
+import { EndingReportScene } from "../scenes/EndingReportScene";
 import { PlaceholderScene } from "../scenes/PlaceholderScene";
 import type { SceneFrame } from "../scenes/Scene";
 import { SceneManager } from "../scenes/SceneManager";
@@ -56,6 +57,8 @@ export interface ProgramCDebugSnapshot {
     readonly newsTemplates: number;
     readonly dayChallenges: number;
     readonly protocolScanTemplates: number;
+    readonly evidenceChainTemplates: number;
+    readonly endingReportTemplates: number;
     readonly audioEvents: number;
   };
   readonly sampleCardIds: readonly string[];
@@ -341,6 +344,8 @@ export class ProgramACanvasApp {
         newsTemplates: this.programCContent.getNewsTemplates().length,
         dayChallenges: this.programCContent.getDayChallenges().length,
         protocolScanTemplates: this.programCContent.getProtocolScanTemplates().length,
+        evidenceChainTemplates: this.programCContent.getEvidenceChainTemplates().length,
+        endingReportTemplates: this.programCContent.getEndingReportTemplates().length,
         audioEvents: Object.keys(SOUND_EVENT_MAP).length,
       },
       sampleCardIds,
@@ -361,6 +366,12 @@ export class ProgramACanvasApp {
       sceneId === "mini-game"
     ) {
       return new WeekOneSliceScene(sceneId, this.weekOneSlice, (nextSceneId) => {
+        this.switchScene(nextSceneId);
+      });
+    }
+
+    if (sceneId === "ending") {
+      return new EndingReportScene(this.weekOneSlice, (nextSceneId) => {
         this.switchScene(nextSceneId);
       });
     }

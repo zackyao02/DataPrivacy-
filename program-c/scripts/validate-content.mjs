@@ -13,6 +13,8 @@ const dataTypes = new Set([
 ]);
 const sensitivities = new Set(["low", "medium", "high"]);
 const riskLevels = new Set(["low", "medium", "high"]);
+const endingReportPaths = new Set(["final_package", "evidence_chain"]);
+const endingReportGrades = new Set(["F", "B+"]);
 const dayChallengeTypes = new Set([
   "protocol_match",
   "data_cleaning",
@@ -155,6 +157,7 @@ const profilePuzzles = readJson("profile_puzzles.json");
 const publicOpinionScripts = readJson("public_opinion_scripts.json");
 const protocolScanTemplates = readJson("protocol_scan_templates.json");
 const evidenceChainTemplates = readJson("evidence_chain_templates.json");
+const endingReportTemplates = readJson("ending_report_templates.json");
 const blackBoxLines = readJson("black_box_lines.json");
 const soundEvents = new Set(readSoundEvents());
 
@@ -172,6 +175,7 @@ assertUniqueIds(profilePuzzles, "profile_puzzles");
 assertUniqueIds(publicOpinionScripts, "public_opinion_scripts");
 assertUniqueIds(protocolScanTemplates, "protocol_scan_templates");
 assertUniqueIds(evidenceChainTemplates, "evidence_chain_templates");
+assertUniqueIds(endingReportTemplates, "ending_report_templates");
 assertUniqueIds(blackBoxLines, "black_box_lines");
 
 assert(cardTemplates.length >= 20, "card_templates needs 20 templates from the Feishu text config");
@@ -185,6 +189,7 @@ assert(profilePuzzles.length >= 3, "profile_puzzles needs 3 official sets from t
 assert(buyerNegotiationScripts.length >= 6, "buyer_negotiation_scripts needs 6 scripts for Program C D6");
 assert(protocolScanTemplates.length >= 5, "protocol_scan_templates needs 5 Day 6 templates from the Feishu text config");
 assert(evidenceChainTemplates.length >= 1, "evidence_chain_templates needs Day 7 evidence chain data for Program C D9");
+assert(endingReportTemplates.length >= 1, "ending_report_templates needs the D10 personal data leak report template");
 assert(dailyMonologues.length >= 7, "daily_monologues needs 7 daily monologues for Program C D6");
 assert(blackBoxLines.length >= 10, "black_box_lines needs at least 10 voice lines for Program C D5");
 
@@ -631,6 +636,56 @@ for (const template of evidenceChainTemplates) {
   );
 }
 
+for (const template of endingReportTemplates) {
+  assert(template.title, `ending_report_template ${template.id} missing title`);
+  assert(template.subtitle, `ending_report_template ${template.id} missing subtitle`);
+  assert(template.durationText, `ending_report_template ${template.id} missing durationText`);
+  assert(template.adviceText, `ending_report_template ${template.id} missing adviceText`);
+  assert(template.qrPrompt, `ending_report_template ${template.id} missing qrPrompt`);
+  assert(
+    Array.isArray(template.dataTypes) && template.dataTypes.length >= 6,
+    `ending_report_template ${template.id} needs at least 6 dataTypes`,
+  );
+  assert(
+    Array.isArray(template.dataUses) && template.dataUses.length >= 5,
+    `ending_report_template ${template.id} needs at least 5 dataUses`,
+  );
+  assert(
+    Array.isArray(template.sharePresets) && template.sharePresets.length >= 3,
+    `ending_report_template ${template.id} needs at least 3 sharePresets`,
+  );
+  assert(
+    Array.isArray(template.endings) && template.endings.length === 2,
+    `ending_report_template ${template.id} needs exactly 2 endings`,
+  );
+
+  const endingPaths = new Set(template.endings.map((ending) => ending.path));
+  assert(endingPaths.has("final_package"), `ending_report_template ${template.id} missing final_package ending`);
+  assert(endingPaths.has("evidence_chain"), `ending_report_template ${template.id} missing evidence_chain ending`);
+
+  for (const shareText of template.sharePresets) {
+    assert(shareText, `ending_report_template ${template.id} contains empty sharePreset`);
+  }
+
+  for (const ending of template.endings) {
+    assert(
+      endingReportPaths.has(ending.path),
+      `ending_report_template ${template.id} invalid ending path: ${ending.path}`,
+    );
+    assert(ending.title, `ending_report_template ${template.id} ending ${ending.path} missing title`);
+    assert(
+      endingReportGrades.has(ending.grade),
+      `ending_report_template ${template.id} ending ${ending.path} invalid grade: ${ending.grade}`,
+    );
+    assert(ending.summary, `ending_report_template ${template.id} ending ${ending.path} missing summary`);
+    assert(
+      ending.ratingComment,
+      `ending_report_template ${template.id} ending ${ending.path} missing ratingComment`,
+    );
+    assert(ending.shareText, `ending_report_template ${template.id} ending ${ending.path} missing shareText`);
+  }
+}
+
 for (const monologue of dailyMonologues) {
   assert(
     Number.isInteger(monologue.day) && monologue.day >= 1 && monologue.day <= 7,
@@ -946,5 +1001,6 @@ console.log(`profilePuzzles=${profilePuzzles.length}`);
 console.log(`buyerNegotiationScripts=${buyerNegotiationScripts.length}`);
 console.log(`protocolScanTemplates=${protocolScanTemplates.length}`);
 console.log(`evidenceChainTemplates=${evidenceChainTemplates.length}`);
+console.log(`endingReportTemplates=${endingReportTemplates.length}`);
 console.log(`dailyMonologues=${dailyMonologues.length}`);
 console.log(`blackBoxLines=${blackBoxLines.length}`);

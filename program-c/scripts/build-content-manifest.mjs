@@ -31,6 +31,7 @@ const profilePuzzles = readJson("profile_puzzles.json");
 const publicOpinionScripts = readJson("public_opinion_scripts.json");
 const protocolScanTemplates = readJson("protocol_scan_templates.json");
 const evidenceChainTemplates = readJson("evidence_chain_templates.json");
+const endingReportTemplates = readJson("ending_report_templates.json");
 const blackBoxLines = readJson("black_box_lines.json");
 
 const manifest = {
@@ -52,6 +53,7 @@ const manifest = {
     "public_opinion_scripts.json",
     "protocol_scan_templates.json",
     "evidence_chain_templates.json",
+    "ending_report_templates.json",
     "black_box_lines.json",
   ],
   counts: {
@@ -69,6 +71,7 @@ const manifest = {
     publicOpinionScripts: publicOpinionScripts.length,
     protocolScanTemplates: protocolScanTemplates.length,
     evidenceChainTemplates: evidenceChainTemplates.length,
+    endingReportTemplates: endingReportTemplates.length,
     blackBoxLines: blackBoxLines.length,
   },
   dataTypes: [...new Set(cardTemplates.map((card) => card.dataType))].sort(),
@@ -87,6 +90,7 @@ const manifest = {
     "getBuyerNegotiationScripts",
     "getProtocolScanTemplates",
     "getEvidenceChainTemplates",
+    "getEndingReportTemplates",
     "getDailyMonologues",
     "getBlackBoxLines",
     "findChallengeByDay",
@@ -106,6 +110,8 @@ const manifest = {
     "findEvidenceChainTemplateById",
     "findEvidenceChainTemplatesByIds",
     "pickEvidenceChainTemplate",
+    "findEndingReportTemplateById",
+    "pickEndingReportTemplate",
     "findDailyMonologueByDay",
     "findBlackBoxLinesByStage",
     "findBlackBoxLinesForChallenge",
