@@ -1,0 +1,252 @@
+[
+  {
+    "id": "protocol-scan-social-xingliao",
+    "scenario": "社交场景",
+    "title": "套1·社交场景",
+    "agreementTitle": "星聊用户协议（节选）",
+    "riskClauses": [
+      {
+        "id": "social-risk-face",
+        "text": "您同意我们基于服务优化目的收集您的面部特征信息"
+      },
+      {
+        "id": "social-risk-location",
+        "text": "您的位置信息将与第三方合作伙伴共享"
+      },
+      {
+        "id": "social-risk-retention",
+        "text": "账号注销后，您的历史数据将保留36个月"
+      },
+      {
+        "id": "social-risk-update",
+        "text": "本协议我们可能随时更新，恕不另行通知"
+      }
+    ],
+    "dataFlowMatches": [
+      {
+        "id": "social-flow-face",
+        "source": "人脸数据",
+        "destination": "AI训练"
+      },
+      {
+        "id": "social-flow-location",
+        "source": "位置",
+        "destination": "广告推荐"
+      },
+      {
+        "id": "social-flow-chat",
+        "source": "聊天记录",
+        "destination": "内容审核外包"
+      }
+    ],
+    "hiddenClause": {
+      "id": "social-hidden-renewal",
+      "text": "连续包月服务将在到期前24小时自动续费",
+      "disguise": "服务延续保障"
+    },
+    "riskQuestion": {
+      "prompt": "我们可能将您的数据用于尚未告知您的用途",
+      "answer": "high"
+    }
+  },
+  {
+    "id": "protocol-scan-delivery-kuaisongfeng",
+    "scenario": "外卖场景",
+    "title": "套2·外卖场景",
+    "agreementTitle": "快送蜂服务协议（节选）",
+    "riskClauses": [
+      {
+        "id": "delivery-risk-live-location",
+        "text": "骑手与用户位置将被持续采集"
+      },
+      {
+        "id": "delivery-risk-commercial-use",
+        "text": "订单数据授权平台商业化使用"
+      },
+      {
+        "id": "delivery-risk-public-route",
+        "text": "配送轨迹可向第三方公示"
+      },
+      {
+        "id": "delivery-risk-update",
+        "text": "协议变更恕不另行通知"
+      }
+    ],
+    "dataFlowMatches": [
+      {
+        "id": "delivery-flow-location",
+        "source": "实时定位",
+        "destination": "调度算法"
+      },
+      {
+        "id": "delivery-flow-orders",
+        "source": "订单记录",
+        "destination": "消费画像"
+      },
+      {
+        "id": "delivery-flow-review",
+        "source": "评价内容",
+        "destination": "骑手评分"
+      }
+    ],
+    "hiddenClause": {
+      "id": "delivery-hidden-ads",
+      "text": "同意接收个性化广告",
+      "disguise": "默认勾选"
+    },
+    "riskQuestion": {
+      "prompt": "平台可将您的地址信息保留至法律法规要求的期限之后",
+      "answer": "high"
+    }
+  },
+  {
+    "id": "protocol-scan-job-zhida",
+    "scenario": "求职场景",
+    "title": "套3·求职场景",
+    "agreementTitle": "职达用户协议（节选）",
+    "riskClauses": [
+      {
+        "id": "job-risk-resume-transfer",
+        "text": "简历数据可转授权合作企业"
+      },
+      {
+        "id": "job-risk-background-check",
+        "text": "背景调查同意不可撤销"
+      },
+      {
+        "id": "job-risk-arbitration",
+        "text": "争议仲裁地点为公司所在地"
+      },
+      {
+        "id": "job-risk-content-copyright",
+        "text": "您在平台的发言内容版权归平台所有"
+      }
+    ],
+    "dataFlowMatches": [
+      {
+        "id": "job-flow-resume",
+        "source": "简历",
+        "destination": "背调公司"
+      },
+      {
+        "id": "job-flow-browsing",
+        "source": "浏览记录",
+        "destination": "岗位推荐"
+      },
+      {
+        "id": "job-flow-posts",
+        "source": "发言",
+        "destination": "文化适配评估"
+      }
+    ],
+    "hiddenClause": {
+      "id": "job-hidden-talent-pool",
+      "text": "未录用者简历将保留进入人才库",
+      "disguise": "永久留存"
+    },
+    "riskQuestion": {
+      "prompt": "平台可对您的求职意向进行商业化分析",
+      "answer": "medium"
+    }
+  },
+  {
+    "id": "protocol-scan-finance-ledai",
+    "scenario": "金融场景",
+    "title": "套4·金融场景",
+    "agreementTitle": "乐贷借款协议（节选）",
+    "riskClauses": [
+      {
+        "id": "finance-risk-contacts",
+        "text": "授权读取通讯录"
+      },
+      {
+        "id": "finance-risk-overdue-share",
+        "text": "逾期信息共享至合作机构"
+      },
+      {
+        "id": "finance-risk-irrevocable",
+        "text": "本授权不可撤销"
+      },
+      {
+        "id": "finance-risk-unilateral-update",
+        "text": "平台保留单方变更协议的权利"
+      }
+    ],
+    "dataFlowMatches": [
+      {
+        "id": "finance-flow-contacts",
+        "source": "通讯录",
+        "destination": "催收网络"
+      },
+      {
+        "id": "finance-flow-consumption",
+        "source": "消费记录",
+        "destination": "额度评估"
+      },
+      {
+        "id": "finance-flow-location",
+        "source": "位置",
+        "destination": "风控核验"
+      }
+    ],
+    "hiddenClause": {
+      "id": "finance-hidden-linked-account",
+      "text": "关联账户交叉验证",
+      "disguise": "读取借款人全家的借贷记录"
+    },
+    "riskQuestion": {
+      "prompt": "您的数据可能传输至境外服务器",
+      "answer": "high"
+    }
+  },
+  {
+    "id": "protocol-scan-game-huanjing",
+    "scenario": "游戏场景",
+    "title": "套5·游戏场景",
+    "agreementTitle": "幻镜世界用户协议（节选）",
+    "riskClauses": [
+      {
+        "id": "game-risk-chat-retention",
+        "text": "聊天记录留存用于安全管理"
+      },
+      {
+        "id": "game-risk-minor-data",
+        "text": "未成年人数据条款表述模糊"
+      },
+      {
+        "id": "game-risk-virtual-property",
+        "text": "虚拟财产所有权归平台"
+      },
+      {
+        "id": "game-risk-cross-border",
+        "text": "数据可能跨境传输"
+      }
+    ],
+    "dataFlowMatches": [
+      {
+        "id": "game-flow-payment",
+        "source": "充值记录",
+        "destination": "付费分层"
+      },
+      {
+        "id": "game-flow-friends",
+        "source": "好友列表",
+        "destination": "裂变推送"
+      },
+      {
+        "id": "game-flow-duration",
+        "source": "在线时长",
+        "destination": "粘性模型"
+      }
+    ],
+    "hiddenClause": {
+      "id": "game-hidden-ai-training",
+      "text": "赛季数据将用于训练AI陪玩",
+      "disguise": "玩法体验优化"
+    },
+    "riskQuestion": {
+      "prompt": "账号封禁后您的虚拟财产不予退还",
+      "answer": "medium"
+    }
+  }
+]

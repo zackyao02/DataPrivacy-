@@ -503,6 +503,142 @@ function parseNegotiations() {
   }));
 }
 
+function makeProtocolScanTemplates() {
+  const templateSource = [
+    [
+      "protocol-scan-social-xingliao",
+      "社交场景",
+      "套1·社交场景",
+      "星聊用户协议（节选）",
+      [
+        "您同意我们基于服务优化目的收集您的面部特征信息",
+        "您的位置信息将与第三方合作伙伴共享",
+        "账号注销后，您的历史数据将保留36个月",
+        "本协议我们可能随时更新，恕不另行通知",
+      ],
+      [
+        ["人脸数据", "AI训练"],
+        ["位置", "广告推荐"],
+        ["聊天记录", "内容审核外包"],
+      ],
+      ["连续包月服务将在到期前24小时自动续费", "服务延续保障"],
+      ["我们可能将您的数据用于尚未告知您的用途", "high"],
+    ],
+    [
+      "protocol-scan-delivery-kuaisongfeng",
+      "外卖场景",
+      "套2·外卖场景",
+      "快送蜂服务协议（节选）",
+      [
+        "骑手与用户位置将被持续采集",
+        "订单数据授权平台商业化使用",
+        "配送轨迹可向第三方公示",
+        "协议变更恕不另行通知",
+      ],
+      [
+        ["实时定位", "调度算法"],
+        ["订单记录", "消费画像"],
+        ["评价内容", "骑手评分"],
+      ],
+      ["同意接收个性化广告", "默认勾选"],
+      ["平台可将您的地址信息保留至法律法规要求的期限之后", "high"],
+    ],
+    [
+      "protocol-scan-job-zhida",
+      "求职场景",
+      "套3·求职场景",
+      "职达用户协议（节选）",
+      [
+        "简历数据可转授权合作企业",
+        "背景调查同意不可撤销",
+        "争议仲裁地点为公司所在地",
+        "您在平台的发言内容版权归平台所有",
+      ],
+      [
+        ["简历", "背调公司"],
+        ["浏览记录", "岗位推荐"],
+        ["发言", "文化适配评估"],
+      ],
+      ["未录用者简历将保留进入人才库", "永久留存"],
+      ["平台可对您的求职意向进行商业化分析", "medium"],
+    ],
+    [
+      "protocol-scan-finance-ledai",
+      "金融场景",
+      "套4·金融场景",
+      "乐贷借款协议（节选）",
+      [
+        "授权读取通讯录",
+        "逾期信息共享至合作机构",
+        "本授权不可撤销",
+        "平台保留单方变更协议的权利",
+      ],
+      [
+        ["通讯录", "催收网络"],
+        ["消费记录", "额度评估"],
+        ["位置", "风控核验"],
+      ],
+      ["关联账户交叉验证", "读取借款人全家的借贷记录"],
+      ["您的数据可能传输至境外服务器", "high"],
+    ],
+    [
+      "protocol-scan-game-huanjing",
+      "游戏场景",
+      "套5·游戏场景",
+      "幻镜世界用户协议（节选）",
+      [
+        "聊天记录留存用于安全管理",
+        "未成年人数据条款表述模糊",
+        "虚拟财产所有权归平台",
+        "数据可能跨境传输",
+      ],
+      [
+        ["充值记录", "付费分层"],
+        ["好友列表", "裂变推送"],
+        ["在线时长", "粘性模型"],
+      ],
+      ["赛季数据将用于训练AI陪玩", "玩法体验优化"],
+      ["账号封禁后您的虚拟财产不予退还", "medium"],
+    ],
+  ];
+
+  return templateSource.map(
+    ([
+      id,
+      scenario,
+      title,
+      agreementTitle,
+      riskClauses,
+      dataFlowMatches,
+      hiddenClause,
+      riskQuestion,
+    ]) => ({
+      id,
+      scenario,
+      title,
+      agreementTitle,
+      riskClauses: riskClauses.map((text, index) => ({
+        id: `${id}-risk-${index + 1}`,
+        text,
+      })),
+      dataFlowMatches: dataFlowMatches.map(([source, destination], index) => ({
+        id: `${id}-flow-${index + 1}`,
+        source,
+        destination,
+      })),
+      hiddenClause: {
+        id: `${id}-hidden`,
+        text: hiddenClause[0],
+        disguise: hiddenClause[1],
+      },
+      riskQuestion: {
+        prompt: riskQuestion[0],
+        answer: riskQuestion[1],
+      },
+    }),
+  );
+}
+
 function parsePublicOpinionScripts() {
   const rows = parseMarkdownTable(section("### 8.3 Day 3 舆论操控", "### 8.4 Day 4 用户画像拼图"))
     .filter((cells) => cells[0] !== "原负面新闻");
@@ -615,6 +751,7 @@ function parseBlackBoxLines() {
     [2, "cleaning", "审计快到了。删掉痕迹，留下合规的影子。", "清理完成。报表看起来像从未发生过。", "备份暴露了你。下一次，先分清证据和陷阱。"],
     [4, "puzzle", "把碎片拼起来。买家不买散点，他们买一个人。", "用户画像完整度100%。正在计算最高出价买家。", "画像不完整。故事缺一块，价格就掉一截。"],
     [5, "negotiation", "价格是谈出来的。别怕开价，他们买的是别人的人生，不差钱。", "完美的交易。你为公司创造的价值，已经超出我的预想了。", "买家还在犹豫。把风险换个名字，再递过去。"],
+    [6, "scan", "读协议。读到你看懂为止。", "协议解剖完成。你终于开始阅读那些你点过同意的东西。", "你漏掉了条款。看不懂的协议，才最适合被同意。"],
   ];
 
   for (const [day, key, intro, success, fail] of challengeLines) {
@@ -646,6 +783,7 @@ const protocolTerms = parseProtocolTerms();
 const { dataCleaningIcons, sensitiveItems, decoyItems } = parseDataCleaning();
 const profilePuzzles = makeProfilePuzzles();
 const buyerNegotiationScripts = parseNegotiations();
+const protocolScanTemplates = makeProtocolScanTemplates();
 
 const dayChallenges = [
   {
@@ -702,6 +840,26 @@ const dayChallenges = [
     successText: "黑盒：谈判完成。买家收下了你的故事。",
     failText: "黑盒：话术还不够稳定。成交不难，难的是让成交看起来合理。",
   },
+  {
+    id: "challenge-day6-protocol-scan",
+    day: 6,
+    type: "protocol_scan",
+    title: "快速协议扫描",
+    briefing: "协议文本正在滚动。标出高风险条款，确认数据流向，找出隐藏条款，并完成风险等级判断。",
+    objective: "四类任务各25分，最终得分达到75分即可获得「协议解剖师」。",
+    timeLimitSeconds: 55,
+    badge: "协议解剖师",
+    protocolScanTemplateIds: protocolScanTemplates.map((template) => template.id),
+    successCondition: {
+      requiredRiskClauseMarks: 4,
+      requiredDataFlowMatches: 3,
+      requiredHiddenClauseFinds: 1,
+      requiredRiskAnswers: 1,
+      passingScore: 75,
+    },
+    successText: "黑盒：你终于开始阅读那些你点过「同意」的东西。",
+    failText: "黑盒：协议仍然安全。安全的意思是，用户仍然看不懂。",
+  },
 ];
 
 writeJson("users.json", users);
@@ -715,6 +873,7 @@ writeJson("data_cleaning_icons.json", dataCleaningIcons);
 writeJson("day_challenges.json", dayChallenges);
 writeJson("profile_puzzles.json", profilePuzzles);
 writeJson("buyer_negotiation_scripts.json", buyerNegotiationScripts);
+writeJson("protocol_scan_templates.json", protocolScanTemplates);
 writeJson("public_opinion_scripts.json", parsePublicOpinionScripts());
 writeJson("daily_monologues.json", parseDailyMonologues());
 writeJson("black_box_lines.json", parseBlackBoxLines());

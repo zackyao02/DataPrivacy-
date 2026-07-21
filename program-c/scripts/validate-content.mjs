@@ -12,11 +12,13 @@ const dataTypes = new Set([
   "contact_graph",
 ]);
 const sensitivities = new Set(["low", "medium", "high"]);
+const riskLevels = new Set(["low", "medium", "high"]);
 const dayChallengeTypes = new Set([
   "protocol_match",
   "data_cleaning",
   "profile_puzzle",
   "buyer_negotiation",
+  "protocol_scan",
 ]);
 const dataCleaningTrapTypes = new Set(["backup_file", "audit_log", "system_file"]);
 const dataCleaningIconRoles = new Set(["sensitive", "decoy"]);
@@ -144,6 +146,7 @@ const dataCleaningIcons = readJson("data_cleaning_icons.json");
 const dailyMonologues = readJson("daily_monologues.json");
 const profilePuzzles = readJson("profile_puzzles.json");
 const publicOpinionScripts = readJson("public_opinion_scripts.json");
+const protocolScanTemplates = readJson("protocol_scan_templates.json");
 const blackBoxLines = readJson("black_box_lines.json");
 const soundEvents = new Set(readSoundEvents());
 
@@ -159,17 +162,19 @@ assertUniqueIds(dataCleaningIcons, "data_cleaning_icons");
 assertUniqueIds(dailyMonologues, "daily_monologues");
 assertUniqueIds(profilePuzzles, "profile_puzzles");
 assertUniqueIds(publicOpinionScripts, "public_opinion_scripts");
+assertUniqueIds(protocolScanTemplates, "protocol_scan_templates");
 assertUniqueIds(blackBoxLines, "black_box_lines");
 
 assert(cardTemplates.length >= 20, "card_templates needs 20 templates from the Feishu text config");
 assert(users.length >= 20, "users needs at least 20 profiles for Program C Day 2");
 assert(newsTemplates.length >= 20, "news_templates needs at least 20 templates for Program C D4");
 assert(protocolTerms.length >= 20, "protocol_terms needs at least 20 pairs for Program C D4");
-assert(dayChallenges.length >= 4, "day_challenges needs Day 1/2/4/5 entries for Program C D6");
+assert(dayChallenges.length >= 5, "day_challenges needs Day 1/2/4/5/6 entries for Program C D8");
 assert(dataCleaningIcons.length >= 10, "data_cleaning_icons needs icon coverage for Program C D5");
 assert(publicOpinionScripts.length >= 5, "public_opinion_scripts needs at least 5 templates for Program C D5");
 assert(profilePuzzles.length >= 3, "profile_puzzles needs 3 official sets from the Feishu text config");
 assert(buyerNegotiationScripts.length >= 6, "buyer_negotiation_scripts needs 6 scripts for Program C D6");
+assert(protocolScanTemplates.length >= 5, "protocol_scan_templates needs 5 Day 6 templates from the Feishu text config");
 assert(dailyMonologues.length >= 7, "daily_monologues needs 7 daily monologues for Program C D6");
 assert(blackBoxLines.length >= 10, "black_box_lines needs at least 10 voice lines for Program C D5");
 
@@ -231,6 +236,7 @@ const profilePuzzleIds = new Set(profilePuzzles.map((puzzle) => puzzle.id));
 const buyerNegotiationScriptIds = new Set(
   buyerNegotiationScripts.map((script) => script.id),
 );
+const protocolScanTemplateIds = new Set(protocolScanTemplates.map((template) => template.id));
 const dataCleaningIconHints = new Set(dataCleaningIcons.map((icon) => icon.iconHint));
 const challengeDays = new Set(dayChallenges.map((challenge) => challenge.day));
 
@@ -486,6 +492,40 @@ for (const script of buyerNegotiationScripts) {
   }
 }
 
+for (const template of protocolScanTemplates) {
+  assert(template.scenario, `protocol_scan_template ${template.id} missing scenario`);
+  assert(template.title, `protocol_scan_template ${template.id} missing title`);
+  assert(template.agreementTitle, `protocol_scan_template ${template.id} missing agreementTitle`);
+  assert(
+    Array.isArray(template.riskClauses) && template.riskClauses.length >= 4,
+    `protocol_scan_template ${template.id} needs at least 4 riskClauses`,
+  );
+  assert(
+    Array.isArray(template.dataFlowMatches) && template.dataFlowMatches.length >= 3,
+    `protocol_scan_template ${template.id} needs at least 3 dataFlowMatches`,
+  );
+  assertUniqueIds(template.riskClauses, `${template.id} riskClauses`);
+  assertUniqueIds(template.dataFlowMatches, `${template.id} dataFlowMatches`);
+
+  for (const clause of template.riskClauses) {
+    assert(clause.text, `protocol_scan_template ${template.id} clause ${clause.id} missing text`);
+  }
+
+  for (const match of template.dataFlowMatches) {
+    assert(match.source, `protocol_scan_template ${template.id} flow ${match.id} missing source`);
+    assert(match.destination, `protocol_scan_template ${template.id} flow ${match.id} missing destination`);
+  }
+
+  assert(template.hiddenClause?.id, `protocol_scan_template ${template.id} missing hiddenClause id`);
+  assert(template.hiddenClause?.text, `protocol_scan_template ${template.id} missing hiddenClause text`);
+  assert(template.hiddenClause?.disguise, `protocol_scan_template ${template.id} missing hiddenClause disguise`);
+  assert(template.riskQuestion?.prompt, `protocol_scan_template ${template.id} missing riskQuestion prompt`);
+  assert(
+    riskLevels.has(template.riskQuestion?.answer),
+    `protocol_scan_template ${template.id} invalid riskQuestion answer: ${template.riskQuestion?.answer}`,
+  );
+}
+
 for (const monologue of dailyMonologues) {
   assert(
     Number.isInteger(monologue.day) && monologue.day >= 1 && monologue.day <= 7,
@@ -548,6 +588,7 @@ assert(challengeDays.has(1), "day_challenges missing Day 1 challenge");
 assert(challengeDays.has(2), "day_challenges missing Day 2 challenge");
 assert(challengeDays.has(4), "day_challenges missing Day 4 profile puzzle challenge");
 assert(challengeDays.has(5), "day_challenges missing Day 5 buyer negotiation challenge");
+assert(challengeDays.has(6), "day_challenges missing Day 6 protocol scan challenge");
 
 const monologueDays = new Set(dailyMonologues.map((monologue) => monologue.day));
 
@@ -682,6 +723,49 @@ for (const challenge of dayChallenges) {
       );
     }
   }
+
+  if (challenge.type === "protocol_scan") {
+    const condition = challenge.successCondition;
+    assert(condition, `challenge ${challenge.id} missing successCondition`);
+    assert(
+      Number.isInteger(condition.requiredRiskClauseMarks) &&
+        condition.requiredRiskClauseMarks >= 4,
+      `challenge ${challenge.id} invalid requiredRiskClauseMarks`,
+    );
+    assert(
+      Number.isInteger(condition.requiredDataFlowMatches) &&
+        condition.requiredDataFlowMatches >= 3,
+      `challenge ${challenge.id} invalid requiredDataFlowMatches`,
+    );
+    assert(
+      Number.isInteger(condition.requiredHiddenClauseFinds) &&
+        condition.requiredHiddenClauseFinds >= 1,
+      `challenge ${challenge.id} invalid requiredHiddenClauseFinds`,
+    );
+    assert(
+      Number.isInteger(condition.requiredRiskAnswers) &&
+        condition.requiredRiskAnswers >= 1,
+      `challenge ${challenge.id} invalid requiredRiskAnswers`,
+    );
+    assert(
+      Number.isInteger(condition.passingScore) &&
+        condition.passingScore >= 75 &&
+        condition.passingScore <= 100,
+      `challenge ${challenge.id} invalid passingScore`,
+    );
+    assert(
+      Array.isArray(challenge.protocolScanTemplateIds) &&
+        challenge.protocolScanTemplateIds.length >= 5,
+      `challenge ${challenge.id} needs at least 5 protocolScanTemplateIds`,
+    );
+
+    for (const templateId of challenge.protocolScanTemplateIds) {
+      assert(
+        protocolScanTemplateIds.has(templateId),
+        `challenge ${challenge.id} references unknown protocol scan template: ${templateId}`,
+      );
+    }
+  }
 }
 
 console.log("Content validation passed.");
@@ -696,5 +780,6 @@ console.log(`dataCleaningIcons=${dataCleaningIcons.length}`);
 console.log(`publicOpinionScripts=${publicOpinionScripts.length}`);
 console.log(`profilePuzzles=${profilePuzzles.length}`);
 console.log(`buyerNegotiationScripts=${buyerNegotiationScripts.length}`);
+console.log(`protocolScanTemplates=${protocolScanTemplates.length}`);
 console.log(`dailyMonologues=${dailyMonologues.length}`);
 console.log(`blackBoxLines=${blackBoxLines.length}`);

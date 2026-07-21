@@ -9,6 +9,7 @@ import newsTemplatesData from "../../data/news_templates.json";
 import packageRecipesData from "../../data/package_recipes.json";
 import profilePuzzlesData from "../../data/profile_puzzles.json";
 import protocolTermsData from "../../data/protocol_terms.json";
+import protocolScanTemplatesData from "../../data/protocol_scan_templates.json";
 import publicOpinionScriptsData from "../../data/public_opinion_scripts.json";
 import usersData from "../../data/users.json";
 import variablesData from "../../data/variables.json";
@@ -26,6 +27,7 @@ import type {
   PackageRecipe,
   ProfilePuzzle,
   ProtocolTerm,
+  ProtocolScanTemplate,
   PublicOpinionScript,
   UserProfile,
   Variables,
@@ -44,6 +46,7 @@ export const defaultContentBundle: ContentBundle = {
   publicOpinionScripts: publicOpinionScriptsData as readonly PublicOpinionScript[],
   profilePuzzles: profilePuzzlesData as readonly ProfilePuzzle[],
   buyerNegotiationScripts: buyerNegotiationScriptsData as readonly BuyerNegotiationScript[],
+  protocolScanTemplates: protocolScanTemplatesData as readonly ProtocolScanTemplate[],
   dailyMonologues: dailyMonologuesData as readonly DailyMonologue[],
   blackBoxLines: blackBoxLinesData as readonly BlackBoxLine[],
 };

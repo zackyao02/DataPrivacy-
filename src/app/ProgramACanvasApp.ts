@@ -55,6 +55,7 @@ export interface ProgramCDebugSnapshot {
     readonly packageRecipes: number;
     readonly newsTemplates: number;
     readonly dayChallenges: number;
+    readonly protocolScanTemplates: number;
     readonly audioEvents: number;
   };
   readonly sampleCardIds: readonly string[];
@@ -339,6 +340,7 @@ export class ProgramACanvasApp {
         packageRecipes: this.programCContent.getPackageRecipes().length,
         newsTemplates: this.programCContent.getNewsTemplates().length,
         dayChallenges: this.programCContent.getDayChallenges().length,
+        protocolScanTemplates: this.programCContent.getProtocolScanTemplates().length,
         audioEvents: Object.keys(SOUND_EVENT_MAP).length,
       },
       sampleCardIds,

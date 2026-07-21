@@ -13,6 +13,10 @@ export const SENSITIVITY_LEVELS = ["low", "medium", "high"] as const;
 
 export type SensitivityLevel = (typeof SENSITIVITY_LEVELS)[number];
 
+export const RISK_LEVELS = ["low", "medium", "high"] as const;
+
+export type RiskLevel = (typeof RISK_LEVELS)[number];
+
 export interface CardTemplate {
   readonly id: string;
   readonly title: string;
@@ -63,6 +67,7 @@ export const DAY_CHALLENGE_TYPES = [
   "data_cleaning",
   "profile_puzzle",
   "buyer_negotiation",
+  "protocol_scan",
 ] as const;
 
 export type DayChallengeType = (typeof DAY_CHALLENGE_TYPES)[number];
@@ -127,11 +132,24 @@ export interface BuyerNegotiationChallenge extends DayChallengeBase {
   readonly negotiationScriptIds: readonly string[];
 }
 
+export interface ProtocolScanChallenge extends DayChallengeBase {
+  readonly type: "protocol_scan";
+  readonly protocolScanTemplateIds: readonly string[];
+  readonly successCondition: {
+    readonly requiredRiskClauseMarks: number;
+    readonly requiredDataFlowMatches: number;
+    readonly requiredHiddenClauseFinds: number;
+    readonly requiredRiskAnswers: number;
+    readonly passingScore: number;
+  };
+}
+
 export type DayChallenge =
   | ProtocolMatchChallenge
   | DataCleaningChallenge
   | ProfilePuzzleChallenge
-  | BuyerNegotiationChallenge;
+  | BuyerNegotiationChallenge
+  | ProtocolScanChallenge;
 
 export type DataCleaningIconRole = "sensitive" | "decoy";
 
@@ -261,6 +279,39 @@ export interface BuyerNegotiationScript {
   readonly successText: string;
 }
 
+export interface ProtocolScanRiskClause {
+  readonly id: string;
+  readonly text: string;
+}
+
+export interface ProtocolScanFlowMatch {
+  readonly id: string;
+  readonly source: string;
+  readonly destination: string;
+}
+
+export interface ProtocolScanHiddenClause {
+  readonly id: string;
+  readonly text: string;
+  readonly disguise: string;
+}
+
+export interface ProtocolScanRiskQuestion {
+  readonly prompt: string;
+  readonly answer: RiskLevel;
+}
+
+export interface ProtocolScanTemplate {
+  readonly id: string;
+  readonly scenario: string;
+  readonly title: string;
+  readonly agreementTitle: string;
+  readonly riskClauses: readonly ProtocolScanRiskClause[];
+  readonly dataFlowMatches: readonly ProtocolScanFlowMatch[];
+  readonly hiddenClause: ProtocolScanHiddenClause;
+  readonly riskQuestion: ProtocolScanRiskQuestion;
+}
+
 export interface DailyMonologue {
   readonly id: string;
   readonly day: number;
@@ -310,6 +361,7 @@ export interface ContentBundle {
   readonly publicOpinionScripts: readonly PublicOpinionScript[];
   readonly profilePuzzles: readonly ProfilePuzzle[];
   readonly buyerNegotiationScripts: readonly BuyerNegotiationScript[];
+  readonly protocolScanTemplates: readonly ProtocolScanTemplate[];
   readonly dailyMonologues: readonly DailyMonologue[];
   readonly blackBoxLines: readonly BlackBoxLine[];
 }

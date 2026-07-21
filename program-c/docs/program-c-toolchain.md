@@ -23,13 +23,13 @@ node scripts/sync-feishu-text-config.mjs
 | Command | Purpose |
 | --- | --- |
 | `typecheck` | Runs TypeScript validation for Program C source and JSON imports. |
-| `validate:content` | Checks JSON IDs, package references, placeholders, challenge references, audio event references, D6 narrative-only negotiation rules, and required data counts. |
+| `validate:content` | Checks JSON IDs, package references, placeholders, challenge references, protocol-scan templates, audio event references, D6 narrative-only negotiation rules, and required data counts. |
 | `build` | Generates `dist/content-manifest.json` and `dist/offline-assets.json`. |
 | `verify:offline` | Confirms Program C data, source, and generated manifests do not depend on remote URLs. |
 | `report:size` | Prints raw tracked file size against the 8MB budget. |
 | `report:gzip` | Writes `dist/gzip-size-report.json` and prints gzip size against the 8MB budget. |
-| `report:week1` | Writes D7 Week 1 vertical slice reports to `dist/week1-vertical-slice-report.json` and `docs/week1-vertical-slice-report.md`. |
-| `check` | Runs the full Program C TypeScript, validation, build, offline, size, gzip, and Week 1 reporting chain. |
+| `report:week1` | Writes the D7 baseline plus D8 Day 6 prototype report to `dist/week1-vertical-slice-report.json` and `docs/week1-vertical-slice-report.md`. |
+| `check` | Runs the full Program C TypeScript, validation, build, offline, size, gzip, and vertical-slice reporting chain. |
 | `node scripts/sync-feishu-text-config.mjs` | Syncs the local Feishu text-config Markdown snapshot into existing Program C JSON content. Set `FEISHU_TEXT_CONFIG_MD=...` to use a different snapshot. |
 
 ## Edit Workflow
@@ -40,8 +40,10 @@ node scripts/sync-feishu-text-config.mjs
 4. Run `npm run check`.
 5. Update README or handoff docs only with stable project progress and integration information.
 
-Generated reports are written only when their stable content changes. To refresh the volatile JSON parse benchmark in the Week 1 report, set `PROGRAM_C_REFRESH_BENCHMARK=1` before running `npm run report:week1`.
+Generated reports are written only when their stable content changes. To refresh the volatile JSON parse benchmark in the vertical-slice report, set `PROGRAM_C_REFRESH_BENCHMARK=1` before running `npm run report:week1`.
 
 ## D7 Vertical Slice Notes
 
 Program C D7 covers Week 1 content integration, JSON completeness, audio integration, and initial performance reporting. FPS itself must be measured in the integrated Program A canvas build; Program C reports asset size, offline readiness, JSON parse timing, and audio event consistency.
+
+D8 adds Day 6 protocol-scan templates, scoring checks, black-box feedback, and an ending-branch prototype on top of the D7 baseline.

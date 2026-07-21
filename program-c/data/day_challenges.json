@@ -227,5 +227,31 @@
     ],
     "successText": "黑盒：谈判完成。买家收下了你的故事。",
     "failText": "黑盒：话术还不够稳定。成交不难，难的是让成交看起来合理。"
+  },
+  {
+    "id": "challenge-day6-protocol-scan",
+    "day": 6,
+    "type": "protocol_scan",
+    "title": "快速协议扫描",
+    "briefing": "协议文本正在滚动。标出高风险条款，确认数据流向，找出隐藏条款，并完成风险等级判断。",
+    "objective": "四类任务各25分，最终得分达到75分即可获得「协议解剖师」。",
+    "timeLimitSeconds": 55,
+    "badge": "协议解剖师",
+    "protocolScanTemplateIds": [
+      "protocol-scan-social-xingliao",
+      "protocol-scan-delivery-kuaisongfeng",
+      "protocol-scan-job-zhida",
+      "protocol-scan-finance-ledai",
+      "protocol-scan-game-huanjing"
+    ],
+    "successCondition": {
+      "requiredRiskClauseMarks": 4,
+      "requiredDataFlowMatches": 3,
+      "requiredHiddenClauseFinds": 1,
+      "requiredRiskAnswers": 1,
+      "passingScore": 75
+    },
+    "successText": "黑盒：你终于开始阅读那些你点过「同意」的东西。",
+    "failText": "黑盒：协议仍然安全。安全的意思是，用户仍然看不懂。"
   }
 ]

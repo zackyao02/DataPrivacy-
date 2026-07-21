@@ -14,6 +14,7 @@ import type {
   PackageRecipe,
   ProfilePuzzle,
   ProtocolTerm,
+  ProtocolScanTemplate,
   PublicOpinionScript,
   SensitivityLevel,
   UserProfile,
@@ -101,6 +102,10 @@ export class ContentRepository {
     return this.bundle.buyerNegotiationScripts;
   }
 
+  getProtocolScanTemplates(): readonly ProtocolScanTemplate[] {
+    return this.bundle.protocolScanTemplates;
+  }
+
   getDailyMonologues(): readonly DailyMonologue[] {
     return this.bundle.dailyMonologues;
   }
@@ -181,6 +186,34 @@ export class ContentRepository {
     }
 
     return this.pick(scripts);
+  }
+
+  findProtocolScanTemplateById(
+    templateId: string,
+  ): ProtocolScanTemplate | undefined {
+    return this.bundle.protocolScanTemplates.find((template) => template.id === templateId);
+  }
+
+  findProtocolScanTemplatesByIds(
+    templateIds: readonly string[],
+  ): readonly ProtocolScanTemplate[] {
+    const ids = new Set(templateIds);
+
+    return this.bundle.protocolScanTemplates.filter((template) => ids.has(template.id));
+  }
+
+  pickProtocolScanTemplate(
+    templateIds?: readonly string[],
+  ): ProtocolScanTemplate | undefined {
+    const templates = templateIds?.length
+      ? this.findProtocolScanTemplatesByIds(templateIds)
+      : this.bundle.protocolScanTemplates;
+
+    if (templates.length === 0) {
+      return undefined;
+    }
+
+    return this.pick(templates);
   }
 
   findDailyMonologueByDay(day: number): DailyMonologue | undefined {

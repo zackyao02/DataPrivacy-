@@ -15,7 +15,7 @@ This index lists the concrete delivery artifacts for Program C. It is meant to a
 | D5 | Done | Data-cleaning icon config, public-opinion scripts, black-box lines, challenge success/fail audio |
 | D6 | Done | Day 4 profile puzzles, Day 5 buyer negotiation scripts, daily monologues, challenge BGM and typewriter audio |
 | D7 | Done | Week 1 vertical-slice report, initial performance check, toolchain handoff document, latest text-config content alignment |
-| D8 | Done | Content-driven mini-game interactions for Day 1 / 2 / 4 / 5 |
+| D8 | Done | Content-driven mini-game interactions for Day 1 / 2 / 4 / 5 / 6 and ending-branch prototype |
 
 ## D7 Reports And Tool Docs
 
@@ -30,11 +30,11 @@ Current Program C performance numbers:
 
 | Metric | Value |
 | --- | ---: |
-| Raw tracked bytes | 146193 |
-| Gzip tracked bytes | 36504 |
+| Raw tracked bytes | 157635 |
+| Gzip tracked bytes | 39605 |
 | Budget bytes | 8388608 |
-| Remaining raw bytes | 8242415 |
-| Remaining gzip bytes | 8352104 |
+| Remaining raw bytes | 8230973 |
+| Remaining gzip bytes | 8349003 |
 | JSON parse average per full pass | 0.182 ms |
 
 Note: D7 performance is an initial Program C asset/build check. Full FPS must be measured in the integrated Program A canvas build.
@@ -76,12 +76,12 @@ npm run build
 | Validation and reports | `program-c/scripts/*.mjs` |
 | Feishu text-config sync | `program-c/scripts/sync-feishu-text-config.mjs` |
 | Local audio preview | `program-c/docs/audio-preview.html` |
-| Integrated Week 1 controller | `src/game/WeekOneSliceController.ts` |
-| Integrated Week 1 scene | `src/scenes/WeekOneSliceScene.ts` |
+| Integrated vertical-slice controller | `src/game/WeekOneSliceController.ts` |
+| Integrated vertical-slice scene | `src/scenes/WeekOneSliceScene.ts` |
 
 ## Known Remaining Work
 
 - Workbench currently uses click-to-select cards. True drag-and-drop card placement is still a follow-up gameplay task.
-- Latest Feishu text config is now local content/reference data, but Day 3 public-opinion gameplay, Day 6 protocol scan, Day 7 branches, endings, report generation, and UI/system copy are not yet implemented as playable flows.
-- D8 mini-games have real rule handling for Day 1 / 2 / 4 / 5, but still need human playtest tuning for spacing, copy density, and feel.
+- Latest Feishu text config is now local content/reference data, but Day 3 public-opinion gameplay, Day 7 full branches, ending report generation, and UI/system copy are not yet implemented as complete playable flows.
+- D8 mini-games have real rule handling for Day 1 / 2 / 4 / 5 / 6, but still need human playtest tuning for spacing, copy density, and feel.
 - Real audio assets, if added later, must rerun `npm run check` to keep offline and size guarantees.

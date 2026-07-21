@@ -4,6 +4,7 @@ import {
   WeekOneSliceController,
   type WeekOneSliceSnapshot,
 } from "../game/WeekOneSliceController";
+import type { RiskLevel } from "../../program-c/src/content";
 import type { Scene, SceneFrame } from "./Scene";
 
 type WeekOneSceneId = Extract<SceneId, "workbench" | "news" | "mini-game">;
@@ -16,6 +17,10 @@ type HitAction =
   | { readonly type: "clean-data-item"; readonly itemId: string }
   | { readonly type: "select-puzzle-fragment"; readonly fragmentId: string }
   | { readonly type: "choose-negotiation-option"; readonly optionId: string }
+  | { readonly type: "mark-protocol-scan-clause"; readonly clauseId: string }
+  | { readonly type: "match-protocol-scan-flow"; readonly flowId: string }
+  | { readonly type: "find-protocol-scan-hidden-clause" }
+  | { readonly type: "answer-protocol-scan-risk"; readonly level: RiskLevel }
   | { readonly type: "complete-challenge"; readonly succeeded: boolean };
 
 interface Rect {
@@ -144,6 +149,26 @@ export class WeekOneSliceScene implements Scene {
           this.navigate("workbench");
         }
         break;
+      case "mark-protocol-scan-clause":
+        if (this.controller.markProtocolScanClause(action.clauseId)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "match-protocol-scan-flow":
+        if (this.controller.matchProtocolScanFlow(action.flowId)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "find-protocol-scan-hidden-clause":
+        if (this.controller.findProtocolScanHiddenClause()) {
+          this.navigate("workbench");
+        }
+        break;
+      case "answer-protocol-scan-risk":
+        if (this.controller.answerProtocolScanRisk(action.level)) {
+          this.navigate("workbench");
+        }
+        break;
       case "complete-challenge":
         this.controller.completeChallenge(action.succeeded);
         this.navigate("workbench");
@@ -232,6 +257,23 @@ export class WeekOneSliceScene implements Scene {
       2,
       14,
     );
+
+    if (snapshot.endingPrototype.awarenessValue > 0) {
+      context.fillStyle = "#91c8bd";
+      context.font = "700 10px ui-monospace, Consolas, monospace";
+      context.fillText("结局原型", panel.x + 12, panel.y + 226);
+      context.fillStyle = "#aebbb7";
+      context.font = "600 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(
+        context,
+        `清醒值 ${snapshot.endingPrototype.awarenessValue}/${snapshot.endingPrototype.threshold} · ${snapshot.endingPrototype.unlockedPathLabel} · 评级 ${snapshot.endingPrototype.reportGrade}`,
+        panel.x + 12,
+        panel.y + 242,
+        panel.width - 24,
+        2,
+        12,
+      );
+    }
 
     this.drawButton(context, this.getSealButtonRect(layout), ready ? "封装数据包" : "生成废包提示", Boolean(ready));
   }
@@ -386,6 +428,9 @@ export class WeekOneSliceScene implements Scene {
       case "buyer_negotiation":
         this.renderBuyerNegotiation(context, layout, snapshot);
         break;
+      case "protocol_scan":
+        this.renderProtocolScan(context, layout, snapshot);
+        break;
     }
 
     const blackBoxY = panel.y + panel.height - 62;
@@ -536,6 +581,110 @@ export class WeekOneSliceScene implements Scene {
     });
   }
 
+  private renderProtocolScan(
+    context: CanvasRenderingContext2D,
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const panel = this.getMiniGamePanelRect(layout);
+    const template = snapshot.miniGame.protocolScanTemplate;
+
+    if (!template) {
+      this.drawMiniBlock(
+        context,
+        "协议扫描",
+        "没有可用协议模板，请检查 Day 6 文本配置。",
+        panel.x + 14,
+        panel.y + 194,
+        panel.width - 28,
+      );
+      return;
+    }
+
+    this.drawMiniBlock(
+      context,
+      template.title,
+      template.agreementTitle,
+      panel.x + 14,
+      panel.y + 194,
+      panel.width - 28,
+    );
+
+    const markedClauses = new Set(snapshot.miniGame.markedProtocolScanClauseIds);
+    const matchedFlows = new Set(snapshot.miniGame.matchedProtocolScanFlowIds);
+    const clauseRects = this.getProtocolScanClauseRects(layout, template.riskClauses.length);
+    const flowRects = this.getProtocolScanFlowRects(layout, template.dataFlowMatches.length);
+    const hiddenRect = this.getProtocolScanHiddenRect(layout);
+    const riskRects = this.getProtocolScanRiskAnswerRects(layout);
+
+    template.riskClauses.forEach((clause, index) => {
+      const rect = clauseRects[index];
+      const active = markedClauses.has(clause.id);
+
+      this.drawPanel(context, rect, active ? "#263d34" : "#161d22", active ? "#77b8ad" : "#5f4637");
+      context.fillStyle = active ? "#9fd6ca" : "#e0a166";
+      context.font = "800 9px ui-monospace, Consolas, monospace";
+      context.fillText(active ? "已标记" : `高危 ${index + 1}`, rect.x + 8, rect.y + 14);
+      context.fillStyle = "#e2ebe6";
+      context.font = "600 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, clause.text, rect.x + 8, rect.y + 30, rect.width - 16, 2, 12);
+    });
+
+    template.dataFlowMatches.forEach((flow, index) => {
+      const rect = flowRects[index];
+      const active = matchedFlows.has(flow.id);
+
+      this.drawPanel(context, rect, active ? "#263d34" : "#101c20", active ? "#77b8ad" : "#40505a");
+      context.fillStyle = active ? "#9fd6ca" : "#d7e2dc";
+      context.font = "800 9px ui-monospace, Consolas, monospace";
+      context.fillText(active ? "已匹配" : `流向 ${index + 1}`, rect.x + 8, rect.y + 14);
+      context.fillStyle = "#aebbb7";
+      context.font = "600 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, `${flow.source} -> ${flow.destination}`, rect.x + 8, rect.y + 30, rect.width - 16, 1, 12);
+    });
+
+    this.drawPanel(
+      context,
+      hiddenRect,
+      snapshot.miniGame.hiddenProtocolScanClauseFound ? "#263d34" : "#1f1816",
+      snapshot.miniGame.hiddenProtocolScanClauseFound ? "#77b8ad" : "#7a5244",
+    );
+    context.fillStyle = snapshot.miniGame.hiddenProtocolScanClauseFound ? "#9fd6ca" : "#e0a166";
+    context.font = "800 10px ui-monospace, Consolas, monospace";
+    context.fillText(
+      snapshot.miniGame.hiddenProtocolScanClauseFound ? "隐藏条款已发现" : "隐藏条款",
+      hiddenRect.x + 9,
+      hiddenRect.y + 16,
+    );
+    context.fillStyle = "#aebbb7";
+    context.font = "600 9px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(
+      context,
+      `${template.hiddenClause.disguise} -> ${template.hiddenClause.text}`,
+      hiddenRect.x + 9,
+      hiddenRect.y + 32,
+      hiddenRect.width - 18,
+      1,
+      12,
+    );
+
+    const levels: readonly RiskLevel[] = ["high", "medium", "low"];
+    const labels: Record<RiskLevel, string> = {
+      high: "高",
+      medium: "中",
+      low: "低",
+    };
+
+    levels.forEach((level, index) => {
+      this.drawButton(
+        context,
+        riskRects[index],
+        `风险 ${labels[level]}`,
+        snapshot.miniGame.selectedProtocolScanRiskLevel === level,
+      );
+    });
+  }
+
   private renderBackground(context: CanvasRenderingContext2D, layout: Layout): void {
     context.fillStyle = "#080b0f";
     context.fillRect(0, 0, layout.width, layout.height);
@@ -578,7 +727,7 @@ export class WeekOneSliceScene implements Scene {
 
     context.fillStyle = "#d7e2dc";
     context.font = "800 17px ui-monospace, Consolas, monospace";
-    context.fillText("Week 1 垂直切片", layout.margin, 26);
+    context.fillText("Program C 垂直切片", layout.margin, 26);
     context.fillStyle = "#91c8bd";
     context.font = "700 10px ui-monospace, Consolas, monospace";
     context.fillText(`${this.title} · Day ${snapshot.day} · ${snapshot.user.name}`, layout.margin, 47);
@@ -671,6 +820,40 @@ export class WeekOneSliceScene implements Scene {
           rect: rects[index],
           action: { type: "choose-negotiation-option", optionId: option.id } as const,
         }));
+      }
+      case "protocol_scan": {
+        const template = snapshot.miniGame.protocolScanTemplate;
+
+        if (!template) {
+          return [];
+        }
+
+        const levels: readonly RiskLevel[] = ["high", "medium", "low"];
+
+        return [
+          ...template.riskClauses.map((clause, index) => ({
+            rect: this.getProtocolScanClauseRects(layout, template.riskClauses.length)[index],
+            action: {
+              type: "mark-protocol-scan-clause",
+              clauseId: clause.id,
+            } as const,
+          })),
+          ...template.dataFlowMatches.map((flow, index) => ({
+            rect: this.getProtocolScanFlowRects(layout, template.dataFlowMatches.length)[index],
+            action: {
+              type: "match-protocol-scan-flow",
+              flowId: flow.id,
+            } as const,
+          })),
+          {
+            rect: this.getProtocolScanHiddenRect(layout),
+            action: { type: "find-protocol-scan-hidden-clause" } as const,
+          },
+          ...levels.map((level, index) => ({
+            rect: this.getProtocolScanRiskAnswerRects(layout)[index],
+            action: { type: "answer-protocol-scan-risk", level } as const,
+          })),
+        ];
       }
       default: {
         const [successRect, failRect] = this.getChallengeResultRects(layout);
@@ -833,6 +1016,48 @@ export class WeekOneSliceScene implements Scene {
     return this.getMiniGameItemRects(layout, count, 254, 104, columns);
   }
 
+  private getProtocolScanClauseRects(layout: Layout, count: number): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const columns = panel.width >= 360 ? 2 : 1;
+
+    return this.getMiniGameItemRects(layout, count, 220, 54, columns);
+  }
+
+  private getProtocolScanFlowRects(layout: Layout, count: number): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const columns = panel.width >= 620 ? 3 : panel.width >= 420 ? 2 : 1;
+    const startOffsetY =
+      this.getRectsBottom(this.getProtocolScanClauseRects(layout, 4)) - panel.y + 8;
+
+    return this.getMiniGameItemRects(layout, count, startOffsetY, 44, columns);
+  }
+
+  private getProtocolScanHiddenRect(layout: Layout): Rect {
+    const panel = this.getMiniGamePanelRect(layout);
+    const flowBottom = this.getRectsBottom(this.getProtocolScanFlowRects(layout, 3));
+
+    return {
+      x: panel.x + 14,
+      y: flowBottom + 8,
+      width: panel.width - 28,
+      height: 44,
+    };
+  }
+
+  private getProtocolScanRiskAnswerRects(layout: Layout): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const hiddenRect = this.getProtocolScanHiddenRect(layout);
+    const gap = 8;
+    const width = (panel.width - 28 - gap * 2) / 3;
+
+    return Array.from({ length: 3 }, (_, index) => ({
+      x: panel.x + 14 + index * (width + gap),
+      y: hiddenRect.y + hiddenRect.height + 8,
+      width,
+      height: 34,
+    }));
+  }
+
   private getMiniGameItemRects(
     layout: Layout,
     count: number,
@@ -879,6 +1104,19 @@ export class WeekOneSliceScene implements Scene {
         return this.getRectsBottom(
           this.getNegotiationOptionRects(layout, snapshot.miniGame.negotiationOptions.length),
         );
+      case "protocol_scan":
+        return this.getRectsBottom([
+          ...this.getProtocolScanClauseRects(
+            layout,
+            snapshot.miniGame.protocolScanTemplate?.riskClauses.length ?? 0,
+          ),
+          ...this.getProtocolScanFlowRects(
+            layout,
+            snapshot.miniGame.protocolScanTemplate?.dataFlowMatches.length ?? 0,
+          ),
+          this.getProtocolScanHiddenRect(layout),
+          ...this.getProtocolScanRiskAnswerRects(layout),
+        ]);
       default:
         return this.getMiniGamePanelRect(layout).y + 210;
     }

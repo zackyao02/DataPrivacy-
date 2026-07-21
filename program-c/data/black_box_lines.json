@@ -428,6 +428,30 @@
     "text": "买家还在犹豫。把风险换个名字，再递过去。"
   },
   {
+    "id": "blackbox-intro-scan",
+    "stage": "challenge_intro",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 6,
+    "voiceHint": "mechanical-low",
+    "text": "读协议。读到你看懂为止。"
+  },
+  {
+    "id": "blackbox-success-scan",
+    "stage": "challenge_success",
+    "cueEventName": "challengeSuccess",
+    "relatedChallengeDay": 6,
+    "voiceHint": "mechanical-low",
+    "text": "协议解剖完成。你终于开始阅读那些你点过同意的东西。"
+  },
+  {
+    "id": "blackbox-fail-scan",
+    "stage": "challenge_fail",
+    "cueEventName": "challengeFail",
+    "relatedChallengeDay": 6,
+    "voiceHint": "mechanical-low",
+    "text": "你漏掉了条款。看不懂的协议，才最适合被同意。"
+  },
+  {
     "id": "blackbox-package-precise_profile",
     "stage": "package_review",
     "cueEventName": "blackBoxLine",

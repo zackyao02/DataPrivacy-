@@ -22,6 +22,7 @@ const requiredAudioEvents = [
   "challengeFail",
   "blackBoxLine",
   "challengeBgm",
+  "endingTriggered",
   "monologueType",
   "bgmBlackBox",
   "bgmPressure",
@@ -29,6 +30,7 @@ const requiredAudioEvents = [
 ];
 
 const requiredWeek1Days = [1, 2, 4, 5];
+const d8PrototypeDays = [6];
 const requiredPackageTypes = [
   "precise_profile",
   "health_risk",
@@ -139,6 +141,7 @@ const news = readJson("news_templates.json");
 const dayChallenges = readJson("day_challenges.json");
 const profilePuzzles = readJson("profile_puzzles.json");
 const negotiations = readJson("buyer_negotiation_scripts.json");
+const protocolScanTemplates = readJson("protocol_scan_templates.json");
 const monologues = readJson("daily_monologues.json");
 const soundMap = readSoundMap();
 const previewEvents = readPreviewEvents();
@@ -199,6 +202,10 @@ for (const day of requiredWeek1Days) {
   assert(challengeDays.includes(day), `missing week1 challenge day: ${day}`);
 }
 
+for (const day of d8PrototypeDays) {
+  assert(challengeDays.includes(day), `missing D8 prototype challenge day: ${day}`);
+}
+
 for (let day = 1; day <= 7; day += 1) {
   assert(monologueDays.includes(day), `missing daily monologue day: ${day}`);
 }
@@ -223,10 +230,11 @@ const report = {
     process.env.PROGRAM_C_REPORT_GENERATED_AT ??
     existingGeneratedAt ??
     new Date().toISOString(),
-  scope: "Program C D7 Week 1 vertical slice readiness",
+  scope: "Program C D7 baseline plus D8 Day 6 prototype readiness",
   week1Coverage: {
     supportedChallengeDays: challengeDays,
     requiredWeek1Days,
+    d8PrototypeDays,
     packageTypes,
     counts: {
       cardTemplates: cards.length,
@@ -237,6 +245,7 @@ const report = {
       dayChallenges: dayChallenges.length,
       profilePuzzles: profilePuzzles.length,
       buyerNegotiationScripts: negotiations.length,
+      protocolScanTemplates: protocolScanTemplates.length,
       dailyMonologues: monologues.length,
       soundEvents: soundEvents.length,
       audioPreviewButtons: previewEvents.buttonEvents.length,
@@ -269,8 +278,8 @@ const report = {
     },
   },
   handoffNotes: [
-    "Program B should run Day 1-5 loop using findChallengeByDay(1/2/4/5), pickNewsForPackage, emotion responses, and daily monologues.",
-    "Program A should verify audio.handleGameEvent for package seal, transaction seal, challenge feedback, BGM, and monologue typing events.",
+    "Program B should run the playable Day 1/2/4/5/6 loop using findChallengeByDay, package news, emotion responses, protocol scan state, and daily monologues.",
+    "Program A should verify audio.handleGameEvent for package seal, transaction seal, challenge feedback, BGM, monologue typing, and endingTriggered prototype events.",
     "Program C performance numbers here cover content/audio/build assets; integrated FPS belongs to the A/B vertical slice run.",
   ],
 };
@@ -279,13 +288,13 @@ mkdirSync(distDir, { recursive: true });
 mkdirSync(docsDir, { recursive: true });
 writeIfChanged(outputJson, `${JSON.stringify(report, null, 2)}\n`);
 
-const markdown = `# Program C Week 1 Vertical Slice Report
+const markdown = `# Program C Vertical Slice Report
 
 Generated: ${report.generatedAt}
 
 ## Scope
 
-This D7 report checks Program C content, audio, build, and initial performance readiness for the Week 1 vertical slice.
+This report keeps the D7 Week 1 acceptance baseline and adds the D8 Day 6 protocol-scan / ending-prototype readiness check.
 
 ## Content Coverage
 
@@ -299,9 +308,14 @@ This D7 report checks Program C content, audio, build, and initial performance r
 | Day challenges | ${dayChallenges.length} |
 | Profile puzzles | ${profilePuzzles.length} |
 | Buyer negotiation scripts | ${negotiations.length} |
+| Protocol scan templates | ${protocolScanTemplates.length} |
 | Daily monologues | ${monologues.length} |
 
-Supported Week 1 challenge days: ${challengeDays.join(", ")}.
+D7 required challenge days: ${requiredWeek1Days.join(", ")}.
+
+D8 prototype challenge days: ${d8PrototypeDays.join(", ")}.
+
+Supported Program C challenge days: ${challengeDays.join(", ")}.
 
 Package types: ${packageTypes.join(", ")}.
 
@@ -335,12 +349,12 @@ FPS risk proxy: low for Program C assets. Program C currently ships JSON presets
 
 ## Handoff
 
-- Program B: run Day 1-5 loop with \`findChallengeByDay(1/2/4/5)\`, package news, emotion responses, and daily monologues.
-- Program A: verify \`audio.handleGameEvent\` for package seal, transaction seal, challenge feedback, BGM, and monologue typing events.
+- Program B: run Day 1/2/4/5/6 loop with \`findChallengeByDay\`, package news, emotion responses, protocol scan state, and daily monologues.
+- Program A: verify \`audio.handleGameEvent\` for package seal, transaction seal, challenge feedback, BGM, monologue typing, and \`endingTriggered\` prototype events.
 - Program C: rerun \`npm run check\` before each content or audio handoff.
 `;
 
 writeIfChanged(outputMd, markdown);
 console.log(`Wrote ${decodeURIComponent(outputJson.pathname)}`);
 console.log(`Wrote ${decodeURIComponent(outputMd.pathname)}`);
-console.log("Week 1 vertical slice readiness passed.");
+console.log("Program C vertical slice readiness passed.");

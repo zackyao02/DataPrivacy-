@@ -14,6 +14,8 @@ import type {
   ProfilePuzzle,
   ProfilePuzzleFragment,
   ProtocolTerm,
+  ProtocolScanTemplate,
+  RiskLevel,
   UserProfile,
 } from "../../program-c/src/content";
 import { ProgramBBridge } from "./ProgramBBridge";
@@ -44,6 +46,24 @@ export interface WeekOneMiniGameState {
   readonly expectedPuzzleOrder: number;
   readonly negotiationOptions: readonly BuyerNegotiationOption[];
   readonly selectedNegotiationOptionId: string | null;
+  readonly protocolScanTemplate: ProtocolScanTemplate | null;
+  readonly markedProtocolScanClauseIds: readonly string[];
+  readonly matchedProtocolScanFlowIds: readonly string[];
+  readonly hiddenProtocolScanClauseFound: boolean;
+  readonly selectedProtocolScanRiskLevel: RiskLevel | null;
+  readonly protocolScanScore: number;
+}
+
+export type EndingPath = "final_package" | "evidence_chain";
+
+export interface EndingPrototypeState {
+  readonly awarenessValue: number;
+  readonly threshold: number;
+  readonly unlockedPath: EndingPath;
+  readonly unlockedPathLabel: string;
+  readonly lockedPathLabel: string;
+  readonly lockedReason: string | null;
+  readonly reportGrade: "F" | "B+";
 }
 
 export interface WeekOneSliceSnapshot {
@@ -65,10 +85,11 @@ export interface WeekOneSliceSnapshot {
   readonly selectedEmotion: EmotionChoice | null;
   readonly emotionResponse: string | null;
   readonly miniGame: WeekOneMiniGameState;
+  readonly endingPrototype: EndingPrototypeState;
   readonly message: string;
 }
 
-const WEEK_ONE_DAYS = [1, 2, 4, 5] as const;
+const PLAYABLE_DAYS = [1, 2, 4, 5, 6] as const;
 const MAX_SLOT_COUNT = 3;
 
 const EMOTION_EVENTS: Record<EmotionChoice, string> = {
@@ -87,6 +108,7 @@ export class WeekOneSliceController {
   private activeChallenge: DayChallenge | null = null;
   private activeProfilePuzzle: ProfilePuzzle | null = null;
   private activeNegotiation: BuyerNegotiationScript | null = null;
+  private activeProtocolScan: ProtocolScanTemplate | null = null;
   private activeMonologue: DailyMonologue | null = null;
   private activeBlackBoxLine: BlackBoxLine | null = null;
   private selectedEmotion: EmotionChoice | null = null;
@@ -97,6 +119,11 @@ export class WeekOneSliceController {
   private cleaningMistakes = 0;
   private acceptedPuzzleFragmentIds: string[] = [];
   private selectedNegotiationOptionId: string | null = null;
+  private markedProtocolScanClauseIds: string[] = [];
+  private matchedProtocolScanFlowIds: string[] = [];
+  private hiddenProtocolScanClauseFound = false;
+  private selectedProtocolScanRiskLevel: RiskLevel | null = null;
+  private completedChallengeDays: number[] = [];
   private message = "选择 3 张数据卡，封装第一个可用数据包。";
 
   constructor(
@@ -130,6 +157,7 @@ export class WeekOneSliceController {
       selectedEmotion: this.selectedEmotion,
       emotionResponse: this.emotionResponse,
       miniGame: this.getMiniGameState(),
+      endingPrototype: this.getEndingPrototype(),
       message: this.message,
     };
   }
@@ -178,6 +206,11 @@ export class WeekOneSliceController {
     this.activeNegotiation =
       this.currentDay === 5
         ? this.content.pickBuyerNegotiationScript(readyPackage.packageType) ?? null
+        : null;
+    this.activeProtocolScan =
+      this.activeChallenge?.type === "protocol_scan"
+        ? this.content.pickProtocolScanTemplate(this.activeChallenge.protocolScanTemplateIds) ??
+          null
         : null;
     this.activeMonologue = this.content.findDailyMonologueByDay(this.currentDay) ?? null;
     this.activeBlackBoxLine = this.content.pickBlackBoxLine("package_review", {
@@ -382,9 +415,94 @@ export class WeekOneSliceController {
     return true;
   }
 
+  markProtocolScanClause(clauseId: string): boolean {
+    if (this.activeChallenge?.type !== "protocol_scan" || !this.activeProtocolScan) {
+      return false;
+    }
+
+    if (this.markedProtocolScanClauseIds.includes(clauseId)) {
+      return false;
+    }
+
+    const clause = this.activeProtocolScan.riskClauses.find((item) => item.id === clauseId);
+
+    if (!clause) {
+      this.message = "这不是当前协议里的高风险条款。";
+      this.programB.emit("riskChanged", { reason: "protocol-scan-unknown-clause", clauseId });
+      this.patchProgramB();
+      return false;
+    }
+
+    this.markedProtocolScanClauseIds = [...this.markedProtocolScanClauseIds, clauseId];
+    this.message = `已标记高风险条款：${clause.text}`;
+    this.programB.emit("dataFlowIn", { task: "protocol-scan-clause", clauseId });
+
+    return this.maybeCompleteProtocolScan();
+  }
+
+  matchProtocolScanFlow(flowId: string): boolean {
+    if (this.activeChallenge?.type !== "protocol_scan" || !this.activeProtocolScan) {
+      return false;
+    }
+
+    if (this.matchedProtocolScanFlowIds.includes(flowId)) {
+      return false;
+    }
+
+    const flow = this.activeProtocolScan.dataFlowMatches.find((item) => item.id === flowId);
+
+    if (!flow) {
+      return false;
+    }
+
+    this.matchedProtocolScanFlowIds = [...this.matchedProtocolScanFlowIds, flowId];
+    this.message = `数据流向已确认：${flow.source} -> ${flow.destination}`;
+    this.programB.emit("dataFlowIn", { task: "protocol-scan-flow", flowId });
+
+    return this.maybeCompleteProtocolScan();
+  }
+
+  findProtocolScanHiddenClause(): boolean {
+    if (this.activeChallenge?.type !== "protocol_scan" || !this.activeProtocolScan) {
+      return false;
+    }
+
+    if (this.hiddenProtocolScanClauseFound) {
+      return false;
+    }
+
+    this.hiddenProtocolScanClauseFound = true;
+    this.message = `隐藏条款已发现：${this.activeProtocolScan.hiddenClause.text}`;
+    this.programB.emit("blackBoxLine", {
+      task: "protocol-scan-hidden-clause",
+      hiddenClauseId: this.activeProtocolScan.hiddenClause.id,
+    });
+
+    return this.maybeCompleteProtocolScan();
+  }
+
+  answerProtocolScanRisk(level: RiskLevel): boolean {
+    if (this.activeChallenge?.type !== "protocol_scan" || !this.activeProtocolScan) {
+      return false;
+    }
+
+    this.selectedProtocolScanRiskLevel = level;
+    this.message =
+      level === this.activeProtocolScan.riskQuestion.answer
+        ? "风险等级判断正确。"
+        : "风险等级判断偏离，但仍会计入最终评分。";
+    this.programB.emit("riskChanged", {
+      task: "protocol-scan-risk-answer",
+      selected: level,
+      expected: this.activeProtocolScan.riskQuestion.answer,
+    });
+
+    return this.maybeCompleteProtocolScan();
+  }
+
   completeChallenge(succeeded: boolean): void {
     const completedDay = this.currentDay;
-    const lastWeekOneDay = WEEK_ONE_DAYS[WEEK_ONE_DAYS.length - 1];
+    const lastPlayableDay = PLAYABLE_DAYS[PLAYABLE_DAYS.length - 1];
     this.challengeStatus = succeeded ? "success" : "failed";
     this.activeBlackBoxLine =
       this.content.pickBlackBoxLine(
@@ -400,20 +518,29 @@ export class WeekOneSliceController {
     });
     this.programB.emit("bgmSilence", { reason: "challenge-complete" });
     if (succeeded) {
-      this.dayIndex = Math.min(this.dayIndex + 1, WEEK_ONE_DAYS.length - 1);
+      if (!this.completedChallengeDays.includes(completedDay)) {
+        this.completedChallengeDays = [...this.completedChallengeDays, completedDay];
+      }
+
+      this.dayIndex = Math.min(this.dayIndex + 1, PLAYABLE_DAYS.length - 1);
     }
 
     this.phase = "workbench";
     this.message = succeeded
-      ? completedDay === lastWeekOneDay
-        ? `Day ${completedDay} 完成，Week 1 垂直切片已完成。`
+      ? completedDay === lastPlayableDay
+        ? `Day ${completedDay} 完成，结局系统原型已解锁：${this.getEndingPrototype().unlockedPathLabel}。`
         : `Day ${completedDay} 完成，Day ${this.currentDay} 已解锁。`
       : `Day ${completedDay} 未通过，返回工作台调整后重试。`;
+
+    if (succeeded && completedDay === lastPlayableDay) {
+      this.programB.emit("endingTriggered", this.getEndingPrototype());
+    }
+
     this.patchProgramB();
   }
 
   private get currentDay(): number {
-    return WEEK_ONE_DAYS[this.dayIndex];
+    return PLAYABLE_DAYS[this.dayIndex];
   }
 
   private getWorkbenchCards(): readonly CardTemplate[] {
@@ -460,6 +587,10 @@ export class WeekOneSliceController {
     this.cleaningMistakes = 0;
     this.acceptedPuzzleFragmentIds = [];
     this.selectedNegotiationOptionId = null;
+    this.markedProtocolScanClauseIds = [];
+    this.matchedProtocolScanFlowIds = [];
+    this.hiddenProtocolScanClauseFound = false;
+    this.selectedProtocolScanRiskLevel = null;
   }
 
   private getMiniGameState(): WeekOneMiniGameState {
@@ -467,6 +598,7 @@ export class WeekOneSliceController {
     const cleaningItems = this.getCleaningItems();
     const puzzleFragments = this.activeProfilePuzzle?.fragments ?? [];
     const negotiationOptions = this.activeNegotiation?.options ?? [];
+    const protocolScanScore = this.getProtocolScanScore();
 
     return {
       status: this.challengeStatus,
@@ -485,6 +617,12 @@ export class WeekOneSliceController {
       expectedPuzzleOrder: this.acceptedPuzzleFragmentIds.length + 1,
       negotiationOptions,
       selectedNegotiationOptionId: this.selectedNegotiationOptionId,
+      protocolScanTemplate: this.activeProtocolScan,
+      markedProtocolScanClauseIds: [...this.markedProtocolScanClauseIds],
+      matchedProtocolScanFlowIds: [...this.matchedProtocolScanFlowIds],
+      hiddenProtocolScanClauseFound: this.hiddenProtocolScanClauseFound,
+      selectedProtocolScanRiskLevel: this.selectedProtocolScanRiskLevel,
+      protocolScanScore,
     };
   }
 
@@ -547,6 +685,8 @@ export class WeekOneSliceController {
         return this.selectedNegotiationOptionId
           ? "谈判话术已选择"
           : "选择任一谈判话术推进交易";
+      case "protocol_scan":
+        return `协议扫描评分 ${this.getProtocolScanScore()}/100，达成 75 分即可通关`;
     }
   }
 
@@ -554,17 +694,88 @@ export class WeekOneSliceController {
     return this.activeProfilePuzzle?.fragments.filter((item) => !item.decoy).length ?? 0;
   }
 
+  private getProtocolScanScore(): number {
+    if (this.activeChallenge?.type !== "protocol_scan" || !this.activeProtocolScan) {
+      return 0;
+    }
+
+    let score = 0;
+    const condition = this.activeChallenge.successCondition;
+
+    if (this.markedProtocolScanClauseIds.length >= condition.requiredRiskClauseMarks) {
+      score += 25;
+    }
+
+    if (this.matchedProtocolScanFlowIds.length >= condition.requiredDataFlowMatches) {
+      score += 25;
+    }
+
+    if (this.hiddenProtocolScanClauseFound) {
+      score += 25;
+    }
+
+    if (this.selectedProtocolScanRiskLevel === this.activeProtocolScan.riskQuestion.answer) {
+      score += 25;
+    }
+
+    return score;
+  }
+
+  private maybeCompleteProtocolScan(): boolean {
+    if (this.activeChallenge?.type !== "protocol_scan") {
+      return false;
+    }
+
+    const condition = this.activeChallenge.successCondition;
+    const allTasksTouched =
+      this.markedProtocolScanClauseIds.length >= condition.requiredRiskClauseMarks &&
+      this.matchedProtocolScanFlowIds.length >= condition.requiredDataFlowMatches &&
+      this.hiddenProtocolScanClauseFound &&
+      this.selectedProtocolScanRiskLevel !== null;
+
+    if (!allTasksTouched) {
+      this.patchProgramB();
+      return false;
+    }
+
+    this.completeChallenge(this.getProtocolScanScore() >= condition.passingScore);
+    return true;
+  }
+
+  private getEndingPrototype(): EndingPrototypeState {
+    const threshold = 5;
+    const awarenessValue = this.completedChallengeDays.length;
+    const unlockedPath: EndingPath =
+      awarenessValue >= threshold ? "evidence_chain" : "final_package";
+    const isHighAwareness = unlockedPath === "evidence_chain";
+
+    return {
+      awarenessValue,
+      threshold,
+      unlockedPath,
+      unlockedPathLabel: isHighAwareness ? "重组证据链" : "最后的数据包",
+      lockedPathLabel: isHighAwareness ? "最后的数据包" : "重组证据链",
+      lockedReason: isHighAwareness ? null : "[数据损坏] 清醒值不足，无法解码该路径",
+      reportGrade: isHighAwareness ? "B+" : "F",
+    };
+  }
+
   private patchProgramB(): void {
+    const endingPrototype = this.getEndingPrototype();
+
     this.programB.patchState({
       phase: this.phase,
       counters: {
         day: this.currentDay,
         selectedCards: this.selectedCardIds.length,
+        awarenessValue: endingPrototype.awarenessValue,
+        protocolScanScore: this.getProtocolScanScore(),
       },
       data: {
         selectedCardIds: [...this.selectedCardIds],
         activePackageType: this.activePackage?.packageType ?? null,
         selectedEmotion: this.selectedEmotion,
+        endingPrototype,
         message: this.message,
       },
     });

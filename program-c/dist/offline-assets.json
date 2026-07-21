@@ -18,6 +18,7 @@
     "data/news_templates.json",
     "data/package_recipes.json",
     "data/profile_puzzles.json",
+    "data/protocol_scan_templates.json",
     "data/protocol_terms.json",
     "data/public_opinion_scripts.json",
     "data/users.json",
