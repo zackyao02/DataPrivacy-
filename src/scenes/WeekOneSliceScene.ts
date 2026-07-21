@@ -1,10 +1,20 @@
-import { SCENE_LABELS, type Point, type RenderLayer, type SceneId } from "../core/types";
+import {
+  SCENE_LABELS,
+  type NormalizedPointerEvent,
+  type Point,
+  type RenderLayer,
+  type SceneId,
+} from "../core/types";
 import {
   type EmotionChoice,
   WeekOneSliceController,
   type WeekOneSliceSnapshot,
 } from "../game/WeekOneSliceController";
-import type { PublicOpinionTactic, RiskLevel } from "../../program-c/src/content";
+import type {
+  CardTemplate,
+  PublicOpinionTactic,
+  RiskLevel,
+} from "../../program-c/src/content";
 import type { Scene, SceneFrame } from "./Scene";
 
 type WeekOneSceneId = Extract<SceneId, "workbench" | "news" | "mini-game">;
@@ -49,10 +59,23 @@ interface Layout {
   readonly footer: Rect;
 }
 
+interface WorkbenchDragState {
+  readonly pointerId: number;
+  readonly cardId: string;
+  readonly sourceSlotIndex: number | null;
+  readonly grabOffset: Point;
+  readonly cardRect: Rect;
+  position: Point;
+  overSlotIndex: number | null;
+}
+
+const WORKBENCH_SLOT_COUNT = 3;
+
 export class WeekOneSliceScene implements Scene {
   readonly title: string;
 
   private lastHandledInputTimestamp = 0;
+  private workbenchDrag: WorkbenchDragState | null = null;
 
   constructor(
     readonly id: WeekOneSceneId,
@@ -64,10 +87,16 @@ export class WeekOneSliceScene implements Scene {
 
   enter(_frame: SceneFrame): void {}
 
-  exit(_frame: SceneFrame): void {}
+  exit(_frame: SceneFrame): void {
+    this.workbenchDrag = null;
+  }
 
   update(frame: SceneFrame): void {
     const input = frame.input.lastEvent;
+
+    if (this.id === "workbench" && input && this.handleWorkbenchDragInput(frame, input)) {
+      return;
+    }
 
     if (
       !input ||
@@ -111,6 +140,10 @@ export class WeekOneSliceScene implements Scene {
         this.renderHeaderFooter(context, layout, snapshot);
         break;
       case "effects":
+        if (this.id === "workbench") {
+          this.renderWorkbenchDragPreview(context, snapshot);
+        }
+
         this.renderPointer(context, frame.input.lastEvent?.position ?? null);
         break;
     }
@@ -206,6 +239,133 @@ export class WeekOneSliceScene implements Scene {
     }
   }
 
+  private handleWorkbenchDragInput(
+    frame: SceneFrame,
+    input: NormalizedPointerEvent,
+  ): boolean {
+    switch (input.phase) {
+      case "drag-start":
+        return this.startWorkbenchDrag(frame, input);
+      case "drag-move":
+        return this.updateWorkbenchDrag(frame, input);
+      case "pointer-up":
+        return this.workbenchDrag?.pointerId === input.pointerId;
+      case "pointer-cancel":
+        if (this.workbenchDrag?.pointerId === input.pointerId) {
+          this.workbenchDrag = null;
+          return true;
+        }
+
+        return false;
+      case "drag-end":
+        return this.finishWorkbenchDrag(frame, input);
+      default:
+        return false;
+    }
+  }
+
+  private startWorkbenchDrag(
+    frame: SceneFrame,
+    input: NormalizedPointerEvent,
+  ): boolean {
+    const layout = this.createLayout(frame);
+    const snapshot = this.controller.getSnapshot();
+    const startPoint = {
+      x: input.position.x - input.totalDelta.x,
+      y: input.position.y - input.totalDelta.y,
+    };
+    const slotRects = this.getWorkbenchSlotRects(layout);
+    const sourceSlotIndex = slotRects.findIndex((rect) =>
+      this.contains(rect, startPoint),
+    );
+
+    if (sourceSlotIndex >= 0) {
+      const cardId = snapshot.selectedCardIds[sourceSlotIndex];
+
+      if (!cardId) {
+        return false;
+      }
+
+      const cardRect = slotRects[sourceSlotIndex];
+      this.workbenchDrag = {
+        pointerId: input.pointerId,
+        cardId,
+        sourceSlotIndex,
+        grabOffset: {
+          x: startPoint.x - cardRect.x,
+          y: startPoint.y - cardRect.y,
+        },
+        cardRect,
+        position: input.position,
+        overSlotIndex: this.findWorkbenchSlotIndex(layout, input.position),
+      };
+      return true;
+    }
+
+    const cardRects = this.getCardRects(layout);
+    const cardIndex = cardRects.findIndex((rect) => this.contains(rect, startPoint));
+    const card = snapshot.availableCards[cardIndex];
+
+    if (!card) {
+      return false;
+    }
+
+    const cardRect = cardRects[cardIndex];
+    this.workbenchDrag = {
+      pointerId: input.pointerId,
+      cardId: card.id,
+      sourceSlotIndex: null,
+      grabOffset: {
+        x: startPoint.x - cardRect.x,
+        y: startPoint.y - cardRect.y,
+      },
+      cardRect,
+      position: input.position,
+      overSlotIndex: this.findWorkbenchSlotIndex(layout, input.position),
+    };
+    return true;
+  }
+
+  private updateWorkbenchDrag(
+    frame: SceneFrame,
+    input: NormalizedPointerEvent,
+  ): boolean {
+    if (!this.workbenchDrag || this.workbenchDrag.pointerId !== input.pointerId) {
+      return false;
+    }
+
+    const layout = this.createLayout(frame);
+    this.workbenchDrag.position = input.position;
+    this.workbenchDrag.overSlotIndex = this.findWorkbenchSlotIndex(layout, input.position);
+    return true;
+  }
+
+  private finishWorkbenchDrag(
+    frame: SceneFrame,
+    input: NormalizedPointerEvent,
+  ): boolean {
+    if (!this.workbenchDrag || this.workbenchDrag.pointerId !== input.pointerId) {
+      return false;
+    }
+
+    const drag = this.workbenchDrag;
+    const layout = this.createLayout(frame);
+    const targetSlotIndex = this.findWorkbenchSlotIndex(layout, input.position);
+    this.workbenchDrag = null;
+
+    if (targetSlotIndex !== null) {
+      this.controller.placeCardInSlot(drag.cardId, targetSlotIndex);
+      return true;
+    }
+
+    if (drag.sourceSlotIndex !== null) {
+      this.controller.removeCardFromSlot(drag.sourceSlotIndex);
+      return true;
+    }
+
+    return true;
+  }
+
   private renderSceneContent(
     context: CanvasRenderingContext2D,
     layout: Layout,
@@ -256,18 +416,20 @@ export class WeekOneSliceScene implements Scene {
     this.drawPanel(context, panel, "#11191e", "#40505a");
     this.drawSectionTitle(context, "工作台槽位", panel.x + 12, panel.y + 14);
 
-    const slotY = panel.y + 42;
-    for (let index = 0; index < 3; index += 1) {
-      const slotRect = {
-        x: panel.x + 12,
-        y: slotY + index * 38,
-        width: panel.width - 24,
-        height: 29,
-      };
+    const slotRects = this.getWorkbenchSlotRects(layout);
+    for (let index = 0; index < WORKBENCH_SLOT_COUNT; index += 1) {
+      const slotRect = slotRects[index];
       const card = snapshot.selectedCards[index];
+      const isDropTarget = this.workbenchDrag?.overSlotIndex === index;
+      const isDragSource = this.workbenchDrag?.sourceSlotIndex === index;
 
-      this.drawPanel(context, slotRect, "#0c1216", "#2b3a42");
-      context.fillStyle = card ? "#d7e2dc" : "#5c6b70";
+      this.drawPanel(
+        context,
+        slotRect,
+        isDropTarget ? "#203c35" : "#0c1216",
+        isDropTarget ? "#9fd6ca" : isDragSource ? "#7a5244" : "#2b3a42",
+      );
+      context.fillStyle = card ? (isDragSource ? "#8d9b98" : "#d7e2dc") : "#5c6b70";
       context.font = "600 10px ui-monospace, Consolas, monospace";
       context.fillText(card ? this.controller.fillText(card.title) : `空槽位 ${index + 1}`, slotRect.x + 8, slotRect.y + 18);
     }
@@ -306,6 +468,70 @@ export class WeekOneSliceScene implements Scene {
     }
 
     this.drawButton(context, this.getSealButtonRect(layout), ready ? "封装数据包" : "生成废包提示", Boolean(ready));
+  }
+
+  private renderWorkbenchDragPreview(
+    context: CanvasRenderingContext2D,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    if (!this.workbenchDrag) {
+      return;
+    }
+
+    const drag = this.workbenchDrag;
+    const card = this.findWorkbenchCard(snapshot, drag.cardId);
+
+    if (!card) {
+      return;
+    }
+
+    const rect = {
+      x: drag.position.x - drag.grabOffset.x,
+      y: drag.position.y - drag.grabOffset.y,
+      width: drag.cardRect.width,
+      height: drag.cardRect.height,
+    };
+    const title = this.controller.fillText(card.title);
+    const summary = this.controller.fillText(card.summary);
+
+    context.save();
+    context.globalAlpha = 0.92;
+    context.shadowColor = "rgba(0, 0, 0, 0.45)";
+    context.shadowBlur = 18;
+    context.shadowOffsetY = 10;
+    this.drawPanel(context, rect, "#203c35", drag.overSlotIndex !== null ? "#9fd6ca" : "#e0a166");
+    context.shadowBlur = 0;
+    context.shadowOffsetY = 0;
+    context.fillStyle = "#e7eee9";
+    context.font = "800 11px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(context, title, rect.x + 9, rect.y + 12, rect.width - 18, 2, 13);
+    context.fillStyle = "#aebbb7";
+    context.font = "600 9px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(context, summary, rect.x + 9, rect.y + 42, rect.width - 18, 1, 12);
+    context.fillStyle = drag.overSlotIndex !== null ? "#9fd6ca" : "#e0a166";
+    context.font = "700 9px ui-monospace, Consolas, monospace";
+    const dragHint =
+      drag.overSlotIndex !== null
+        ? `放入槽位 ${drag.overSlotIndex + 1}`
+        : drag.sourceSlotIndex !== null
+          ? "拖出槽位移除"
+          : "拖到槽位放入";
+    context.fillText(
+      dragHint,
+      rect.x + 9,
+      rect.y + rect.height - 14,
+    );
+    context.restore();
+  }
+
+  private findWorkbenchCard(
+    snapshot: WeekOneSliceSnapshot,
+    cardId: string,
+  ): CardTemplate | undefined {
+    return (
+      snapshot.availableCards.find((card) => card.id === cardId) ??
+      snapshot.selectedCards.find((card) => card.id === cardId)
+    );
   }
 
   private renderNews(
@@ -1288,6 +1514,26 @@ export class WeekOneSliceScene implements Scene {
       width: layout.body.width - 24,
       height: layout.body.y + layout.body.height - cardGrid.y - cardGrid.height - 24,
     };
+  }
+
+  private getWorkbenchSlotRects(layout: Layout): readonly Rect[] {
+    const panel = this.getSidePanelRect(layout);
+    const slotY = panel.y + 42;
+
+    return Array.from({ length: WORKBENCH_SLOT_COUNT }, (_, index) => ({
+      x: panel.x + 12,
+      y: slotY + index * 38,
+      width: panel.width - 24,
+      height: 29,
+    }));
+  }
+
+  private findWorkbenchSlotIndex(layout: Layout, point: Point): number | null {
+    const slotIndex = this.getWorkbenchSlotRects(layout).findIndex((rect) =>
+      this.contains(rect, point),
+    );
+
+    return slotIndex >= 0 ? slotIndex : null;
   }
 
   private getSealButtonRect(layout: Layout): Rect {

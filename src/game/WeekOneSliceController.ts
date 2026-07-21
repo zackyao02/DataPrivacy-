@@ -365,6 +365,74 @@ export class WeekOneSliceController {
     this.patchProgramB();
   }
 
+  placeCardInSlot(cardId: string, slotIndex: number): boolean {
+    if (slotIndex < 0 || slotIndex >= MAX_SLOT_COUNT) {
+      this.message = "目标卡槽不存在。";
+      this.programB.emit("riskChanged", { reason: "invalid-slot-index", cardId, slotIndex });
+      this.patchProgramB();
+      return false;
+    }
+
+    const cardExists = this.getWorkbenchCards().some((card) => card.id === cardId);
+
+    if (!cardExists) {
+      this.message = "这张数据卡不在当前工作台卡池里。";
+      this.programB.emit("riskChanged", { reason: "unknown-workbench-card", cardId });
+      this.patchProgramB();
+      return false;
+    }
+
+    const nextCardIds = [...this.selectedCardIds];
+    const sourceSlotIndex = nextCardIds.indexOf(cardId);
+    const targetCardId = nextCardIds[slotIndex] ?? null;
+
+    if (sourceSlotIndex === slotIndex) {
+      this.message = `数据卡已在槽位 ${slotIndex + 1}。`;
+      this.patchProgramB();
+      return false;
+    }
+
+    if (sourceSlotIndex >= 0 && targetCardId) {
+      nextCardIds[sourceSlotIndex] = targetCardId;
+      nextCardIds[slotIndex] = cardId;
+      this.message = `已交换槽位 ${sourceSlotIndex + 1} 和槽位 ${slotIndex + 1}。`;
+    } else {
+      if (sourceSlotIndex >= 0) {
+        nextCardIds.splice(sourceSlotIndex, 1);
+      }
+
+      if (slotIndex >= nextCardIds.length) {
+        nextCardIds.push(cardId);
+      } else {
+        nextCardIds[slotIndex] = cardId;
+      }
+
+      this.message = targetCardId
+        ? `槽位 ${slotIndex + 1} 已替换为新的数据卡。`
+        : `数据卡已放入槽位 ${slotIndex + 1}。`;
+    }
+
+    this.selectedCardIds = nextCardIds.slice(0, MAX_SLOT_COUNT);
+    this.programB.emit("cardMovedToSlot", { cardId, slotIndex });
+    this.patchProgramB();
+    return true;
+  }
+
+  removeCardFromSlot(slotIndex: number): boolean {
+    if (slotIndex < 0 || slotIndex >= this.selectedCardIds.length) {
+      this.message = "这个槽位里没有可移除的数据卡。";
+      this.patchProgramB();
+      return false;
+    }
+
+    const [cardId] = this.selectedCardIds.splice(slotIndex, 1);
+    this.selectedCardIds = [...this.selectedCardIds];
+    this.message = `已清空槽位 ${slotIndex + 1}。`;
+    this.programB.emit("cardMovedToSlot", { cardId, slotIndex: -1 });
+    this.patchProgramB();
+    return true;
+  }
+
   sealPackage(): boolean {
     const readyPackage = this.getSnapshot().readyPackages[0];
 

@@ -2,7 +2,7 @@
 
 Updated: 2026-07-22
 
-This checklist records the current Program C delivery state for content tools, audio, build, performance, the D7 Week 1 baseline, D8 playable mini-games, the D9 Day 7 evidence-chain prototype, and the D10 ending report / save-state loop.
+This checklist records the current Program C delivery state for content tools, audio, build, performance, the D7 Week 1 baseline, D8 playable mini-games, the D9 Day 7 evidence-chain prototype, the D10 ending report / save-state loop, and the D11 workbench drag-and-drop loop.
 
 ## Completed Milestones
 
@@ -16,6 +16,7 @@ This checklist records the current Program C delivery state for content tools, a
 - D8: integrated `mini-game` scene now uses content-driven Day 1 / 2 / 3 / 4 / 5 / 6 rules instead of generic success/fail buttons, including Day 3 public-opinion choice scoring, protocol-scan scoring, and an ending-branch prototype.
 - D9: Day 7 evidence-chain prototype is playable with 18 evidence fragments, 3 causal connections, a report upload action, low-awareness final-package branch display, and emotion-driven awareness scoring.
 - D10: Day 7 completion now routes to a playable ending report scene with grade-branch copy, share-text copy action, localStorage save/load state, Program B state patches, and clear-save handling.
+- D11: `workbench` now supports drag-and-drop slot placement with target highlighting, slot replacement, selected-card swapping, drag-out removal, and click-to-select fallback.
 
 ## Current Data Scale
 
@@ -77,7 +78,6 @@ This verifies TypeScript, JSON content references, generated manifests, offline 
 
 ## Remaining Work
 
-- Implement real workbench drag-and-drop instead of click-to-select card placement.
 - Add final report image export / QR visual treatment when the final presentation flow is designed.
 - Run a human end-to-end playtest for Day 1 / 2 / 3 / 4 / 5 / 6 / 7 spacing, wording, and audio feel.
 - Later: rerun `npm run check` after real audio assets or final copy changes are added.

@@ -16,6 +16,7 @@
 - D8：小关卡已接入内容驱动点击规则，支持 Day 1 协议伪装、Day 2 数据清洗、Day 3 舆论操控、Day 4 画像拼图、Day 5 买家谈判、Day 6 快速协议扫描，并补充清醒值驱动的结局分支原型。
 - D9：接入 Day 7 证据链重组原型，新增证据链模板、18 件证据、3 条关键连接、低清醒值“最后的数据包”分支展示，并把情绪选择接成真实清醒值累计。
 - D10：接入结局报告与本地存档闭环，Day 7 成功后进入 `ending` 报告页，按清醒值生成“替罪羊 / 举报者”评级分支，支持分享文案复制、存档读取、自动保存和清除存档。
+- D11：工作台接入真实拖拽卡槽判定，支持从卡池拖入指定槽位、槽位替换、已选卡槽交换、拖出槽位移除，同时保留点击选卡兜底。
 - D7 内容对齐补充：根据最新飞书“文本配置”更新 Week 1 垂直切片验收前已有内容口径，升级已存在的数据卡、用户、新闻、协议词、清洗图标、舆论题、画像拼图、谈判话术、协议扫描模板、证据链模板、结局报告模板、每日独白和黑盒台词；新增同步脚本。最终图片导出、二维码视觉和完整 UI 文案仍作为后续开发依据。
 
 ## 目录说明
@@ -30,7 +31,7 @@
 - `scripts/bundle-size-report.mjs`：8MB 包体预算检查。
 - `scripts/week1-vertical-slice-report.mjs`：D7 垂直切片内容、音效和性能初测报告，并记录 D8/D9 Day 1-7 可玩小关卡与 D10 结局报告/存档覆盖。
 - `docs/audio-preview.html`：本地音效试听页。
-- `docs/program-c-delivery-index.md`：Program C D1-D10 交付索引。
+- `docs/program-c-delivery-index.md`：Program C D1-D11 交付索引。
 - `docs/program-c-toolchain.md`：程序 C 工具链交接说明。
 - `docs/program-c-acceptance-checklist.md`：Program C 验收清单。
 - `docs/week1-vertical-slice-report.md`：Week 1 垂直切片验收报告。

@@ -16,6 +16,7 @@
 - D8：小关卡由占位判定升级为内容驱动交互，接入 Day 1 协议伪装、Day 2 数据清洗、Day 3 舆论操控、Day 4 画像拼图、Day 5 买家谈判、Day 6 快速协议扫描，以及清醒值驱动的结局分支原型。
 - D9：接入 Day 7 证据链重组原型，新增 18 件证据、3 条关键连接、低清醒值“最后的数据包”分支展示，以及同情/愤怒/麻木驱动的真实清醒值累计。
 - D10：接入结局报告与本地存档闭环，Day 7 成功后进入 `ending` 报告页，按清醒值生成“替罪羊 / 举报者”评级分支，支持分享文案复制、存档读取、自动保存和清除存档。
+- D11：工作台接入真实拖拽卡槽判定，支持从卡池拖入指定槽位、槽位替换、已选卡槽交换、拖出槽位移除，同时保留点击选卡兜底。
 - D7 内容对齐补充：按最新飞书“文本配置”更新 Week 1 垂直切片验收前已有内容口径，升级为 20 张正式数据卡、15 个买家、18 个清洗图标、10 组舆论题、3 套画像拼图、5 套协议扫描模板、1 套证据链模板、1 套结局报告模板和 71 条黑盒台词；新增同步脚本并修正工作台起始卡池。最终图片导出、二维码视觉和完整 UI 文案仍作为后续开发依据。
 
 ## 接入重点
@@ -52,7 +53,7 @@ window.programA.programB.emit("newsBroadcast");
 
 当前可玩联调路径：
 
-1. 切到 `workbench` 场景，点击数据卡调整 3 个槽位。
+1. 切到 `workbench` 场景，拖拽数据卡到 3 个槽位；也可以点击数据卡快速加入或移除。
 2. 点击“封装数据包”，有效组合会进入 `news` 场景并触发封装/新闻音效。
 3. 在 `news` 场景选择同情、愤怒或麻木，清醒值会按 +1 / +2 / -1 累计，再点击“进入小关卡”。
 4. 在 `mini-game` 场景按当天任务点击：Day 1 伪装协议术语、Day 2 清理敏感项、Day 3 选择安全舆论改写、Day 4 依次拼画像碎片、Day 5 选择谈判话术、Day 6 标记协议风险、Day 7 收集证据并连接证据链；成功会解锁下一天。
@@ -119,5 +120,5 @@ npm run check
 - 低于 8MB 预算
 
 完整交接说明见 `program-c/docs/program-c-integration.md`。
-Program C 交付索引见 `program-c/docs/program-c-delivery-index.md`，可按 D1-D10 快速核对对应交付物。
+Program C 交付索引见 `program-c/docs/program-c-delivery-index.md`，可按 D1-D11 快速核对对应交付物。
 D7 垂直切片报告见 `program-c/docs/week1-vertical-slice-report.md`，工具链说明见 `program-c/docs/program-c-toolchain.md`，验收清单见 `program-c/docs/program-c-acceptance-checklist.md`。
