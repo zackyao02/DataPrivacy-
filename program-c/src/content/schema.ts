@@ -65,6 +65,7 @@ export interface PackageRecipe {
 export const DAY_CHALLENGE_TYPES = [
   "protocol_match",
   "data_cleaning",
+  "public_opinion",
   "profile_puzzle",
   "buyer_negotiation",
   "protocol_scan",
@@ -122,6 +123,15 @@ export interface DataCleaningChallenge extends DayChallengeBase {
   readonly decoyItems: readonly DataCleaningDecoyItem[];
 }
 
+export interface PublicOpinionChallenge extends DayChallengeBase {
+  readonly type: "public_opinion";
+  readonly publicOpinionScriptIds: readonly string[];
+  readonly successCondition: {
+    readonly requiredSafeChoices: number;
+    readonly maxRiskChoices: number;
+  };
+}
+
 export interface ProfilePuzzleChallenge extends DayChallengeBase {
   readonly type: "profile_puzzle";
   readonly profilePuzzleIds: readonly string[];
@@ -147,6 +157,7 @@ export interface ProtocolScanChallenge extends DayChallengeBase {
 export type DayChallenge =
   | ProtocolMatchChallenge
   | DataCleaningChallenge
+  | PublicOpinionChallenge
   | ProfilePuzzleChallenge
   | BuyerNegotiationChallenge
   | ProtocolScanChallenge;

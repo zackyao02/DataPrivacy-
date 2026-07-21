@@ -16,6 +16,7 @@ const riskLevels = new Set(["low", "medium", "high"]);
 const dayChallengeTypes = new Set([
   "protocol_match",
   "data_cleaning",
+  "public_opinion",
   "profile_puzzle",
   "buyer_negotiation",
   "protocol_scan",
@@ -169,7 +170,7 @@ assert(cardTemplates.length >= 20, "card_templates needs 20 templates from the F
 assert(users.length >= 20, "users needs at least 20 profiles for Program C Day 2");
 assert(newsTemplates.length >= 20, "news_templates needs at least 20 templates for Program C D4");
 assert(protocolTerms.length >= 20, "protocol_terms needs at least 20 pairs for Program C D4");
-assert(dayChallenges.length >= 5, "day_challenges needs Day 1/2/4/5/6 entries for Program C D8");
+assert(dayChallenges.length >= 6, "day_challenges needs Day 1/2/3/4/5/6 entries for Program C D8");
 assert(dataCleaningIcons.length >= 10, "data_cleaning_icons needs icon coverage for Program C D5");
 assert(publicOpinionScripts.length >= 5, "public_opinion_scripts needs at least 5 templates for Program C D5");
 assert(profilePuzzles.length >= 3, "profile_puzzles needs 3 official sets from the Feishu text config");
@@ -233,6 +234,7 @@ const packageTypes = new Set(recipes.map((recipe) => recipe.packageType));
 const protocolTermIds = new Set(protocolTerms.map((term) => term.id));
 const cardIds = new Set(cardTemplates.map((card) => card.id));
 const profilePuzzleIds = new Set(profilePuzzles.map((puzzle) => puzzle.id));
+const publicOpinionScriptIds = new Set(publicOpinionScripts.map((script) => script.id));
 const buyerNegotiationScriptIds = new Set(
   buyerNegotiationScripts.map((script) => script.id),
 );
@@ -357,6 +359,10 @@ for (const script of publicOpinionScripts) {
     `public_opinion_script ${script.id} needs at least 3 tactics`,
   );
   assertUniqueIds(script.tactics, `${script.id} tactics`);
+  assert(
+    script.tactics.filter((tactic) => tactic.label === "安全改写").length === 1,
+    `public_opinion_script ${script.id} needs exactly one safe rewrite tactic`,
+  );
 
   for (const tactic of script.tactics) {
     assert(tactic.label, `public_opinion_script ${script.id} tactic ${tactic.id} missing label`);
@@ -586,6 +592,7 @@ for (const line of blackBoxLines) {
 
 assert(challengeDays.has(1), "day_challenges missing Day 1 challenge");
 assert(challengeDays.has(2), "day_challenges missing Day 2 challenge");
+assert(challengeDays.has(3), "day_challenges missing Day 3 public opinion challenge");
 assert(challengeDays.has(4), "day_challenges missing Day 4 profile puzzle challenge");
 assert(challengeDays.has(5), "day_challenges missing Day 5 buyer negotiation challenge");
 assert(challengeDays.has(6), "day_challenges missing Day 6 protocol scan challenge");
@@ -700,6 +707,32 @@ for (const challenge of dayChallenges) {
       assert(
         puzzle?.day === challenge.day,
         `challenge ${challenge.id} references profile puzzle from another day: ${puzzleId}`,
+      );
+    }
+  }
+
+  if (challenge.type === "public_opinion") {
+    const condition = challenge.successCondition;
+    assert(condition, `challenge ${challenge.id} missing successCondition`);
+    assert(
+      Number.isInteger(condition.requiredSafeChoices) &&
+        condition.requiredSafeChoices >= 1,
+      `challenge ${challenge.id} invalid requiredSafeChoices`,
+    );
+    assert(
+      Number.isInteger(condition.maxRiskChoices) && condition.maxRiskChoices >= 0,
+      `challenge ${challenge.id} invalid maxRiskChoices`,
+    );
+    assert(
+      Array.isArray(challenge.publicOpinionScriptIds) &&
+        challenge.publicOpinionScriptIds.length >= 5,
+      `challenge ${challenge.id} needs at least 5 publicOpinionScriptIds`,
+    );
+
+    for (const scriptId of challenge.publicOpinionScriptIds) {
+      assert(
+        publicOpinionScriptIds.has(scriptId),
+        `challenge ${challenge.id} references unknown public opinion script: ${scriptId}`,
       );
     }
   }

@@ -29,7 +29,7 @@ const requiredAudioEvents = [
   "bgmSilence",
 ];
 
-const requiredWeek1Days = [1, 2, 4, 5];
+const requiredWeek1Days = [1, 2, 3, 4, 5];
 const d8PrototypeDays = [6];
 const requiredPackageTypes = [
   "precise_profile",
@@ -230,7 +230,7 @@ const report = {
     process.env.PROGRAM_C_REPORT_GENERATED_AT ??
     existingGeneratedAt ??
     new Date().toISOString(),
-  scope: "Program C D7 baseline plus D8 Day 6 prototype readiness",
+  scope: "Program C D7 baseline plus D8 playable mini-game readiness",
   week1Coverage: {
     supportedChallengeDays: challengeDays,
     requiredWeek1Days,
@@ -278,7 +278,7 @@ const report = {
     },
   },
   handoffNotes: [
-    "Program B should run the playable Day 1/2/4/5/6 loop using findChallengeByDay, package news, emotion responses, protocol scan state, and daily monologues.",
+    "Program B should run the playable Day 1/2/3/4/5/6 loop using findChallengeByDay, package news, emotion responses, public opinion choices, protocol scan state, and daily monologues.",
     "Program A should verify audio.handleGameEvent for package seal, transaction seal, challenge feedback, BGM, monologue typing, and endingTriggered prototype events.",
     "Program C performance numbers here cover content/audio/build assets; integrated FPS belongs to the A/B vertical slice run.",
   ],
@@ -294,7 +294,7 @@ Generated: ${report.generatedAt}
 
 ## Scope
 
-This report keeps the D7 Week 1 acceptance baseline and adds the D8 Day 6 protocol-scan / ending-prototype readiness check.
+This report keeps the D7 Week 1 acceptance baseline and adds the D8 playable mini-game / ending-prototype readiness check.
 
 ## Content Coverage
 
@@ -349,7 +349,7 @@ FPS risk proxy: low for Program C assets. Program C currently ships JSON presets
 
 ## Handoff
 
-- Program B: run Day 1/2/4/5/6 loop with \`findChallengeByDay\`, package news, emotion responses, protocol scan state, and daily monologues.
+- Program B: run Day 1/2/3/4/5/6 loop with \`findChallengeByDay\`, package news, emotion responses, public opinion choices, protocol scan state, and daily monologues.
 - Program A: verify \`audio.handleGameEvent\` for package seal, transaction seal, challenge feedback, BGM, monologue typing, and \`endingTriggered\` prototype events.
 - Program C: rerun \`npm run check\` before each content or audio handoff.
 `;

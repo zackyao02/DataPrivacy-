@@ -749,6 +749,7 @@ function parseBlackBoxLines() {
   const challengeLines = [
     [1, "protocol", "把危险词换成柔软词。用户不会反对他们看不见的东西。", "措辞合格。风险已经藏进服务体验。", "太直白了。重新包装，别让用户意识到代价。"],
     [2, "cleaning", "审计快到了。删掉痕迹，留下合规的影子。", "清理完成。报表看起来像从未发生过。", "备份暴露了你。下一次，先分清证据和陷阱。"],
+    [3, "opinion", "争议不需要消失，只需要换一个更容易转发的标题。", "很好。真相还在，只是没人会点开它。", "评论区开始追问原始数据来源。把话题带回来。"],
     [4, "puzzle", "把碎片拼起来。买家不买散点，他们买一个人。", "用户画像完整度100%。正在计算最高出价买家。", "画像不完整。故事缺一块，价格就掉一截。"],
     [5, "negotiation", "价格是谈出来的。别怕开价，他们买的是别人的人生，不差钱。", "完美的交易。你为公司创造的价值，已经超出我的预想了。", "买家还在犹豫。把风险换个名字，再递过去。"],
     [6, "scan", "读协议。读到你看懂为止。", "协议解剖完成。你终于开始阅读那些你点过同意的东西。", "你漏掉了条款。看不懂的协议，才最适合被同意。"],
@@ -784,6 +785,7 @@ const { dataCleaningIcons, sensitiveItems, decoyItems } = parseDataCleaning();
 const profilePuzzles = makeProfilePuzzles();
 const buyerNegotiationScripts = parseNegotiations();
 const protocolScanTemplates = makeProtocolScanTemplates();
+const publicOpinionScripts = parsePublicOpinionScripts();
 
 const dayChallenges = [
   {
@@ -813,6 +815,23 @@ const dayChallenges = [
     decoyItems,
     successText: "黑盒：痕迹清理完成。审计员只会看到一份干净的报表。",
     failText: "黑盒：备份恢复了部分证据。下次先分清证据和陷阱。",
+  },
+  {
+    id: "challenge-day3-public-opinion",
+    day: 3,
+    type: "public_opinion",
+    title: "舆论操控",
+    briefing: "负面新闻正在扩散。黑盒要求你从3个改写话术中选出最安全、最不像掩盖且传播效果最好的版本。",
+    objective: "选择唯一的安全改写话术。风险话术会激化追问并导致任务失败。",
+    timeLimitSeconds: 45,
+    badge: "公关鬼才",
+    publicOpinionScriptIds: publicOpinionScripts.map((script) => script.id),
+    successCondition: {
+      requiredSafeChoices: 1,
+      maxRiskChoices: 0,
+    },
+    successText: "黑盒：争议已经改写成增长叙事。真相暂时失去入口。",
+    failText: "黑盒：评论区开始追问数据来源。你把火引回了公司。",
   },
   {
     id: "challenge-day4-profile-puzzle",
@@ -874,7 +893,7 @@ writeJson("day_challenges.json", dayChallenges);
 writeJson("profile_puzzles.json", profilePuzzles);
 writeJson("buyer_negotiation_scripts.json", buyerNegotiationScripts);
 writeJson("protocol_scan_templates.json", protocolScanTemplates);
-writeJson("public_opinion_scripts.json", parsePublicOpinionScripts());
+writeJson("public_opinion_scripts.json", publicOpinionScripts);
 writeJson("daily_monologues.json", parseDailyMonologues());
 writeJson("black_box_lines.json", parseBlackBoxLines());
 

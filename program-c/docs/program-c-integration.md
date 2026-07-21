@@ -13,7 +13,7 @@
 | D5 | 数据清洗图标、舆论操控话术、黑盒评价台词、小关卡通用成败音效 | 已完成 |
 | D6 | Day 4 画像拼图、Day 5 买家谈判纯叙事话术、7 天每日独白、小关卡 BGM、独白打字机音效 | 已完成 |
 | D7 | Week 1 内容整合验收、音效整合检查、性能初测报告、工具链文档；按最新飞书文本配置对齐验收前内容口径 | 已完成 |
-| D8 | Day 1 / 2 / 4 / 5 / 6 小关卡内容驱动点击规则，Day 6 快速协议扫描，结局分支原型 | 已完成 |
+| D8 | Day 1 / 2 / 3 / 4 / 5 / 6 小关卡内容驱动点击规则，Day 3 舆论操控，Day 6 快速协议扫描，结局分支原型 | 已完成 |
 
 ## 内容文件
 
@@ -26,14 +26,14 @@
 | `data/news_templates.json` | 20 条新闻模板，每种数据包类型至少 4 条 |
 | `data/protocol_terms.json` | 20 组协议伪装配对 |
 | `data/package_recipes.json` | 5 种数据包配方 |
-| `data/day_challenges.json` | Day 1 / Day 2 / Day 4 / Day 5 / Day 6 游戏内小关卡入口配置 |
+| `data/day_challenges.json` | Day 1 / Day 2 / Day 3 / Day 4 / Day 5 / Day 6 游戏内小关卡入口配置 |
 | `data/data_cleaning_icons.json` | Day 2 数据清洗图标视觉配置，18 个敏感/干扰图标 |
-| `data/public_opinion_scripts.json` | 10 组 Day 3 舆论操控话术模板，当前作为后续玩法依据 |
+| `data/public_opinion_scripts.json` | 10 组 Day 3 舆论操控话术模板，小关卡会从 3 个话术里判定唯一安全改写 |
 | `data/profile_puzzles.json` | 3 组 Day 4 用户画像拼图碎片 |
 | `data/buyer_negotiation_scripts.json` | 6 组 Day 5 买家谈判话术；纯叙事，无价格/风险联动字段 |
 | `data/protocol_scan_templates.json` | 5 套 Day 6 快速协议扫描模板 |
 | `data/daily_monologues.json` | 7 天每日新闻后的独白文案 |
-| `data/black_box_lines.json` | 65 条黑盒台词和音效绑定，包含后续 Day 3 / 7 文案依据 |
+| `data/black_box_lines.json` | 68 条黑盒台词和音效绑定，包含 Day 3 小关卡反馈和后续 Day 7 文案依据 |
 | `scripts/sync-feishu-text-config.mjs` | 从本地飞书 Markdown 快照同步文本配置到 JSON 内容库 |
 
 ## 程序 B 接入内容
@@ -68,11 +68,12 @@ const monologue = content.findDailyMonologueByDay(5);
 - `pickNewsForPackage(packageType)`：从指定包类型中随机抽一条新闻。
 - `findChallengeByDay(1)`：读取 Day 1 “协议伪装”配置。
 - `findChallengeByDay(2)`：读取 Day 2 “数据清洗”配置。
+- `findChallengeByDay(3)`：读取 Day 3 “舆论操控”入口配置。
 - `findChallengeByDay(4)`：读取 Day 4 “用户画像拼图”入口配置。
 - `findChallengeByDay(5)`：读取 Day 5 “买家谈判”入口配置。
 - `findChallengeByDay(6)`：读取 Day 6 “快速协议扫描”入口配置。
 - `findDataCleaningIcon(iconHint)`：读取 Day 2 图标视觉配置。
-- `pickPublicOpinionScript(packageType)`：按包类型抽取舆论操控话术。
+- `pickPublicOpinionScript(packageType)`：按包类型抽取 Day 3 舆论操控话术；其中 `label === "安全改写"` 的选项是当前可玩规则的通关选择。
 - `pickProfilePuzzleByDay(4)`：随机抽取一组画像拼图碎片。
 - `pickBuyerNegotiationScript(packageType)`：按数据包类型抽取 Day 5 谈判脚本。两项选择都成交，只返回不同叙事和黑盒反馈。
 - `pickProtocolScanTemplate()`：随机抽取一套 Day 6 协议扫描模板；也可用 `findProtocolScanTemplatesByIds(ids)` 对齐关卡配置。
@@ -173,19 +174,19 @@ npm run check
 | 打包配方 | 5 |
 | 新闻模板 | 20 |
 | 协议词 | 20 |
-| 游戏内小关卡配置 | 5 |
+| 游戏内小关卡配置 | 6 |
 | 数据清洗图标 | 18 |
 | 舆论操控话术 | 10 |
 | 用户画像拼图 | 3 |
 | 买家谈判话术 | 6 |
 | 协议扫描模板 | 5 |
 | 每日独白 | 7 |
-| 黑盒台词 | 65 |
+| 黑盒台词 | 68 |
 | 离线检查 | `externalNetworkRequired=false` |
 | 包体预算 | 8MB 内 |
 
 ## 后续
 
-- 主项目已接入可点击垂直切片；当前可玩规则是 Day 1/2/4/5/6，Day 6 完成后会给出清醒值驱动的结局分支原型。最新飞书文本配置中的 Day 3、Day 7 完整分支、结局报告、UI 文案是后续开发依据，不代表当前玩法已完成。
-- 后续端到端联调重点检查 A/B 卡槽数量、包类型枚举、新闻生成、Day 1/2/4/5/6 小关卡点击规则、结局原型状态和音效事件是否一致。
+- 主项目已接入可点击垂直切片；当前可玩规则是 Day 1/2/3/4/5/6，Day 6 成功后会给出清醒值驱动的结局分支原型。最新飞书文本配置中的 Day 7 完整分支、结局报告、UI 文案是后续开发依据，不代表当前玩法已完成。
+- 后续端到端联调重点检查 A/B 卡槽数量、包类型枚举、新闻生成、Day 1/2/3/4/5/6 小关卡点击规则、结局原型状态和音效事件是否一致。
 - 真实音频素材接入后继续跑 `npm run check` 控制包体。

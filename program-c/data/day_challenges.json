@@ -192,6 +192,34 @@
     "failText": "黑盒：备份恢复了部分证据。下次先分清证据和陷阱。"
   },
   {
+    "id": "challenge-day3-public-opinion",
+    "day": 3,
+    "type": "public_opinion",
+    "title": "舆论操控",
+    "briefing": "负面新闻正在扩散。黑盒要求你从3个改写话术中选出最安全、最不像掩盖且传播效果最好的版本。",
+    "objective": "选择唯一的安全改写话术。风险话术会激化追问并导致任务失败。",
+    "timeLimitSeconds": 45,
+    "badge": "公关鬼才",
+    "publicOpinionScriptIds": [
+      "opinion-1-外卖骑手过劳猝死",
+      "opinion-2-大学生网贷深渊",
+      "opinion-3-老人被干儿子诈骗",
+      "opinion-4-用户因健康数据被拒保",
+      "opinion-5-求职者被性格判定拒offer",
+      "opinion-6-大数据杀熟",
+      "opinion-7-健康数据泄露",
+      "opinion-8-催收骚扰通讯录",
+      "opinion-9-酒店记录被勒索",
+      "opinion-10-员工数据被自家公司出售"
+    ],
+    "successCondition": {
+      "requiredSafeChoices": 1,
+      "maxRiskChoices": 0
+    },
+    "successText": "黑盒：争议已经改写成增长叙事。真相暂时失去入口。",
+    "failText": "黑盒：评论区开始追问数据来源。你把火引回了公司。"
+  },
+  {
     "id": "challenge-day4-profile-puzzle",
     "day": 4,
     "type": "profile_puzzle",

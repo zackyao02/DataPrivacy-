@@ -1,14 +1,14 @@
 {
   "budgetBytes": 8388608,
-  "totalRawBytes": 157635,
-  "totalGzipBytes": 39605,
-  "remainingRawBytes": 8230973,
-  "remainingGzipBytes": 8349003,
+  "totalRawBytes": 159970,
+  "totalGzipBytes": 40238,
+  "remainingRawBytes": 8228638,
+  "remainingGzipBytes": 8348370,
   "files": [
     {
       "file": "data\\black_box_lines.json",
-      "rawBytes": 17830,
-      "gzipBytes": 4141
+      "rawBytes": 18620,
+      "gzipBytes": 4232
     },
     {
       "file": "data\\news_templates.json",
@@ -21,6 +21,11 @@
       "gzipBytes": 3236
     },
     {
+      "file": "data\\day_challenges.json",
+      "rawBytes": 10216,
+      "gzipBytes": 3169
+    },
+    {
       "file": "data\\card_templates.json",
       "rawBytes": 9705,
       "gzipBytes": 3148
@@ -31,19 +36,14 @@
       "gzipBytes": 2861
     },
     {
-      "file": "data\\day_challenges.json",
-      "rawBytes": 9021,
-      "gzipBytes": 2670
-    },
-    {
       "file": "data\\users.json",
       "rawBytes": 6852,
       "gzipBytes": 2344
     },
     {
       "file": "src\\content\\schema.ts",
-      "rawBytes": 9979,
-      "gzipBytes": 2167
+      "rawBytes": 10300,
+      "gzipBytes": 2206
     },
     {
       "file": "data\\protocol_scan_templates.json",
@@ -72,8 +72,8 @@
     },
     {
       "file": "dist\\content-manifest.json",
-      "rawBytes": 3355,
-      "gzipBytes": 1116
+      "rawBytes": 3384,
+      "gzipBytes": 1120
     },
     {
       "file": "data\\protocol_terms.json",

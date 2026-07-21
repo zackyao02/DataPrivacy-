@@ -15,6 +15,8 @@ import type {
   ProfilePuzzleFragment,
   ProtocolTerm,
   ProtocolScanTemplate,
+  PublicOpinionScript,
+  PublicOpinionTactic,
   RiskLevel,
   UserProfile,
 } from "../../program-c/src/content";
@@ -46,6 +48,9 @@ export interface WeekOneMiniGameState {
   readonly expectedPuzzleOrder: number;
   readonly negotiationOptions: readonly BuyerNegotiationOption[];
   readonly selectedNegotiationOptionId: string | null;
+  readonly publicOpinionScript: PublicOpinionScript | null;
+  readonly publicOpinionTactics: readonly PublicOpinionTactic[];
+  readonly selectedPublicOpinionTacticId: string | null;
   readonly protocolScanTemplate: ProtocolScanTemplate | null;
   readonly markedProtocolScanClauseIds: readonly string[];
   readonly matchedProtocolScanFlowIds: readonly string[];
@@ -80,6 +85,7 @@ export interface WeekOneSliceSnapshot {
   readonly activeChallenge: DayChallenge | null;
   readonly activeProfilePuzzle: ProfilePuzzle | null;
   readonly activeNegotiation: BuyerNegotiationScript | null;
+  readonly activePublicOpinion: PublicOpinionScript | null;
   readonly activeMonologue: DailyMonologue | null;
   readonly activeBlackBoxLine: BlackBoxLine | null;
   readonly selectedEmotion: EmotionChoice | null;
@@ -89,7 +95,7 @@ export interface WeekOneSliceSnapshot {
   readonly message: string;
 }
 
-const PLAYABLE_DAYS = [1, 2, 4, 5, 6] as const;
+const PLAYABLE_DAYS = [1, 2, 3, 4, 5, 6] as const;
 const MAX_SLOT_COUNT = 3;
 
 const EMOTION_EVENTS: Record<EmotionChoice, string> = {
@@ -108,6 +114,7 @@ export class WeekOneSliceController {
   private activeChallenge: DayChallenge | null = null;
   private activeProfilePuzzle: ProfilePuzzle | null = null;
   private activeNegotiation: BuyerNegotiationScript | null = null;
+  private activePublicOpinion: PublicOpinionScript | null = null;
   private activeProtocolScan: ProtocolScanTemplate | null = null;
   private activeMonologue: DailyMonologue | null = null;
   private activeBlackBoxLine: BlackBoxLine | null = null;
@@ -119,6 +126,7 @@ export class WeekOneSliceController {
   private cleaningMistakes = 0;
   private acceptedPuzzleFragmentIds: string[] = [];
   private selectedNegotiationOptionId: string | null = null;
+  private selectedPublicOpinionTacticId: string | null = null;
   private markedProtocolScanClauseIds: string[] = [];
   private matchedProtocolScanFlowIds: string[] = [];
   private hiddenProtocolScanClauseFound = false;
@@ -152,6 +160,7 @@ export class WeekOneSliceController {
       activeChallenge: this.activeChallenge,
       activeProfilePuzzle: this.activeProfilePuzzle,
       activeNegotiation: this.activeNegotiation,
+      activePublicOpinion: this.activePublicOpinion,
       activeMonologue: this.activeMonologue,
       activeBlackBoxLine: this.activeBlackBoxLine,
       selectedEmotion: this.selectedEmotion,
@@ -206,6 +215,10 @@ export class WeekOneSliceController {
     this.activeNegotiation =
       this.currentDay === 5
         ? this.content.pickBuyerNegotiationScript(readyPackage.packageType) ?? null
+        : null;
+    this.activePublicOpinion =
+      this.activeChallenge?.type === "public_opinion"
+        ? this.pickPublicOpinionScript(readyPackage.packageType)
         : null;
     this.activeProtocolScan =
       this.activeChallenge?.type === "protocol_scan"
@@ -415,6 +428,33 @@ export class WeekOneSliceController {
     return true;
   }
 
+  choosePublicOpinionTactic(tacticId: string): boolean {
+    if (this.activeChallenge?.type !== "public_opinion" || !this.activePublicOpinion) {
+      return false;
+    }
+
+    const tactic = this.activePublicOpinion.tactics.find((item) => item.id === tacticId);
+
+    if (!tactic) {
+      return false;
+    }
+
+    this.selectedPublicOpinionTacticId = tacticId;
+    const safe = this.isSafePublicOpinionTactic(tactic);
+
+    this.message = safe
+      ? `舆论改写已发布：${tactic.line}`
+      : `风险话术引发追问：${this.activePublicOpinion.counterCue}`;
+    this.programB.emit("publicOpinionPulse", {
+      scriptId: this.activePublicOpinion.id,
+      tacticId,
+      safe,
+    });
+
+    this.completeChallenge(safe);
+    return true;
+  }
+
   markProtocolScanClause(clauseId: string): boolean {
     if (this.activeChallenge?.type !== "protocol_scan" || !this.activeProtocolScan) {
       return false;
@@ -587,6 +627,7 @@ export class WeekOneSliceController {
     this.cleaningMistakes = 0;
     this.acceptedPuzzleFragmentIds = [];
     this.selectedNegotiationOptionId = null;
+    this.selectedPublicOpinionTacticId = null;
     this.markedProtocolScanClauseIds = [];
     this.matchedProtocolScanFlowIds = [];
     this.hiddenProtocolScanClauseFound = false;
@@ -598,6 +639,7 @@ export class WeekOneSliceController {
     const cleaningItems = this.getCleaningItems();
     const puzzleFragments = this.activeProfilePuzzle?.fragments ?? [];
     const negotiationOptions = this.activeNegotiation?.options ?? [];
+    const publicOpinionTactics = this.activePublicOpinion?.tactics ?? [];
     const protocolScanScore = this.getProtocolScanScore();
 
     return {
@@ -617,6 +659,9 @@ export class WeekOneSliceController {
       expectedPuzzleOrder: this.acceptedPuzzleFragmentIds.length + 1,
       negotiationOptions,
       selectedNegotiationOptionId: this.selectedNegotiationOptionId,
+      publicOpinionScript: this.activePublicOpinion,
+      publicOpinionTactics,
+      selectedPublicOpinionTacticId: this.selectedPublicOpinionTacticId,
       protocolScanTemplate: this.activeProtocolScan,
       markedProtocolScanClauseIds: [...this.markedProtocolScanClauseIds],
       matchedProtocolScanFlowIds: [...this.matchedProtocolScanFlowIds],
@@ -685,9 +730,38 @@ export class WeekOneSliceController {
         return this.selectedNegotiationOptionId
           ? "谈判话术已选择"
           : "选择任一谈判话术推进交易";
+      case "public_opinion":
+        return this.selectedPublicOpinionTacticId
+          ? "舆论改写话术已发布"
+          : "从 3 个话术中选择唯一安全改写";
       case "protocol_scan":
         return `协议扫描评分 ${this.getProtocolScanScore()}/100，达成 75 分即可通关`;
     }
+  }
+
+  private pickPublicOpinionScript(packageType: string): PublicOpinionScript | null {
+    if (this.activeChallenge?.type !== "public_opinion") {
+      return null;
+    }
+
+    const allowedIds = new Set(this.activeChallenge.publicOpinionScriptIds);
+    const packageScripts = this.content
+      .findPublicOpinionScriptsForPackage(packageType)
+      .filter((script) => allowedIds.has(script.id));
+
+    if (packageScripts.length > 0) {
+      return packageScripts[0];
+    }
+
+    return (
+      this.content
+        .getPublicOpinionScripts()
+        .find((script) => allowedIds.has(script.id)) ?? null
+    );
+  }
+
+  private isSafePublicOpinionTactic(tactic: PublicOpinionTactic): boolean {
+    return tactic.label === "安全改写" || tactic.playerPrompt.includes("安全");
   }
 
   private getActivePuzzleFragmentCount(): number {

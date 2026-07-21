@@ -380,6 +380,30 @@
     "text": "备份暴露了你。下一次，先分清证据和陷阱。"
   },
   {
+    "id": "blackbox-intro-opinion",
+    "stage": "challenge_intro",
+    "cueEventName": "blackBoxLine",
+    "relatedChallengeDay": 3,
+    "voiceHint": "mechanical-persuasive",
+    "text": "争议不需要消失，只需要换一个更容易转发的标题。"
+  },
+  {
+    "id": "blackbox-success-opinion",
+    "stage": "challenge_success",
+    "cueEventName": "challengeSuccess",
+    "relatedChallengeDay": 3,
+    "voiceHint": "mechanical-persuasive",
+    "text": "很好。真相还在，只是没人会点开它。"
+  },
+  {
+    "id": "blackbox-fail-opinion",
+    "stage": "challenge_fail",
+    "cueEventName": "challengeFail",
+    "relatedChallengeDay": 3,
+    "voiceHint": "mechanical-persuasive",
+    "text": "评论区开始追问原始数据来源。把话题带回来。"
+  },
+  {
     "id": "blackbox-intro-puzzle",
     "stage": "challenge_intro",
     "cueEventName": "blackBoxLine",

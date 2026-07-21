@@ -26,13 +26,13 @@
     "newsTemplates": 20,
     "protocolTerms": 20,
     "packageRecipes": 5,
-    "dayChallenges": 5,
+    "dayChallenges": 6,
     "dataCleaningIcons": 18,
     "dailyMonologues": 7,
     "profilePuzzles": 3,
     "publicOpinionScripts": 10,
     "protocolScanTemplates": 5,
-    "blackBoxLines": 65
+    "blackBoxLines": 68
   },
   "dataTypes": [
     "biometric",
@@ -57,6 +57,7 @@
   "playableDays": [
     1,
     2,
+    3,
     4,
     5,
     6
@@ -66,7 +67,8 @@
     "data_cleaning",
     "profile_puzzle",
     "protocol_match",
-    "protocol_scan"
+    "protocol_scan",
+    "public_opinion"
   ],
   "repositoryCapabilities": [
     "pickUser",

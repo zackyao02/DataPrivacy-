@@ -4,7 +4,7 @@ import {
   WeekOneSliceController,
   type WeekOneSliceSnapshot,
 } from "../game/WeekOneSliceController";
-import type { RiskLevel } from "../../program-c/src/content";
+import type { PublicOpinionTactic, RiskLevel } from "../../program-c/src/content";
 import type { Scene, SceneFrame } from "./Scene";
 
 type WeekOneSceneId = Extract<SceneId, "workbench" | "news" | "mini-game">;
@@ -17,6 +17,7 @@ type HitAction =
   | { readonly type: "clean-data-item"; readonly itemId: string }
   | { readonly type: "select-puzzle-fragment"; readonly fragmentId: string }
   | { readonly type: "choose-negotiation-option"; readonly optionId: string }
+  | { readonly type: "choose-public-opinion-tactic"; readonly tacticId: string }
   | { readonly type: "mark-protocol-scan-clause"; readonly clauseId: string }
   | { readonly type: "match-protocol-scan-flow"; readonly flowId: string }
   | { readonly type: "find-protocol-scan-hidden-clause" }
@@ -146,6 +147,11 @@ export class WeekOneSliceScene implements Scene {
         break;
       case "choose-negotiation-option":
         if (this.controller.chooseNegotiationOption(action.optionId)) {
+          this.navigate("workbench");
+        }
+        break;
+      case "choose-public-opinion-tactic":
+        if (this.controller.choosePublicOpinionTactic(action.tacticId)) {
           this.navigate("workbench");
         }
         break;
@@ -422,6 +428,9 @@ export class WeekOneSliceScene implements Scene {
       case "data_cleaning":
         this.renderDataCleaning(context, layout, snapshot);
         break;
+      case "public_opinion":
+        this.renderPublicOpinion(context, layout, snapshot);
+        break;
       case "profile_puzzle":
         this.renderProfilePuzzle(context, layout, snapshot);
         break;
@@ -505,6 +514,74 @@ export class WeekOneSliceScene implements Scene {
     });
   }
 
+  private renderPublicOpinion(
+    context: CanvasRenderingContext2D,
+    layout: Layout,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const panel = this.getMiniGamePanelRect(layout);
+    const script = snapshot.miniGame.publicOpinionScript;
+
+    if (!script) {
+      this.drawMiniBlock(
+        context,
+        "舆论操控",
+        "没有可用舆论脚本，请检查 Day 3 文本配置。",
+        panel.x + 14,
+        panel.y + 194,
+        panel.width - 28,
+      );
+      return;
+    }
+
+    this.drawMiniBlock(
+      context,
+      script.platform,
+      `负面新闻：${script.openingLine}`,
+      panel.x + 14,
+      panel.y + 194,
+      panel.width - 28,
+    );
+
+    context.fillStyle = "#aebbb7";
+    context.font = "500 10px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(
+      context,
+      script.manipulationGoal,
+      panel.x + 14,
+      panel.y + 238,
+      panel.width - 28,
+      2,
+      14,
+    );
+
+    const rects = this.getPublicOpinionTacticRects(
+      layout,
+      snapshot.miniGame.publicOpinionTactics.length,
+    );
+    snapshot.miniGame.publicOpinionTactics.forEach((tactic, index) => {
+      this.renderPublicOpinionTactic(context, rects[index], tactic, index, snapshot);
+    });
+
+    const promptY = this.getRectsBottom(rects) + 14;
+    if (promptY + 40 <= panel.y + panel.height - 12) {
+      context.fillStyle = "#e0a166";
+      context.font = "700 9px ui-monospace, Consolas, monospace";
+      context.fillText("评论区", panel.x + 14, promptY);
+      context.fillStyle = "#aebbb7";
+      context.font = "500 9px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(
+        context,
+        `${script.counterCue} ${script.consciencePrompt}`,
+        panel.x + 14,
+        promptY + 14,
+        panel.width - 28,
+        2,
+        12,
+      );
+    }
+  }
+
   private renderProfilePuzzle(
     context: CanvasRenderingContext2D,
     layout: Layout,
@@ -543,6 +620,41 @@ export class WeekOneSliceScene implements Scene {
       context.font = "500 9px ui-monospace, Consolas, monospace";
       this.drawWrappedText(context, fragment.text, rect.x + 8, rect.y + 48, rect.width - 16, 2, 12);
     });
+  }
+
+  private renderPublicOpinionTactic(
+    context: CanvasRenderingContext2D,
+    rect: Rect,
+    tactic: PublicOpinionTactic,
+    index: number,
+    snapshot: WeekOneSliceSnapshot,
+  ): void {
+    const active = snapshot.miniGame.selectedPublicOpinionTacticId === tactic.id;
+    const optionName = `方案 ${String.fromCharCode(65 + index)}`;
+
+    this.drawPanel(
+      context,
+      rect,
+      active ? "#263d34" : "#101c20",
+      active ? "#77b8ad" : "#40505a",
+    );
+    context.fillStyle = "#9fd6ca";
+    context.font = "800 10px ui-monospace, Consolas, monospace";
+    context.fillText(optionName, rect.x + 9, rect.y + 16);
+    context.fillStyle = "#d7e2dc";
+    context.font = "700 10px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(context, tactic.line, rect.x + 9, rect.y + 34, rect.width - 18, 2, 13);
+    context.fillStyle = "#91a09b";
+    context.font = "500 9px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(
+      context,
+      "点击发布改写",
+      rect.x + 9,
+      rect.y + rect.height - 18,
+      rect.width - 18,
+      1,
+      12,
+    );
   }
 
   private renderBuyerNegotiation(
@@ -802,6 +914,20 @@ export class WeekOneSliceScene implements Scene {
           action: { type: "clean-data-item", itemId: item.id } as const,
         }));
       }
+      case "public_opinion": {
+        const rects = this.getPublicOpinionTacticRects(
+          layout,
+          snapshot.miniGame.publicOpinionTactics.length,
+        );
+
+        return snapshot.miniGame.publicOpinionTactics.map((tactic, index) => ({
+          rect: rects[index],
+          action: {
+            type: "choose-public-opinion-tactic",
+            tacticId: tactic.id,
+          } as const,
+        }));
+      }
       case "profile_puzzle": {
         const rects = this.getPuzzleFragmentRects(layout, snapshot.miniGame.puzzleFragments.length);
 
@@ -1002,6 +1128,13 @@ export class WeekOneSliceScene implements Scene {
     return this.getMiniGameItemRects(layout, count, 190, 52, columns);
   }
 
+  private getPublicOpinionTacticRects(layout: Layout, count: number): readonly Rect[] {
+    const panel = this.getMiniGamePanelRect(layout);
+    const columns = panel.width >= 620 ? 3 : 1;
+
+    return this.getMiniGameItemRects(layout, count, 266, 74, columns);
+  }
+
   private getPuzzleFragmentRects(layout: Layout, count: number): readonly Rect[] {
     const panel = this.getMiniGamePanelRect(layout);
     const columns = panel.width >= 620 ? 3 : 2;
@@ -1095,6 +1228,13 @@ export class WeekOneSliceScene implements Scene {
       case "data_cleaning":
         return this.getRectsBottom(
           this.getCleaningItemRects(layout, snapshot.miniGame.cleaningItems.length),
+        );
+      case "public_opinion":
+        return this.getRectsBottom(
+          this.getPublicOpinionTacticRects(
+            layout,
+            snapshot.miniGame.publicOpinionTactics.length,
+          ),
         );
       case "profile_puzzle":
         return this.getRectsBottom(
