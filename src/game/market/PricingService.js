@@ -22,7 +22,8 @@ export class PricingService {
     }
 
     // Check if the buyer accepts this recipe
-    const accepts = buyer.allowedRecipes.includes(dataPackage.recipeId);
+    const acceptedTypes = buyer.allowedPackageTypes || buyer.allowedRecipes || [];
+    const accepts = acceptedTypes.includes(dataPackage.packageType || dataPackage.recipeId);
     if (!accepts) {
       return {
         ok: false,
@@ -32,7 +33,10 @@ export class PricingService {
     }
 
     // Calculate dynamic transaction price
-    const transactionPrice = Math.round(dataPackage.price * buyer.priceMultiplier);
+    const multipliedPrice = Math.round(dataPackage.price * buyer.priceMultiplier);
+    const transactionPrice = Array.isArray(dataPackage.priceRange)
+      ? clamp(multipliedPrice, dataPackage.priceRange[0], dataPackage.priceRange[1])
+      : multipliedPrice;
 
     return {
       ok: true,
@@ -41,4 +45,8 @@ export class PricingService {
       multiplier: buyer.priceMultiplier
     };
   }
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
 }

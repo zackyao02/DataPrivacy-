@@ -1,4 +1,5 @@
 import { CardStatus, WORKBENCH_SLOT_COUNT } from "../data/schemas.js";
+import { dailyRhythm } from "../../data/textConfig.js";
 
 /**
  * Service to manage player workbench slots and packaged inventory.
@@ -94,6 +95,10 @@ export class InventoryService {
    * Adds a compiled package to inventory
    */
   static addPackage(gameState, dataPackage) {
+    if (!this.canAddPackage(gameState)) {
+      return { ok: false, code: "INVENTORY_FULL", message: "库存已满，请先出售" };
+    }
+
     gameState.packageInventory.push(dataPackage);
     
     // Clear the workbench slots where these cards were
@@ -103,6 +108,12 @@ export class InventoryService {
         gameState.workbench[i] = null;
       }
     }
+
+    return { ok: true, packageInventory: gameState.packageInventory };
+  }
+
+  static canAddPackage(gameState) {
+    return gameState.packageInventory.length < dailyRhythm.packageInventoryLimit;
   }
 
   /**

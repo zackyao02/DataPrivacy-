@@ -31,29 +31,10 @@ export class TransactionService {
 
     const finalPrice = priceResult.price;
 
-    // Satirical calculation of Conscience penalty:
-    // Selling highly sensitive biometric/health/social data to vultures damages conscience.
-    // If cards were polluted (misclassified), players feel even worse (or maybe less, satirically, but let's say it drops conscience).
-    let consciencePenalty = 0;
-    if (dataPackage.recipeId === "health_risk") {
-      consciencePenalty += 15;
-    } else if (dataPackage.recipeId === "relationship_infiltration") {
-      consciencePenalty += 12;
-    } else if (dataPackage.recipeId === "precise_profile") {
-      consciencePenalty += 8;
-    } else {
-      consciencePenalty += 5;
-    }
-
-    // Adjust conscience penalty based on card sensitivities
-    const hasHighSensitivity = dataPackage.cards?.some(c => c.sensitivity === "high");
-    if (hasHighSensitivity) {
-      consciencePenalty += 5;
-    }
-
-    // Apply adjustments to state
+    // Text config D10/D11 keeps clarity as a news/emotion mechanic.
+    const consciencePenalty = 0;
     gameState.score += finalPrice;
-    gameState.conscience = Math.max(0, gameState.conscience - consciencePenalty);
+    gameState.conscience = gameState.clarity_score;
 
     // Calculate immediate risk contributions based on the buyer's greed and the package's weight
     const rc = logRiskContribution(buyer.riskContribution, dataPackage.riskWeight);
@@ -65,9 +46,12 @@ export class TransactionService {
       packageId: dataPackage.id,
       packageName: dataPackage.recipeName,
       recipeId: dataPackage.recipeId,
+      pack_type: dataPackage.packageType || dataPackage.recipeId,
       packageType: dataPackage.packageType || dataPackage.recipeId,
       buyerId: buyer.id,
+      buyer: buyer.name,
       buyerName: buyer.name,
+      buyerType: buyer.buyerType,
       price: finalPrice,
       riskWeight: dataPackage.riskWeight,
       riskContribution: rc,
@@ -75,6 +59,9 @@ export class TransactionService {
       pollutedCount: dataPackage.incorrectCardsCount,
       consciencePenalty,
       cardIds: [...dataPackage.cardIds],
+      userIds: [...dataPackage.userIds],
+      user_ids: [...dataPackage.userIds],
+      dataUse: dataPackage.dataUse,
       timestamp: new Date().toISOString()
     };
 

@@ -2,9 +2,9 @@ import { SeedRandom } from "../data/seedRandom.js";
 import { DataCardFactory } from "../data/DataCardFactory.js";
 import { BuyerFactory } from "../market/BuyerFactory.js";
 import { RiskService } from "../risk/RiskService.js";
-import { newsDatabase } from "../../data/mockContent.js";
 import { content } from "../content/contentBridge.js";
 import { WORKBENCH_SLOT_COUNT } from "../data/schemas.js";
+import { ReportDataBuilder } from "../report/ReportDataBuilder.js";
 
 /**
  * Controller managing the daily sequence transitions.
@@ -32,8 +32,8 @@ export class DayController {
     gameState.rawCards = [];
     gameState.workbench = Array(WORKBENCH_SLOT_COUNT).fill(null);
 
-    // 3. Generate 2-3 data cards and 3-5 corporate buyers
-    gameState.rawCards = DataCardFactory.generateDailyCards(rng, gameState.day);
+    // 3. Generate text-config daily data cards and 3-5 corporate buyers
+    gameState.rawCards = DataCardFactory.generateDailyCards(rng, gameState.day, gameState);
     gameState.buyers = BuyerFactory.generateDailyBuyers(rng, gameState.day);
 
     // Save RNG state back to game state for save file reproducibility
@@ -43,6 +43,7 @@ export class DayController {
     gameState.dailyNews = this.generateDailyNews(gameState);
     gameState.dailyChallenge = content.findChallengeByDay(gameState.day);
     gameState.dailyMonologue = content.findDailyMonologueByDay(gameState.day);
+    gameState.blackboxDialogue = content.findBlackboxDialogueByDay(gameState.day, gameState.endingRoute);
 
     return {
       ok: true,
@@ -51,7 +52,8 @@ export class DayController {
       buyers: gameState.buyers,
       news: gameState.dailyNews,
       challenge: gameState.dailyChallenge,
-      monologue: gameState.dailyMonologue
+      monologue: gameState.dailyMonologue,
+      blackboxDialogue: gameState.blackboxDialogue
     };
   }
 
@@ -70,6 +72,8 @@ export class DayController {
     if (settlement.isGameOver) {
       gameState.isGameOver = true;
       gameState.gameOverReason = settlement.breached[0];
+      gameState.endingRoute = gameState.conscience < 5 ? "final_package" : "evidence_chain";
+      gameState.ending_report = ReportDataBuilder.buildEndingReport(gameState);
       return {
         ok: true,
         settlement,
@@ -83,6 +87,9 @@ export class DayController {
     if (gameState.day >= 7) {
       gameState.isGameOver = true;
       gameState.gameOverReason = "SUCCESS_7_DAYS";
+      gameState.endingRoute = gameState.conscience < 5 ? "final_package" : "evidence_chain";
+      gameState.endingTriggered = true;
+      gameState.ending_report = ReportDataBuilder.buildEndingReport(gameState);
       return {
         ok: true,
         settlement,
@@ -115,74 +122,81 @@ export class DayController {
   static generateDailyNews(gameState) {
     const currentDay = gameState.day;
     if (currentDay === 1) {
-      return {
-        headline: "WELCOME TO CLOUD METRICS INC.",
-        body: "Automated Data Classification pipeline goes live! Help train the model, package profiles, and hit our high-yield sales target.",
+      const welcomeNews = {
+        id: "WELCOME",
+        headline: "黑盒入职提示：数据分类流水线已启动",
+        body: "完成打包、出售与每日指令。系统会记录你的每一次犹豫。",
         category: "neutral"
       };
+      gameState.news_seen.push(welcomeNews.id);
+      return welcomeNews;
     }
 
     // Examine yesterday's transaction log (from day - 1)
     const yesterday = currentDay - 1;
-    const txs = gameState.transactions.filter(t => t.day === yesterday);
+    const txs = gameState.transactions.filter(t => t.day === yesterday && t.packageType !== "waste");
 
     if (txs.length === 0) {
-      return {
-        headline: "OFFICE ALERT: IDLE STATION DETECTED",
-        body: "Internal audit flags severe drop in transaction volume. Managers warn: 'Unsold data is a storage liability.'",
+      const idleNews = {
+        id: `IDLE-${currentDay}`,
+        headline: "内部警报：昨日无成交记录",
+        body: "黑盒标记该工位产出异常。未出售的数据仍会占用库存，并提高内部审查概率。",
         category: "internalSuspicion"
       };
+      gameState.news_seen.push(idleNews.id);
+      return idleNews;
     }
 
-    const latestPackageType = txs[txs.length - 1]?.packageType || txs[txs.length - 1]?.recipeId;
-    if (latestPackageType) {
-      return content.pickNewsForPackage(latestPackageType);
-    }
-
-    // Find if there was high risk or pollution in yesterday's sold packages
-    let totalPollution = 0;
-    let highRiskSold = false;
-    txs.forEach(t => {
-      totalPollution += t.pollutedCount;
-      if (t.riskWeight > 5) highRiskSold = true;
-    });
-
-    // Pick satirical news headline based on yesterday's profile
     const rng = new SeedRandom();
-    // seed the headline selection deterministically with the day index + seed
     const daySeed = rng.hash(`${gameState.seed}-news-${currentDay}`);
     rng.setState(daySeed);
+    const groups = groupTransactionsByPackageType(txs);
+    const [mainType] = groups.sort((a, b) => b.transactions.length - a.transactions.length);
+    const mainNews = content.pickNewsForPackage(mainType.packageType, {
+      transactions: mainType.transactions,
+      rng
+    });
 
-    if (totalPollution > 1) {
-      return {
-        headline: rng.pick(newsDatabase.regulatory),
-        body: `An investigation reveals massive customer profiles compiled from corrupted 'classification errors'. Consumer forums are in uproar.`,
-        category: "regulatory"
-      };
-    }
+    const secondaryNews = [];
+    groups
+      .filter(group => group.packageType !== mainType.packageType)
+      .forEach(group => {
+        if (rng.next() < 0.3) {
+          secondaryNews.push(content.pickNewsForPackage(group.packageType, {
+            transactions: group.transactions,
+            rng
+          }));
+        }
+      });
 
-    if (highRiskSold) {
-      return {
-        headline: rng.pick(newsDatabase.publicOpinion),
-        body: `Reports claim several highly-sensitive data profiles were sold directly to hostile pricing syndicates. Standard citizens are complaining.`,
-        category: "publicOpinion"
-      };
-    }
-
-    // Default to a neutral or internal humor article
-    const coin = rng.rangeInt(0, 1);
-    if (coin === 0) {
-      return {
-        headline: rng.pick(newsDatabase.internalSuspicion),
-        body: "Compliance officers reinforce: logs are updated in real-time. Employee retention rates remain under deep telemetry tracking.",
-        category: "internalSuspicion"
-      };
-    } else {
-      return {
-        headline: rng.pick(newsDatabase.neutral),
-        body: "Shares in data brokers reach record valuations as algorithmic accuracy is declared 'secondary to total transaction velocity.'",
-        category: "neutral"
-      };
-    }
+    const result = {
+      ...mainNews,
+      day: currentDay,
+      basedOnDay: yesterday,
+      transactionCount: txs.length,
+      secondaryNews
+    };
+    [result, ...secondaryNews].forEach(news => {
+      if (news.id && !gameState.news_seen.includes(news.id)) {
+        gameState.news_seen.push(news.id);
+      }
+    });
+    return result;
   }
+}
+
+function groupTransactionsByPackageType(transactions) {
+  const map = new Map();
+  transactions.forEach(tx => {
+    const packageType = tx.packageType || tx.recipeId || tx.pack_type;
+    if (!packageType) return;
+    if (!map.has(packageType)) {
+      map.set(packageType, []);
+    }
+    map.get(packageType).push(tx);
+  });
+  return [...map.entries()].map(([packageType, items]) => ({
+    packageType,
+    transactions: items
+  }));
 }

@@ -17,7 +17,14 @@ export class GameState {
       internalSuspicion: 0   // Risk of manager audits / getting fired (0-100)
     };
     
-    this.conscience = 100;   // Player's morality index (0-100)
+    this.clarity_score = 0;  // Text config clarity score, range -6 to +12
+    this.conscience = 0;     // Backward-compatible alias used by A/C branch checks
+    this.emotion_history = [];
+    this.news_seen = [];
+    this.nickname = "第996号员工";
+    this.tutorial_done = false;
+    this.random_seed = seed;
+    this.last_save_time = null;
     
     // Pools
     this.rawCards = [];            // Active available data cards for the day
@@ -29,6 +36,7 @@ export class GameState {
     this.lastEvent = null;         // Last UI event emitted by Program B
     this.dailyChallenge = null;    // C-provided challenge entry for the current day
     this.dailyMonologue = null;    // C-provided monologue entry for the current day
+    this.blackboxDialogue = null;   // Daily blackbox dialogue from text config
     this.badges = [];
     this.ending_report = null;
     this.endingTriggered = false;
@@ -51,16 +59,26 @@ export class GameState {
       day: this.day,
       score: this.score,
       risk: { ...this.risk },
+      clarity_score: this.clarity_score,
       conscience: this.conscience,
+      emotion_history: this.emotion_history,
+      news_seen: this.news_seen,
+      nickname: this.nickname,
+      tutorial_done: this.tutorial_done,
+      random_seed: this.random_seed,
+      last_save_time: this.last_save_time,
       rawCards: this.rawCards,
       workbench: this.workbench,
       packageInventory: this.packageInventory,
+      inventory: this.packageInventory,
       buyers: this.buyers,
       transactions: this.transactions,
+      sold_log: this.transactions,
       events: this.events,
       lastEvent: this.lastEvent,
       dailyChallenge: this.dailyChallenge,
       dailyMonologue: this.dailyMonologue,
+      blackboxDialogue: this.blackboxDialogue,
       badges: this.badges,
       ending_report: this.ending_report,
       endingTriggered: this.endingTriggered,
@@ -81,16 +99,24 @@ export class GameState {
     this.day = Number(obj.day) || 1;
     this.score = Number(obj.score) || 0;
     this.risk = obj.risk ? { ...obj.risk } : { regulatory: 0, publicOpinion: 0, internalSuspicion: 0 };
-    this.conscience = typeof obj.conscience === "number" ? obj.conscience : 100;
+    this.clarity_score = normalizeClarity(obj.clarity_score, obj.conscience);
+    this.conscience = this.clarity_score;
+    this.emotion_history = obj.emotion_history || [];
+    this.news_seen = obj.news_seen || [];
+    this.nickname = obj.nickname || "第996号员工";
+    this.tutorial_done = !!obj.tutorial_done;
+    this.random_seed = obj.random_seed || this.seed;
+    this.last_save_time = obj.last_save_time || null;
     this.rawCards = obj.rawCards || [];
     this.workbench = normalizeWorkbench(obj.workbench);
-    this.packageInventory = obj.packageInventory || [];
+    this.packageInventory = obj.packageInventory || obj.inventory || [];
     this.buyers = obj.buyers || [];
-    this.transactions = obj.transactions || [];
+    this.transactions = obj.transactions || obj.sold_log || [];
     this.events = obj.events || [];
     this.lastEvent = obj.lastEvent || null;
     this.dailyChallenge = obj.dailyChallenge || null;
     this.dailyMonologue = obj.dailyMonologue || null;
+    this.blackboxDialogue = obj.blackboxDialogue || null;
     this.badges = obj.badges || [];
     this.ending_report = obj.ending_report || null;
     this.endingTriggered = !!obj.endingTriggered;
@@ -111,17 +137,27 @@ export class GameState {
       day: this.day,
       score: this.score,
       risk: { ...this.risk },
+      clarity_score: this.clarity_score,
       conscience: this.conscience,
+      emotion_history: this.emotion_history,
+      news_seen: this.news_seen,
+      nickname: this.nickname,
+      tutorial_done: this.tutorial_done,
+      random_seed: this.random_seed,
+      last_save_time: this.last_save_time,
       rawCards: this.rawCards,
       workbench: this.workbench,
       packageInventory: this.packageInventory,
+      inventory: this.packageInventory,
       buyers: this.buyers,
       transactions: this.transactions,
+      sold_log: this.transactions,
       isGameOver: this.isGameOver,
       gameOverReason: this.gameOverReason,
       dailyNews: this.dailyNews,
       dailyChallenge: this.dailyChallenge,
       dailyMonologue: this.dailyMonologue,
+      blackboxDialogue: this.blackboxDialogue,
       badges: this.badges,
       ending_report: this.ending_report,
       endingTriggered: this.endingTriggered,
@@ -140,4 +176,14 @@ function normalizeWorkbench(workbench) {
     }
   }
   return slots;
+}
+
+function normalizeClarity(clarityScore, conscience) {
+  if (typeof clarityScore === "number") {
+    return Math.max(-6, Math.min(12, clarityScore));
+  }
+  if (typeof conscience === "number" && conscience >= -6 && conscience <= 12) {
+    return conscience;
+  }
+  return 0;
 }

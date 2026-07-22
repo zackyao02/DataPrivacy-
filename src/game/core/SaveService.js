@@ -21,6 +21,7 @@ export class SaveService {
     }
 
     try {
+      gameState.last_save_time = new Date().toISOString();
       const data = gameState.serialize();
       storage.setItem(this.SAVE_KEY, JSON.stringify(data));
       return { ok: true, message: "Game successfully saved." };

@@ -14,7 +14,7 @@ export class PackageFactory {
   static create(recipe, cards, day) {
     const activeCards = cards.filter(c => c !== null && c !== undefined);
     const cardIds = activeCards.map(c => c.id);
-    const userIds = activeCards.map(c => c.userId);
+    const userIds = [...new Set(activeCards.map(c => c.userId).filter(Boolean))];
 
     // Mark cards as packaged
     activeCards.forEach(c => {
@@ -26,7 +26,7 @@ export class PackageFactory {
 
     if (!recipe) {
       // Create a WASTE package
-      const id = `PKG-WASTE-${day}-${Math.floor(Math.random() * 899 + 100)}`;
+      const id = `PKG-WASTE-${day}-${stableSuffix(cardIds)}`;
       return {
         id,
         recipeId: "waste",
@@ -44,17 +44,13 @@ export class PackageFactory {
     }
 
     // Create a VALID package
-    const id = `PKG-${recipe.id.toUpperCase()}-${day}-${Math.floor(Math.random() * 899 + 100)}`;
-    
-    // Calculate initial base price as sum of card baseValues
-    const sumBaseValue = activeCards.reduce((sum, c) => sum + c.baseValue, 0);
-    // Recipe bonus multiplier (e.g. 1.2x for a successful combo)
-    const recipeBonus = 1.25;
-    
+    const id = `PKG-${recipe.id.toUpperCase()}-${day}-${stableSuffix(cardIds)}`;
+
     // If the data is polluted (misclassified), there's a valuation penalty
     // 20% discount per uncorrected card
     const qualityMultiplier = Math.max(0.4, 1 - (incorrectCardsCount * 0.2));
-    const price = Math.round(sumBaseValue * recipeBonus * qualityMultiplier);
+    const rawPrice = Math.round(recipe.basePrice * qualityMultiplier);
+    const price = clamp(rawPrice, recipe.priceRange[0], recipe.priceRange[1]);
 
     // Calculate risk weight
     // Polluted data carries higher regulatory and publicOpinion risks!
@@ -67,9 +63,15 @@ export class PackageFactory {
       recipeId: recipe.id,
       packageType: recipe.id,
       recipeName: recipe.name,
+      buyerType: recipe.buyerType,
+      dataUse: recipe.dataUse,
+      newsSeverity: recipe.newsSeverity,
       cardIds,
       userIds,
       price,
+      basePrice: recipe.basePrice,
+      priceRange: recipe.priceRange,
+      qualityMultiplier,
       riskWeight,
       createdDay: day,
       isWaste: false,
@@ -77,4 +79,18 @@ export class PackageFactory {
       cards: activeCards
     };
   }
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function stableSuffix(parts) {
+  const value = parts.join("|");
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = Math.imul(31, hash) + value.charCodeAt(index);
+    hash |= 0;
+  }
+  return String(Math.abs(hash) % 900 + 100);
 }

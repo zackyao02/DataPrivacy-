@@ -11,7 +11,11 @@ import {
   pickBuyerNegotiationScript,
   pickEvidenceChainTemplate,
   pickPublicOpinionScript,
-  resolveDay7Route
+  resolveDay7Route,
+  applyEmotionChoice,
+  evaluateProtocolDisguise,
+  evaluateBuyerNegotiation,
+  completeEvidenceChain
 } from "../src/game/index.js";
 
 /**
@@ -35,8 +39,8 @@ export function runDayLoopTests() {
       errors.push("Day 1 start should return visibleState with a C challenge entry.");
     }
     
-    if (game.rawCards.length < 2 || game.rawCards.length > 3) {
-      errors.push(`Day 1 generated unexpected card count: ${game.rawCards.length}`);
+    if (game.rawCards.length !== 5) {
+      errors.push(`Day 1 should generate 5 text-config cards, got: ${game.rawCards.length}`);
     }
 
     // Try modifying a card category to correct AI error
@@ -96,6 +100,27 @@ export function runDayLoopTests() {
     if (!pickEvidenceChainTemplate()?.requiredLinks?.length) {
       errors.push("Day 7 evidence chain template should expose required links.");
     }
+    const emotionRes = applyEmotionChoice(game, "anger");
+    if (!emotionRes.ok || game.clarity_score !== 2 || game.conscience !== 2) {
+      errors.push(`Emotion choice should update clarity/conscience by +2, got: ${JSON.stringify(emotionRes)}`);
+    }
+    const disguiseRes = evaluateProtocolDisguise(game, {
+      P01: "优化社交连接体验",
+      P02: "提升本地化服务准确性",
+      P03: "保障账号安全与身份核验",
+      P04: "提供个性化优惠推荐",
+      P05: "用于生态服务协同",
+      P06: "改善内容理解与客服质量",
+      P07: "生成生活方式洞察",
+      P08: "构建联系人亲密度模型"
+    });
+    if (!disguiseRes.ok || !disguiseRes.passed || !game.badges.some(badge => badge.id === "rhetoric_master")) {
+      errors.push("Day 1 protocol disguise challenge should be judgeable and award a badge.");
+    }
+    const negotiationRes = evaluateBuyerNegotiation(game, "health_risk", "risk");
+    if (!negotiationRes.ok || !negotiationRes.dealSucceeds) {
+      errors.push("Day 5 negotiation evaluation should keep both outcomes successful.");
+    }
     game.conscience = 4;
     if (resolveDay7Route(game).route !== "final_package") {
       errors.push("conscience < 5 should route to final_package.");
@@ -103,6 +128,11 @@ export function runDayLoopTests() {
     game.conscience = 5;
     if (resolveDay7Route(game).route !== "evidence_chain") {
       errors.push("conscience >= 5 should route to evidence_chain.");
+    }
+    const chainTemplate = pickEvidenceChainTemplate();
+    const chainRes = completeEvidenceChain(game, chainTemplate.requiredLinks);
+    if (!chainRes.ok || !chainRes.completed || !game.endingTriggered || !game.ending_report) {
+      errors.push("Completed evidence chain should trigger the whistleblower ending report.");
     }
   } catch (e) {
     errors.push(`Crash during day-loop tests: ${e.message}`);

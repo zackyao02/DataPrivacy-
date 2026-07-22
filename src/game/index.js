@@ -8,6 +8,9 @@ import { PackageFactory } from "./packaging/PackageFactory.js";
 import { TransactionService } from "./market/TransactionService.js";
 import { EventName } from "./data/schemas.js";
 import { content } from "./content/contentBridge.js";
+import { ConscienceService } from "./risk/ConscienceService.js";
+import { ChallengeService } from "./challenges/ChallengeService.js";
+import { ReportDataBuilder } from "./report/ReportDataBuilder.js";
 
 /**
  * Creates a brand new game state instance.
@@ -88,6 +91,14 @@ export function createPackage(gameState, preferredPackageType = null) {
     });
   }
 
+  if (!InventoryService.canAddPackage(gameState)) {
+    return withVisibleState(gameState, {
+      ok: false,
+      code: "INVENTORY_FULL",
+      message: "库存已满，请先出售"
+    });
+  }
+
   // 1. Evaluate recipe match
   const previewResult = content.findPackagePreviews(selectedCardIds, {
     onlyReady: true,
@@ -122,7 +133,10 @@ export function createPackage(gameState, preferredPackageType = null) {
   }
 
   // 4. Save package to inventory & clear slots
-  InventoryService.addPackage(gameState, compiledPackage);
+  const inventoryResult = InventoryService.addPackage(gameState, compiledPackage);
+  if (!inventoryResult.ok) {
+    return withVisibleState(gameState, inventoryResult);
+  }
 
   const event = compiledPackage.isWaste ? EventName.WASTE_CREATED : EventName.PACKAGE_CREATED;
   return withVisibleState(gameState, {
@@ -200,17 +214,70 @@ export function findDailyMonologueByDay(day) {
   return content.findDailyMonologueByDay(day);
 }
 
+export function findBlackboxDialogueByDay(day, route = null) {
+  return content.findBlackboxDialogueByDay(day, route);
+}
+
+export function getEmotionChoices() {
+  return ConscienceService.getEmotionChoices();
+}
+
+export function applyEmotionChoice(gameState, choiceId) {
+  return withVisibleState(gameState, ConscienceService.applyEmotionChoice(gameState, choiceId));
+}
+
+export function pickProtocolScanTemplate(options = {}) {
+  return content.pickProtocolScanTemplate(options);
+}
+
 export function pickEvidenceChainTemplate() {
   return content.pickEvidenceChainTemplate();
 }
 
 export function resolveDay7Route(gameState) {
-  const route = gameState.conscience < 5 ? "final_package" : "evidence_chain";
+  const conscience = typeof gameState.conscience === "number" ? gameState.conscience : gameState.clarity_score;
+  gameState.conscience = conscience;
+  gameState.clarity_score = conscience;
+  const route = conscience < 5 ? "final_package" : "evidence_chain";
   gameState.endingRoute = route;
-  if (gameState.conscience < 5) {
+  if (conscience < 5) {
     return { route: "final_package", reason: "LOW_CONSCIENCE" };
   }
   return { route: "evidence_chain", reason: "CONSCIENCE_THRESHOLD_MET" };
+}
+
+export function evaluateProtocolDisguise(gameState, answers) {
+  return withVisibleState(gameState, ChallengeService.evaluateProtocolDisguise(gameState, answers));
+}
+
+export function evaluateDataCleaning(gameState, selectedItems) {
+  return withVisibleState(gameState, ChallengeService.evaluateDataCleaning(gameState, selectedItems));
+}
+
+export function evaluatePublicOpinionChoice(gameState, packageType, choiceId) {
+  return withVisibleState(gameState, ChallengeService.evaluatePublicOpinionChoice(gameState, packageType, choiceId));
+}
+
+export function evaluateProfilePuzzle(gameState, puzzleId, placements) {
+  return withVisibleState(gameState, ChallengeService.evaluateProfilePuzzle(gameState, puzzleId, placements));
+}
+
+export function evaluateBuyerNegotiation(gameState, packageType, choiceId) {
+  return withVisibleState(gameState, ChallengeService.evaluateBuyerNegotiation(gameState, packageType, choiceId));
+}
+
+export function evaluateProtocolScan(gameState, templateId, answers) {
+  return withVisibleState(gameState, ChallengeService.evaluateProtocolScan(gameState, templateId, answers));
+}
+
+export function completeEvidenceChain(gameState, links) {
+  return withVisibleState(gameState, ChallengeService.completeEvidenceChain(gameState, links));
+}
+
+export function buildEndingReport(gameState) {
+  const report = ReportDataBuilder.buildEndingReport(gameState);
+  gameState.ending_report = report;
+  return withVisibleState(gameState, { ok: true, report });
 }
 
 function withVisibleState(gameState, result, event = null, eventPayload = {}) {

@@ -46,7 +46,6 @@ export class RiskService {
     if (gameState.risk.regulatory >= 100) breached.push("REGULATORY_SHUTDOWN");
     if (gameState.risk.publicOpinion >= 100) breached.push("PUBLIC_LYNCHING");
     if (gameState.risk.internalSuspicion >= 100) breached.push("TERMINATION");
-    if (gameState.conscience <= 0) breached.push("SOUL_DEATH");
 
     return {
       ok: true,
