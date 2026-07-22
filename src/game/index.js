@@ -9,8 +9,10 @@ import { TransactionService } from "./market/TransactionService.js";
 import { EventName } from "./data/schemas.js";
 import { content } from "./content/contentBridge.js";
 import { ConscienceService } from "./risk/ConscienceService.js";
+import { ClarityService } from "./risk/ClarityService.js";
 import { ChallengeService } from "./challenges/ChallengeService.js";
 import { ReportDataBuilder } from "./report/ReportDataBuilder.js";
+import { FinalPackageService } from "./ending/FinalPackageService.js";
 
 /**
  * Creates a brand new game state instance.
@@ -235,15 +237,7 @@ export function pickEvidenceChainTemplate() {
 }
 
 export function resolveDay7Route(gameState) {
-  const conscience = typeof gameState.conscience === "number" ? gameState.conscience : gameState.clarity_score;
-  gameState.conscience = conscience;
-  gameState.clarity_score = conscience;
-  const route = conscience < 5 ? "final_package" : "evidence_chain";
-  gameState.endingRoute = route;
-  if (conscience < 5) {
-    return { route: "final_package", reason: "LOW_CONSCIENCE" };
-  }
-  return { route: "evidence_chain", reason: "CONSCIENCE_THRESHOLD_MET" };
+  return ClarityService.resolveDay7Route(gameState);
 }
 
 export function evaluateProtocolDisguise(gameState, answers) {
@@ -272,6 +266,18 @@ export function evaluateProtocolScan(gameState, templateId, answers) {
 
 export function completeEvidenceChain(gameState, links) {
   return withVisibleState(gameState, ChallengeService.completeEvidenceChain(gameState, links));
+}
+
+export function createFinalEmployeePackage(gameState) {
+  return withVisibleState(gameState, FinalPackageService.createFinalEmployeePackage(gameState));
+}
+
+export function sellFinalEmployeePackage(gameState, packageId = null, buyerId = null) {
+  return withVisibleState(gameState, FinalPackageService.sellFinalEmployeePackage(gameState, packageId, buyerId));
+}
+
+export function completeFinalEmployeePackage(gameState) {
+  return withVisibleState(gameState, FinalPackageService.completeFinalEmployeePackage(gameState));
 }
 
 export function buildEndingReport(gameState) {

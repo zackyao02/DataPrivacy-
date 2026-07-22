@@ -1,4 +1,4 @@
-import { packageConfigs, reportConfig } from "../../data/textConfig.js";
+import { clarityConfig, packageConfigs, reportConfig } from "../../data/textConfig.js";
 
 /**
  * Service to build reports and endings for the summary and epilogue pages.
@@ -76,7 +76,7 @@ export class ReportDataBuilder {
 }
 
 function resolveEndingKey(gameState) {
-  if (gameState.endingRoute === "evidence_chain" || (gameState.conscience || 0) >= 5) {
+  if (gameState.endingRoute === clarityConfig.highRoute || (gameState.conscience || 0) >= clarityConfig.endingThreshold) {
     return "ending_b";
   }
   return "ending_a";

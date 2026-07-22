@@ -1,4 +1,4 @@
-import { createGame, startDay, saveGame, loadGame } from "../src/game/index.js";
+import { createGame, startDay, saveGame, loadGame, evaluateProtocolDisguise } from "../src/game/index.js";
 
 /**
  * Mock storage mimicking browser localStorage
@@ -34,6 +34,19 @@ export function runSaveLoadTests() {
     startDay(game);
     game.score = 520;
     game.risk.regulatory = 35.5;
+    const challengeRes = evaluateProtocolDisguise(game, {
+      P01: "优化社交连接体验",
+      P02: "提升本地化服务准确性",
+      P03: "保障账号安全与身份核验",
+      P04: "提供个性化优惠推荐",
+      P05: "用于生态服务协同",
+      P06: "改善内容理解与客服质量",
+      P07: "生成生活方式洞察",
+      P08: "构建联系人亲密度模型"
+    });
+    if (!challengeRes.ok || !challengeRes.completed) {
+      errors.push("Failed to complete Day 1 challenge before save/load check.");
+    }
 
     // Save Game
     const saveRes = saveGame(game, storage);
@@ -54,6 +67,18 @@ export function runSaveLoadTests() {
       }
       if (loadedGame.seed !== "save-load-repro-seed-999") {
         errors.push(`Loaded seed mismatch. Expected save-load-repro-seed-999, got ${loadedGame.seed}`);
+      }
+      if (loadedGame.challenge_history["1"]?.status !== "passed") {
+        errors.push("Loaded challenge_history should preserve Day 1 passed status.");
+      }
+      if (!loadedGame.badges.some(badge => badge.id === "rhetoric_master")) {
+        errors.push("Loaded badges should preserve the Day 1 awarded badge.");
+      }
+      if (!loadedGame.activeChallenge || loadedGame.activeChallenge.day !== 1) {
+        errors.push("Loaded activeChallenge should preserve current daily challenge state.");
+      }
+      if (!loadedGame.last_save_time) {
+        errors.push("Save should persist last_save_time.");
       }
     }
 

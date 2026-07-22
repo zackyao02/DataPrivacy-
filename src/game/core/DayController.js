@@ -5,6 +5,8 @@ import { RiskService } from "../risk/RiskService.js";
 import { content } from "../content/contentBridge.js";
 import { WORKBENCH_SLOT_COUNT } from "../data/schemas.js";
 import { ReportDataBuilder } from "../report/ReportDataBuilder.js";
+import { ChallengeService } from "../challenges/ChallengeService.js";
+import { ClarityService } from "../risk/ClarityService.js";
 
 /**
  * Controller managing the daily sequence transitions.
@@ -44,6 +46,8 @@ export class DayController {
     gameState.dailyChallenge = content.findChallengeByDay(gameState.day);
     gameState.dailyMonologue = content.findDailyMonologueByDay(gameState.day);
     gameState.blackboxDialogue = content.findBlackboxDialogueByDay(gameState.day, gameState.endingRoute);
+    gameState.dailyEmotion = this.initializeDailyEmotion(gameState);
+    gameState.activeChallenge = ChallengeService.ensureDailyChallengeState(gameState, gameState.day);
 
     return {
       ok: true,
@@ -53,7 +57,9 @@ export class DayController {
       news: gameState.dailyNews,
       challenge: gameState.dailyChallenge,
       monologue: gameState.dailyMonologue,
-      blackboxDialogue: gameState.blackboxDialogue
+      blackboxDialogue: gameState.blackboxDialogue,
+      dailyEmotion: gameState.dailyEmotion,
+      activeChallenge: gameState.activeChallenge
     };
   }
 
@@ -66,13 +72,22 @@ export class DayController {
       return { ok: false, code: "GAME_OVER", message: "Game is already over." };
     }
 
+    if (gameState.dailyEmotion?.required && !gameState.dailyEmotion.resolved) {
+      return {
+        ok: false,
+        code: "EMOTION_CHOICE_REQUIRED",
+        message: "请先完成昨日新闻后的情绪选择，再结转本日。",
+        dailyEmotion: gameState.dailyEmotion
+      };
+    }
+
     // 1. Run Risk Service settlements
     const settlement = RiskService.settleDailyRisk(gameState);
     
     if (settlement.isGameOver) {
       gameState.isGameOver = true;
       gameState.gameOverReason = settlement.breached[0];
-      gameState.endingRoute = gameState.conscience < 5 ? "final_package" : "evidence_chain";
+      ClarityService.resolveDay7Route(gameState);
       gameState.ending_report = ReportDataBuilder.buildEndingReport(gameState);
       return {
         ok: true,
@@ -87,7 +102,7 @@ export class DayController {
     if (gameState.day >= 7) {
       gameState.isGameOver = true;
       gameState.gameOverReason = "SUCCESS_7_DAYS";
-      gameState.endingRoute = gameState.conscience < 5 ? "final_package" : "evidence_chain";
+      ClarityService.resolveDay7Route(gameState);
       gameState.endingTriggered = true;
       gameState.ending_report = ReportDataBuilder.buildEndingReport(gameState);
       return {
@@ -182,6 +197,34 @@ export class DayController {
       }
     });
     return result;
+  }
+
+  static initializeDailyEmotion(gameState) {
+    const day = Number(gameState.day);
+    if (!ClarityService.requiresEmotionForDay(day)) {
+      return null;
+    }
+
+    const existing = gameState.dailyEmotion?.day === day ? gameState.dailyEmotion : null;
+    if (existing?.resolved || gameState.emotion_history.some(item => item.day === day)) {
+      return {
+        ...(existing || {}),
+        day,
+        required: true,
+        resolved: true,
+        newsId: gameState.dailyNews?.id || existing?.newsId || null,
+        trigger: "after_yesterday_news"
+      };
+    }
+
+    return {
+      day,
+      required: true,
+      resolved: false,
+      trigger: "after_yesterday_news",
+      newsId: gameState.dailyNews?.id || null,
+      choices: content.findEmotionChoices()
+    };
   }
 }
 

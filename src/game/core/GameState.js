@@ -1,4 +1,5 @@
 import { WORKBENCH_SLOT_COUNT } from "../data/schemas.js";
+import { clarityConfig } from "../../data/textConfig.js";
 
 /**
  * Core Game State Container.
@@ -17,10 +18,13 @@ export class GameState {
       internalSuspicion: 0   // Risk of manager audits / getting fired (0-100)
     };
     
-    this.clarity_score = 0;  // Text config clarity score, range -6 to +12
-    this.conscience = 0;     // Backward-compatible alias used by A/C branch checks
+    this.clarity_score = clarityConfig.initialValue;
+    this.conscience = clarityConfig.initialValue; // Backward-compatible alias used by A/C branch checks
     this.emotion_history = [];
+    this.dailyEmotion = null;
     this.news_seen = [];
+    this.challenge_history = {};
+    this.activeChallenge = null;
     this.nickname = "第996号员工";
     this.tutorial_done = false;
     this.random_seed = seed;
@@ -62,7 +66,10 @@ export class GameState {
       clarity_score: this.clarity_score,
       conscience: this.conscience,
       emotion_history: this.emotion_history,
+      dailyEmotion: this.dailyEmotion,
       news_seen: this.news_seen,
+      challenge_history: this.challenge_history,
+      activeChallenge: this.activeChallenge,
       nickname: this.nickname,
       tutorial_done: this.tutorial_done,
       random_seed: this.random_seed,
@@ -102,7 +109,10 @@ export class GameState {
     this.clarity_score = normalizeClarity(obj.clarity_score, obj.conscience);
     this.conscience = this.clarity_score;
     this.emotion_history = obj.emotion_history || [];
+    this.dailyEmotion = obj.dailyEmotion || null;
     this.news_seen = obj.news_seen || [];
+    this.challenge_history = normalizeChallengeHistory(obj.challenge_history);
+    this.activeChallenge = obj.activeChallenge || this.challenge_history[String(this.day)] || null;
     this.nickname = obj.nickname || "第996号员工";
     this.tutorial_done = !!obj.tutorial_done;
     this.random_seed = obj.random_seed || this.seed;
@@ -140,7 +150,10 @@ export class GameState {
       clarity_score: this.clarity_score,
       conscience: this.conscience,
       emotion_history: this.emotion_history,
+      dailyEmotion: this.dailyEmotion,
       news_seen: this.news_seen,
+      challenge_history: this.challenge_history,
+      activeChallenge: this.activeChallenge,
       nickname: this.nickname,
       tutorial_done: this.tutorial_done,
       random_seed: this.random_seed,
@@ -180,10 +193,21 @@ function normalizeWorkbench(workbench) {
 
 function normalizeClarity(clarityScore, conscience) {
   if (typeof clarityScore === "number") {
-    return Math.max(-6, Math.min(12, clarityScore));
+    return Math.max(clarityConfig.min, Math.min(clarityConfig.max, clarityScore));
   }
-  if (typeof conscience === "number" && conscience >= -6 && conscience <= 12) {
-    return conscience;
+  if (typeof conscience === "number" && conscience >= clarityConfig.min && conscience <= clarityConfig.max) {
+    return Math.max(clarityConfig.min, Math.min(clarityConfig.max, conscience));
   }
-  return 0;
+  return clarityConfig.initialValue;
+}
+
+function normalizeChallengeHistory(history) {
+  if (!history) return {};
+  if (Array.isArray(history)) {
+    return history.reduce((acc, item) => {
+      if (item?.day) acc[String(item.day)] = item;
+      return acc;
+    }, {});
+  }
+  return { ...history };
 }

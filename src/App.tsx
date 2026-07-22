@@ -8,6 +8,7 @@ import {
   createPackage,
   sellPackage,
   endDay,
+  applyEmotionChoice,
   getVisibleState,
   saveGame,
   loadGame
@@ -195,12 +196,23 @@ export default function App() {
         setAmbiguousChoices(null);
         syncState();
       }
+    } else {
+      alert(res.message);
     }
   };
 
   // Handler: Donate to NGO
   const handleDonate = (amount: number) => {
     const res = ConscienceService.donateToNGO(game, amount);
+    if (res.ok) {
+      syncState();
+    } else {
+      alert(res.message);
+    }
+  };
+
+  const handleEmotionChoice = (choiceId: string) => {
+    const res = applyEmotionChoice(game, choiceId);
     if (res.ok) {
       syncState();
     } else {
@@ -563,6 +575,29 @@ export default function App() {
                     <AlertTriangle className="w-3.5 h-3.5" /> {gameState.dailyNews.headline}
                   </div>
                   <p className="text-gray-400 text-[11px] leading-relaxed">{gameState.dailyNews.body}</p>
+                  {gameState.dailyEmotion?.required && !gameState.dailyEmotion.resolved && (
+                    <div className="mt-4 border-t border-zinc-900 pt-3">
+                      <div className="text-[10px] text-amber-400 font-bold mb-2 uppercase">Emotion Response Required</div>
+                      <div className="space-y-2">
+                        {gameState.dailyEmotion.choices?.map((choice: any) => (
+                          <button
+                            key={choice.id}
+                            onClick={() => handleEmotionChoice(choice.id)}
+                            className="w-full text-left px-3 py-2 bg-zinc-900 hover:bg-amber-950/40 border border-zinc-800 hover:border-amber-500/40 rounded text-[11px] text-gray-300 hover:text-amber-200 transition-colors"
+                          >
+                            <span className="text-amber-400 font-bold">{choice.label}</span>
+                            <span className="text-gray-500 mx-1">/</span>
+                            {choice.buttonText}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {gameState.dailyEmotion?.resolved && gameState.dailyEmotion.feedback && (
+                    <div className="mt-3 px-3 py-2 bg-zinc-900/70 border border-zinc-800 rounded text-[11px] text-amber-200">
+                      {gameState.dailyEmotion.feedback}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

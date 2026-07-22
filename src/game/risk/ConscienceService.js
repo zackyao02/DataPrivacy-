@@ -1,22 +1,27 @@
 import { CardStatus } from "../data/schemas.js";
 import { emotionChoices } from "../../data/textConfig.js";
-
-const clarityRange = { min: -6, max: 12 };
+import { ClarityService } from "./ClarityService.js";
 
 /**
  * Service managing moral mechanics and conscience recovery actions.
  */
 export class ConscienceService {
   static applyEmotionChoice(gameState, choiceId, rng = null) {
+    if (!gameState.dailyEmotion?.required) {
+      return { ok: false, code: "NO_EMOTION_PENDING", message: "No daily emotion choice is pending." };
+    }
+
+    if (gameState.dailyEmotion.resolved) {
+      return { ok: false, code: "EMOTION_ALREADY_SELECTED", message: "Daily emotion choice has already been selected." };
+    }
+
     const choice = emotionChoices.find(item => item.id === choiceId);
     if (!choice) {
       return { ok: false, code: "UNKNOWN_EMOTION_CHOICE", message: "Emotion choice not found." };
     }
 
-    const before = gameState.clarity_score || 0;
-    const after = clamp(before + choice.delta, clarityRange.min, clarityRange.max);
-    gameState.clarity_score = after;
-    gameState.conscience = after;
+    const before = ClarityService.getValue(gameState);
+    const after = ClarityService.addDelta(gameState, choice.delta);
 
     const feedbackText = rng && typeof rng.pick === "function"
       ? rng.pick(choice.feedback)
@@ -28,9 +33,20 @@ export class ConscienceService {
       delta: choice.delta,
       before,
       after,
-      feedback: feedbackText
+      feedback: feedbackText,
+      newsId: gameState.dailyEmotion.newsId || null
     };
     gameState.emotion_history.push(log);
+    gameState.dailyEmotion = {
+      ...gameState.dailyEmotion,
+      resolved: true,
+      selectedChoiceId: choice.id,
+      selectedLabel: choice.label,
+      delta: choice.delta,
+      feedback: feedbackText,
+      resolvedAt: new Date().toISOString()
+    };
+    const routeResult = Number(gameState.day) === 7 ? ClarityService.resolveDay7Route(gameState) : null;
 
     return {
       ok: true,
@@ -38,7 +54,10 @@ export class ConscienceService {
       feedback: feedbackText,
       clarityBefore: before,
       clarityAfter: after,
-      newConscience: gameState.conscience
+      newConscience: gameState.conscience,
+      dailyEmotion: gameState.dailyEmotion,
+      route: routeResult?.route,
+      threshold: routeResult?.threshold
     };
   }
 
@@ -69,8 +88,7 @@ export class ConscienceService {
     const conscienceBoost = card.sensitivity === "high" ? 2 : card.sensitivity === "medium" ? 1 : 0;
     const suspicionIncrease = card.sensitivity === "high" ? 12 : card.sensitivity === "medium" ? 6 : 3;
 
-    gameState.clarity_score = clamp((gameState.clarity_score || 0) + conscienceBoost, clarityRange.min, clarityRange.max);
-    gameState.conscience = gameState.clarity_score;
+    ClarityService.addDelta(gameState, conscienceBoost);
     gameState.risk.internalSuspicion = Math.min(100, gameState.risk.internalSuspicion + suspicionIncrease);
 
     return {
@@ -102,8 +120,7 @@ export class ConscienceService {
     gameState.score -= amount;
     // Kept only for older UI compatibility; official text-config clarity comes from emotion choices.
     const conscienceBoost = Math.floor(amount / 200);
-    gameState.clarity_score = clamp((gameState.clarity_score || 0) + conscienceBoost, clarityRange.min, clarityRange.max);
-    gameState.conscience = gameState.clarity_score;
+    ClarityService.addDelta(gameState, conscienceBoost);
 
     return {
       ok: true,
@@ -113,8 +130,4 @@ export class ConscienceService {
       newConscience: gameState.conscience
     };
   }
-}
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
 }

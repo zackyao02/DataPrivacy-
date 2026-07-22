@@ -110,6 +110,25 @@ export const emotionChoices = [
   { id: "numb", label: "麻木", buttonText: "只是工作而已，与我无关。", delta: -1, feedback: ["想那么多干嘛，又不是我泄露的。", "转正要紧。", "这只是数据。一串字符而已。"] }
 ];
 
+export const clarityConfig = {
+  field: "clarity_score",
+  initialValue: 0,
+  min: -6,
+  max: 12,
+  trigger: {
+    timing: "after_yesterday_news",
+    startDay: 2,
+    endDay: 7,
+    totalChoices: 6,
+    day7BeforeChallenge: true
+  },
+  accumulation: "sum_emotion_choice_delta",
+  endingThreshold: 5,
+  lowRoute: "final_package",
+  highRoute: "evidence_chain",
+  lockedPathMessage: "[数据损坏] 清醒值不足，无法解码该路径。"
+};
+
 export const blackboxDialogues = {
   1: { briefing: "今天是你的第一天。完成3笔交易，证明你有留下来的价值。", instruction: "广告公司正在常规收购精准画像包，标准价格。别搞砸了。", success: "效率不错。我就喜欢不提问的下属。", summary: "第一天，活干完了，手还干净吗？开个玩笑。我们的数据不沾血。去休息吧。" },
   2: { briefing: "昨天的表现我看到了。今天买家更多，手快一点。", instruction: "保险公司急需健康风险评估包，溢价50%。病人的时间，就是我们的商机。", success: "很好。你已经开始像一个真正的分析师了。", summary: "今天的交易记录已经归档。每一条，都有你的签名。晚安。" },
@@ -230,7 +249,12 @@ export const challengeConfigs = [
     type: "evidence_chain",
     title: "证据链重组",
     entry: "rebuild_evidence_chain",
-    branchRule: { scoreField: "conscience", threshold: 5, lowRoute: "final_package", highRoute: "evidence_chain" }
+    branchRule: {
+      scoreField: clarityConfig.field,
+      threshold: clarityConfig.endingThreshold,
+      lowRoute: clarityConfig.lowRoute,
+      highRoute: clarityConfig.highRoute
+    }
   }
 ];
 
@@ -523,4 +547,31 @@ export const finalEmployeeCard = {
   detail: "系统已收集第996号员工的登录时长、鼠标轨迹、犹豫时间、新闻停留时长与打包偏好。该员工可作为风险样本出售给匿名买家。",
   baseValue: 996,
   riskWeight: 6
+};
+
+export const finalPackageConfig = {
+  route: "final_package",
+  packageType: "final_package",
+  recipeId: "final_package",
+  recipeName: "员工数据包·{nickname}",
+  displayName: "员工数据包·第996号",
+  dataUse: "AI筛选模型训练样本",
+  price: 996,
+  riskWeight: 6,
+  anonymousBuyer: {
+    id: "BUYER-DAY7-ANON",
+    name: "匿名买家",
+    buyerType: "anonymous",
+    reputation: "UNKNOWN",
+    description: "只收购最终员工数据包的匿名买家。",
+    allowedPackageTypes: ["final_package"],
+    allowedRecipes: ["final_package"],
+    priceMultiplier: 1,
+    riskContribution: { regulatory: 0, publicOpinion: 0, internalSuspicion: 0 }
+  },
+  ending: {
+    key: "ending_a",
+    route: "final_package",
+    reason: "LOW_CLARITY_FINAL_PACKAGE"
+  }
 };

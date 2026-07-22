@@ -15,7 +15,9 @@ import {
   applyEmotionChoice,
   evaluateProtocolDisguise,
   evaluateBuyerNegotiation,
-  completeEvidenceChain
+  evaluateProtocolScan,
+  completeEvidenceChain,
+  completeFinalEmployeePackage
 } from "../src/game/index.js";
 
 /**
@@ -77,8 +79,20 @@ export function runDayLoopTests() {
       errors.push("Failed to load daily monologue for Day 2.");
     }
 
+    const blockedDay2End = endDay(game);
+    if (blockedDay2End.ok || blockedDay2End.code !== "EMOTION_CHOICE_REQUIRED") {
+      errors.push("Day 2 should require an emotion choice before endDay.");
+    }
+    const day2Emotion = applyEmotionChoice(game, "sympathy");
+    if (!day2Emotion.ok || !game.dailyEmotion.resolved || game.emotion_history.length !== 1) {
+      errors.push(`Day 2 emotion choice should resolve the pending daily emotion, got: ${JSON.stringify(day2Emotion)}`);
+    }
+
     // End Day 2
-    endDay(game);
+    const day2End = endDay(game);
+    if (!day2End.ok || game.day !== 3) {
+      errors.push("Ending Day 2 after emotion choice should increment day to 3.");
+    }
 
     // 4. Play Day 3
     const day3Start = startDay(game);
@@ -101,8 +115,8 @@ export function runDayLoopTests() {
       errors.push("Day 7 evidence chain template should expose required links.");
     }
     const emotionRes = applyEmotionChoice(game, "anger");
-    if (!emotionRes.ok || game.clarity_score !== 2 || game.conscience !== 2) {
-      errors.push(`Emotion choice should update clarity/conscience by +2, got: ${JSON.stringify(emotionRes)}`);
+    if (!emotionRes.ok || game.clarity_score !== 3 || game.conscience !== 3 || game.emotion_history.length !== 2) {
+      errors.push(`Emotion choices should update clarity/conscience and history, got: ${JSON.stringify(emotionRes)}`);
     }
     const disguiseRes = evaluateProtocolDisguise(game, {
       P01: "优化社交连接体验",
@@ -121,18 +135,54 @@ export function runDayLoopTests() {
     if (!negotiationRes.ok || !negotiationRes.dealSucceeds) {
       errors.push("Day 5 negotiation evaluation should keep both outcomes successful.");
     }
+    const firstScanFail = evaluateProtocolScan(game, "SCAN-01", { highRiskClauses: [], dataFlowMatches: [], riskAnswer: "低风险" });
+    if (!firstScanFail.ok || firstScanFail.passed || !firstScanFail.canRetry || firstScanFail.completed) {
+      errors.push(`Day 6 protocol scan first failure should allow one retry, got: ${JSON.stringify(firstScanFail)}`);
+    }
+    const secondScanFail = evaluateProtocolScan(game, "SCAN-01", { highRiskClauses: [], dataFlowMatches: [], riskAnswer: "低风险" });
+    if (!secondScanFail.ok || secondScanFail.passed || !secondScanFail.skipped || !secondScanFail.completed) {
+      errors.push(`Day 6 protocol scan second failure should skip without blocking, got: ${JSON.stringify(secondScanFail)}`);
+    }
+    if (game.challenge_history["6"]?.status !== "skipped" || game.challenge_history["6"]?.attempts !== 2) {
+      errors.push("Day 6 challenge history should persist attempts and skipped status.");
+    }
+    game.clarity_score = 4;
     game.conscience = 4;
     if (resolveDay7Route(game).route !== "final_package") {
-      errors.push("conscience < 5 should route to final_package.");
+      errors.push("configured low clarity threshold should route to final_package.");
     }
+    game.clarity_score = 5;
     game.conscience = 5;
     if (resolveDay7Route(game).route !== "evidence_chain") {
-      errors.push("conscience >= 5 should route to evidence_chain.");
+      errors.push("configured clarity threshold should route to evidence_chain.");
     }
     const chainTemplate = pickEvidenceChainTemplate();
     const chainRes = completeEvidenceChain(game, chainTemplate.requiredLinks);
     if (!chainRes.ok || !chainRes.completed || !game.endingTriggered || !game.ending_report) {
       errors.push("Completed evidence chain should trigger the whistleblower ending report.");
+    }
+
+    const lowClarityGame = createGame({ seed: "test-final-package-low-route" });
+    lowClarityGame.day = 7;
+    startDay(lowClarityGame);
+    const lowEmotion = applyEmotionChoice(lowClarityGame, "numb");
+    if (!lowEmotion.ok || lowEmotion.route !== "final_package") {
+      errors.push(`Day 7 numb emotion should resolve the low clarity final route, got: ${JSON.stringify(lowEmotion)}`);
+    }
+    const finalRes = completeFinalEmployeePackage(lowClarityGame);
+    if (!finalRes.ok || finalRes.route !== "final_package" || !lowClarityGame.isGameOver || lowClarityGame.ending_report?.endingKey !== "ending_a") {
+      errors.push(`Low clarity final package route should sell employee data and trigger ending A, got: ${JSON.stringify(finalRes)}`);
+    }
+
+    const highClarityGame = createGame({ seed: "test-final-package-high-route" });
+    highClarityGame.day = 7;
+    highClarityGame.clarity_score = 5;
+    highClarityGame.conscience = 5;
+    startDay(highClarityGame);
+    applyEmotionChoice(highClarityGame, "sympathy");
+    const lockedFinalRes = completeFinalEmployeePackage(highClarityGame);
+    if (lockedFinalRes.ok || lockedFinalRes.code !== "FINAL_ROUTE_LOCKED") {
+      errors.push("High clarity Day 7 should lock the final_package route.");
     }
   } catch (e) {
     errors.push(`Crash during day-loop tests: ${e.message}`);
