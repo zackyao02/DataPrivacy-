@@ -1,4 +1,4 @@
-import { createGame, placeCardToSlot, createPackage } from "../src/game/index.js";
+import { createGame, placeCardToSlot, createPackage, findPackagePreviews, moveWorkbenchCard, sellPackage } from "../src/game/index.js";
 import { CardStatus } from "../src/game/data/schemas.js";
 
 /**
@@ -26,22 +26,79 @@ export function runPackagingTests() {
     if (failRes.ok) {
       errors.push("Failed: Expected error compiling package with empty workbench slots.");
     }
+    if (!failRes.visibleState || failRes.visibleState.workbench.length !== 3) {
+      errors.push("Failed: Public action result should include 3-slot visibleState.");
+    }
+
+    const invalidSlotRes = placeCardToSlot(game, "C-LOC", 3);
+    if (invalidSlotRes.ok || invalidSlotRes.code !== "INVALID_SLOT") {
+      errors.push("Failed: slotIndex 3 should be rejected after the 3-slot contract update.");
+    }
 
     // Place Location + Consumption + Social
     placeCardToSlot(game, "C-LOC", 0);
     placeCardToSlot(game, "C-CON", 1);
     placeCardToSlot(game, "C-SOC", 2);
 
+    const duplicatePlaceRes = placeCardToSlot(game, "C-LOC", 1);
+    if (!duplicatePlaceRes.ok) {
+      errors.push("Failed: Replacing/moving a workbench card by cardId + slotIndex should be supported.");
+    }
+    if (game.workbench.filter(c => c && c.id === "C-LOC").length !== 1) {
+      errors.push("Failed: A card instance appeared in multiple slots.");
+    }
+    // Put cards back into the original ambiguous combination.
+    moveWorkbenchCard(game, 1, 0);
+    placeCardToSlot(game, "C-CON", 1);
+
     // Test Case 2: Ambiguous Combo (precise_profile vs career_competitiveness)
     const ambigRes = createPackage(game);
     if (ambigRes.ok || ambigRes.code !== "AMBIGUOUS_COMBINATION") {
       errors.push(`Failed: Expected AMBIGUOUS_COMBINATION, got: ${JSON.stringify(ambigRes)}`);
     }
+    if (!ambigRes.candidates.every(candidate => candidate.packageType)) {
+      errors.push("Failed: Ambiguous candidates should expose packageType.");
+    }
 
-    // Test Case 3: Resolving ambiguity with preferredRecipeId
+    const previewRes = findPackagePreviews(game, ["C-LOC", "C-CON", "C-SOC"], { onlyReady: true });
+    if (!previewRes.ok || !previewRes.ambiguous || previewRes.previews.length !== 2) {
+      errors.push(`Failed: Expected package previews for the ambiguous card set, got: ${JSON.stringify(previewRes)}`);
+    }
+
+    // Test Case 3: Resolving ambiguity with preferredPackageType
     const resolvedRes = createPackage(game, "precise_profile");
-    if (!resolvedRes.ok || resolvedRes.package.recipeId !== "precise_profile") {
+    if (!resolvedRes.ok || resolvedRes.package.packageType !== "precise_profile") {
       errors.push(`Failed: Expected successful precise_profile creation, got: ${JSON.stringify(resolvedRes)}`);
+    }
+    if (resolvedRes.event !== "packageCreated") {
+      errors.push(`Failed: Expected packageCreated event, got ${resolvedRes.event}`);
+    }
+
+    game.buyers = [
+      {
+        id: "BUYER-OK",
+        name: "Test Buyer",
+        allowedRecipes: ["precise_profile"],
+        priceMultiplier: 1,
+        riskContribution: { regulatory: 1, publicOpinion: 1, internalSuspicion: 1 }
+      },
+      {
+        id: "BUYER-BAD",
+        name: "Wrong Buyer",
+        allowedRecipes: ["health_risk"],
+        priceMultiplier: 1,
+        riskContribution: { regulatory: 1, publicOpinion: 1, internalSuspicion: 1 }
+      }
+    ];
+
+    const failedTx = sellPackage(game, resolvedRes.package.id, "BUYER-BAD");
+    if (failedTx.ok || failedTx.event !== "transactionFailed") {
+      errors.push(`Failed: Expected transactionFailed event, got: ${JSON.stringify(failedTx)}`);
+    }
+
+    const okTx = sellPackage(game, resolvedRes.package.id, "BUYER-OK");
+    if (!okTx.ok || okTx.event !== "transactionSuccess" || okTx.transaction.packageType !== "precise_profile") {
+      errors.push(`Failed: Expected successful transaction with packageType, got: ${JSON.stringify(okTx)}`);
     }
 
     // Workbench slots should be cleared after a successful packaging
@@ -62,6 +119,9 @@ export function runPackagingTests() {
     const wasteRes = createPackage(game);
     if (!wasteRes.ok || wasteRes.package.recipeId !== "waste") {
       errors.push(`Failed: Expected waste package compilation for invalid combo, got: ${JSON.stringify(wasteRes)}`);
+    }
+    if (wasteRes.event !== "wasteCreated") {
+      errors.push(`Failed: Expected wasteCreated event, got ${wasteRes.event}`);
     }
 
     log("Packaging tests complete.");

@@ -65,6 +65,7 @@ export class TransactionService {
       packageId: dataPackage.id,
       packageName: dataPackage.recipeName,
       recipeId: dataPackage.recipeId,
+      packageType: dataPackage.packageType || dataPackage.recipeId,
       buyerId: buyer.id,
       buyerName: buyer.name,
       price: finalPrice,

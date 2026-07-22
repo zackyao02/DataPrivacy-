@@ -30,6 +30,7 @@ export class PackageFactory {
       return {
         id,
         recipeId: "waste",
+        packageType: "waste",
         recipeName: "废弃数据垃圾 (Data Waste)",
         cardIds,
         userIds,
@@ -64,6 +65,7 @@ export class PackageFactory {
     return {
       id,
       recipeId: recipe.id,
+      packageType: recipe.id,
       recipeName: recipe.name,
       cardIds,
       userIds,

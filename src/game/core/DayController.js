@@ -3,6 +3,8 @@ import { DataCardFactory } from "../data/DataCardFactory.js";
 import { BuyerFactory } from "../market/BuyerFactory.js";
 import { RiskService } from "../risk/RiskService.js";
 import { newsDatabase } from "../../data/mockContent.js";
+import { content } from "../content/contentBridge.js";
+import { WORKBENCH_SLOT_COUNT } from "../data/schemas.js";
 
 /**
  * Controller managing the daily sequence transitions.
@@ -28,7 +30,7 @@ export class DayController {
 
     // 2. Clear old daily pool and workbench cards (raw cards expire each day)
     gameState.rawCards = [];
-    gameState.workbench = [null, null, null, null];
+    gameState.workbench = Array(WORKBENCH_SLOT_COUNT).fill(null);
 
     // 3. Generate 2-3 data cards and 3-5 corporate buyers
     gameState.rawCards = DataCardFactory.generateDailyCards(rng, gameState.day);
@@ -39,13 +41,17 @@ export class DayController {
 
     // 4. Compile news from yesterday's actions
     gameState.dailyNews = this.generateDailyNews(gameState);
+    gameState.dailyChallenge = content.findChallengeByDay(gameState.day);
+    gameState.dailyMonologue = content.findDailyMonologueByDay(gameState.day);
 
     return {
       ok: true,
       day: gameState.day,
       cards: gameState.rawCards,
       buyers: gameState.buyers,
-      news: gameState.dailyNews
+      news: gameState.dailyNews,
+      challenge: gameState.dailyChallenge,
+      monologue: gameState.dailyMonologue
     };
   }
 
@@ -126,6 +132,11 @@ export class DayController {
         body: "Internal audit flags severe drop in transaction volume. Managers warn: 'Unsold data is a storage liability.'",
         category: "internalSuspicion"
       };
+    }
+
+    const latestPackageType = txs[txs.length - 1]?.packageType || txs[txs.length - 1]?.recipeId;
+    if (latestPackageType) {
+      return content.pickNewsForPackage(latestPackageType);
     }
 
     // Find if there was high risk or pollution in yesterday's sold packages

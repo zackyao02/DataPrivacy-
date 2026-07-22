@@ -27,3 +27,21 @@ export const PackageStatus = {
   ACTIVE: "active",
   SOLD: "sold"
 };
+
+export const WORKBENCH_SLOT_COUNT = 3;
+
+export const EventName = {
+  PACKAGE_CREATED: "packageCreated",
+  WASTE_CREATED: "wasteCreated",
+  TRANSACTION_SUCCESS: "transactionSuccess",
+  TRANSACTION_FAILED: "transactionFailed"
+};
+
+export const PackageType = {
+  PRECISE_PROFILE: "precise_profile",
+  HEALTH_RISK: "health_risk",
+  CAREER_COMPETITIVENESS: "career_competitiveness",
+  CREDIT_SCORE: "credit_score",
+  RELATIONSHIP_INFILTRATION: "relationship_infiltration",
+  WASTE: "waste"
+};

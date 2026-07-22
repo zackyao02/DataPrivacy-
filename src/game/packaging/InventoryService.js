@@ -1,4 +1,4 @@
-import { CardStatus } from "../data/schemas.js";
+import { CardStatus, WORKBENCH_SLOT_COUNT } from "../data/schemas.js";
 
 /**
  * Service to manage player workbench slots and packaged inventory.
@@ -8,12 +8,17 @@ export class InventoryService {
    * Places a data card into a specific workbench slot.
    * @param {object} gameState - The current state object
    * @param {string} cardId - The ID of the card to place
-   * @param {number} slotIndex - The index of the slot (0 to 3)
+   * @param {number} slotIndex - The index of the slot (0 to 2)
    * @returns {object} Action result
    */
   static placeCardToSlot(gameState, cardId, slotIndex) {
-    if (slotIndex < 0 || slotIndex > 3) {
-      return { ok: false, code: "INVALID_SLOT", message: "Slot index must be between 0 and 3." };
+    if (!isValidSlot(slotIndex)) {
+      return { ok: false, code: "INVALID_SLOT", message: "Slot index must be 0, 1, or 2." };
+    }
+
+    const currentSlotIndex = gameState.workbench.findIndex(c => c && c.id === cardId);
+    if (currentSlotIndex !== -1) {
+      return this.moveCardBetweenSlots(gameState, currentSlotIndex, slotIndex);
     }
 
     const card = gameState.rawCards.find(c => c.id === cardId);
@@ -41,12 +46,12 @@ export class InventoryService {
   /**
    * Removes a data card from a specific workbench slot.
    * @param {object} gameState - The current state object
-   * @param {number} slotIndex - The index of the slot (0 to 3)
+   * @param {number} slotIndex - The index of the slot (0 to 2)
    * @returns {object} Action result
    */
   static removeCardFromSlot(gameState, slotIndex) {
-    if (slotIndex < 0 || slotIndex > 3) {
-      return { ok: false, code: "INVALID_SLOT", message: "Slot index must be between 0 and 3." };
+    if (!isValidSlot(slotIndex)) {
+      return { ok: false, code: "INVALID_SLOT", message: "Slot index must be 0, 1, or 2." };
     }
 
     const card = gameState.workbench[slotIndex];
@@ -56,6 +61,31 @@ export class InventoryService {
 
     card.status = CardStatus.AVAILABLE;
     gameState.workbench[slotIndex] = null;
+
+    return { ok: true, workbench: gameState.workbench };
+  }
+
+  /**
+   * Moves a card between workbench slots. If the destination is occupied,
+   * the two cards are swapped.
+   */
+  static moveCardBetweenSlots(gameState, fromSlotIndex, toSlotIndex) {
+    if (!isValidSlot(fromSlotIndex) || !isValidSlot(toSlotIndex)) {
+      return { ok: false, code: "INVALID_SLOT", message: "Slot index must be 0, 1, or 2." };
+    }
+
+    if (fromSlotIndex === toSlotIndex) {
+      return { ok: true, workbench: gameState.workbench };
+    }
+
+    const fromCard = gameState.workbench[fromSlotIndex];
+    if (!fromCard) {
+      return { ok: false, code: "SLOT_EMPTY", message: "Source slot is empty." };
+    }
+
+    const toCard = gameState.workbench[toSlotIndex];
+    gameState.workbench[toSlotIndex] = fromCard;
+    gameState.workbench[fromSlotIndex] = toCard || null;
 
     return { ok: true, workbench: gameState.workbench };
   }
@@ -83,4 +113,8 @@ export class InventoryService {
     gameState.packageInventory = gameState.packageInventory.filter(p => p.id !== packageId);
     return gameState.packageInventory.length < initialLength;
   }
+}
+
+function isValidSlot(slotIndex) {
+  return Number.isInteger(slotIndex) && slotIndex >= 0 && slotIndex < WORKBENCH_SLOT_COUNT;
 }

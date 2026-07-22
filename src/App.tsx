@@ -46,7 +46,7 @@ const aiAdapter = new LocalAIAdapter();
 export default function App() {
   // Game instance keeper
   const [game, setGame] = useState(() => createGame({ seed: "data-privacy-default-seed" }));
-  const [gameState, setGameState] = useState(() => game.serialize());
+  const [gameState, setGameState] = useState(() => getVisibleState(game));
   
   // Custom seed state
   const [inputSeed, setInputSeed] = useState("data-privacy-default-seed");
@@ -67,7 +67,7 @@ export default function App() {
 
   // Sync game with serialized helper state
   const syncState = () => {
-    setGameState(game.serialize());
+    setGameState(getVisibleState(game));
   };
 
   // Start the very first day on mount
@@ -103,7 +103,7 @@ export default function App() {
     const loaded = loadGame(window.localStorage);
     if (loaded) {
       setGame(loaded);
-      setGameState(loaded.serialize());
+      setGameState(getVisibleState(loaded));
       setInputSeed(loaded.seed);
       setAiAnalysisResult(null);
       setAmbiguousChoices(null);
@@ -159,9 +159,9 @@ export default function App() {
   };
 
   // Handler: Compile Package
-  const handleCompile = (preferredId: string | null = null) => {
+  const handleCompile = (preferredPackageType: string | null = null) => {
     setAmbiguousChoices(null);
-    const res = createPackage(game, preferredId);
+    const res = createPackage(game, preferredPackageType);
     if (!res.ok) {
       if (res.code === "AMBIGUOUS_COMBINATION") {
         setAmbiguousChoices(res.candidates || []);
@@ -582,7 +582,7 @@ export default function App() {
               </div>
 
               {/* Interactive slots */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                 {gameState.workbench.map((slotCard: any, index: number) => (
                   <div
                     key={index}
@@ -651,7 +651,7 @@ export default function App() {
                     {ambiguousChoices.map((choice) => (
                       <button
                         key={choice.id}
-                        onClick={() => handleCompile(choice.id)}
+                        onClick={() => handleCompile(choice.packageType || choice.id)}
                         className="bg-zinc-900/60 hover:bg-amber-950/40 border border-zinc-800 hover:border-amber-500 text-left p-3 rounded transition-colors text-xs"
                       >
                         <div className="font-bold text-amber-400 mb-0.5">{choice.name}</div>

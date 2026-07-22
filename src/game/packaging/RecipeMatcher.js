@@ -7,10 +7,10 @@ export class RecipeMatcher {
   /**
    * Matches a set of cards against the recipe database.
    * @param {Array<object>} cards - Non-empty cards on the workbench slots (should be 3 cards)
-   * @param {string} [preferredRecipeId] - User's chosen recipe in case of ambiguity
+   * @param {string} [preferredPackageType] - User's chosen package type in case of ambiguity
    * @returns {object} Matching result: { matched: boolean, ambiguous: boolean, recipe: object, candidates: Array }
    */
-  static match(cards, preferredRecipeId = null) {
+  static match(cards, preferredPackageType = null) {
     // Filter out null or undefined cards
     const activeCards = cards.filter(c => c !== null && c !== undefined);
 
@@ -45,8 +45,8 @@ export class RecipeMatcher {
 
     // Ambiguity check (e.g. precise_profile vs career_competitiveness)
     if (candidates.length > 1) {
-      if (preferredRecipeId && candidates.some(r => r.id === preferredRecipeId)) {
-        const selected = candidates.find(r => r.id === preferredRecipeId);
+      if (preferredPackageType && candidates.some(r => r.id === preferredPackageType)) {
+        const selected = candidates.find(r => r.id === preferredPackageType);
         return {
           matched: true,
           ambiguous: false,
