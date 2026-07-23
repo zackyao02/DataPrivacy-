@@ -17,6 +17,9 @@
 | D9 | Day 7 证据链重组原型、低清醒值最后数据包分支展示、情绪驱动清醒值累计 | 已完成 |
 | D10 | 结局报告模板、`ending` 报告场景、分享文案复制、本地存档读取/保存/清除 | 已完成 |
 | D11 | `workbench` 拖拽卡槽判定、槽位替换、已选卡交换、拖出移除、点击兜底 | 已完成 |
+| D12 | Program C 集成适配层、`window.programAIntegrations.programC` registry、集成契约校验 | 已完成 |
+| D13 | Program B visibleState / runtime binding、`window.programAIntegrations.programB` registry、Day 1 -> Day 2 smoke | 已完成 |
+| D14 | Week 1 全日规则 smoke，覆盖 Day 1-7 runtime 命令、证据链和结局报告 | 已完成 |
 
 ## 内容文件
 
@@ -130,6 +133,37 @@ window.programA.programB.emit("challengeSuccess");
 
 `programB.emit(eventName)` 会把同名事件转给 Program C 音效映射，方便 A/B/C 早期联调。
 
+Program A 最新 adapter 入口：
+
+```ts
+import { createProgramCIntegration } from "./integration";
+
+const programC = createProgramCIntegration();
+window.programAIntegrations = {
+  ...window.programAIntegrations,
+  programC,
+};
+
+programC.audio.handleGameEvent("newsBroadcast");
+programC.contentDebug.findPackagePreviews(selectedCardIds, {
+  onlyReady: true,
+});
+```
+
+当前主应用已经把同一个 C 实例同步挂到 `window.programA.programC` 和 `window.programAIntegrations.programC`，旧调试面板和 A 最新分支都能读取。`audio.handleGameEvent(eventName)` 是正式音频边界；`contentDebug` 用于 B/C 联调、内容抽样和 B 侧生成 A 可见状态时排查，不应让 A 侧直接把它当正式业务状态来源。
+
+Program A 最新 B runtime 入口：
+
+```ts
+const b = window.programAIntegrations.programB;
+const state = b.getState();
+b.createPackage(state);
+b.selectEmotion(b.getState(), "empathy");
+b.advanceDailyPhase(b.getState());
+```
+
+`programB` 会从当前 WeekOne 控制器投影 visibleState，并接收 A 侧的工作台、打包、情绪、小关卡和阶段推进命令；当前 smoke 已验证 Day 1 可从工作台推进到 Day 2，`npm run smoke:week1` 额外验证 Day 1-7 全日规则链路。正式合并 A 最新分支后，重点核对 A 的 daily-flow UI 是否按 `dailyFlow.phase` 分别展示 emotion / challenge / processing / ending。
+
 推荐事件名：
 
 | 事件名 | 用途 |
@@ -167,6 +201,13 @@ window.programA.programB.emit("challengeSuccess");
 npm run check
 ```
 
+根目录可额外运行：
+
+```bash
+npm run smoke:integration
+npm run smoke:week1
+```
+
 `npm run check` 会同时生成 D7 Week 1 垂直切片报告：
 
 - `dist/week1-vertical-slice-report.json`
@@ -200,6 +241,6 @@ npm run check
 ## 后续
 
 - 主项目已接入可拖拽垂直切片；当前可玩规则是工作台拖拽卡槽、Day 1/2/3/4/5/6/7 小关卡，Day 7 会按清醒值进入“重组证据链”或“最后的数据包”分支，并在成功后进入 `ending` 结局报告场景。
-- 后续端到端联调重点检查 A/B 卡槽数量、拖拽落槽判定、包类型枚举、新闻生成、Day 1/2/3/4/5/6/7 小关卡点击规则、证据链状态、结局报告状态、存档状态和音效事件是否一致。
+- 后续端到端联调重点检查 A/B 卡槽数量、拖拽落槽判定、包类型枚举、新闻生成、Day 1/2/3/4/5/6/7 小关卡点击规则、证据链状态、结局报告状态、存档状态、`window.programAIntegrations.programB/C` 挂载时机和音效事件是否一致。
 - 最新飞书文本配置中的最终图片导出、二维码视觉和完整 UI 文案仍是后续开发依据；如方案与实际玩法冲突，应在共享文档对应部分下补充对接问题。
 - 真实音频素材接入后继续跑 `npm run check` 控制包体。

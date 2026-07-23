@@ -1,8 +1,8 @@
 # Program C Acceptance Checklist
 
-Updated: 2026-07-22
+Updated: 2026-07-23
 
-This checklist records the current Program C delivery state for content tools, audio, build, performance, the D7 Week 1 baseline, D8 playable mini-games, the D9 Day 7 evidence-chain prototype, the D10 ending report / save-state loop, and the D11 workbench drag-and-drop loop.
+This checklist records the current Program C delivery state for content tools, audio, build, performance, the D7 Week 1 baseline, D8 playable mini-games, the D9 Day 7 evidence-chain prototype, the D10 ending report / save-state loop, the D11 workbench drag-and-drop loop, the D12 Program C adapter boundary, the D13 Program B visible-state runtime binding, and the D14 Week 1 rules smoke.
 
 ## Completed Milestones
 
@@ -17,6 +17,9 @@ This checklist records the current Program C delivery state for content tools, a
 - D9: Day 7 evidence-chain prototype is playable with 18 evidence fragments, 3 causal connections, a report upload action, low-awareness final-package branch display, and emotion-driven awareness scoring.
 - D10: Day 7 completion now routes to a playable ending report scene with grade-branch copy, share-text copy action, localStorage save/load state, Program B state patches, and clear-save handling.
 - D11: `workbench` now supports drag-and-drop slot placement with target highlighting, slot replacement, selected-card swapping, drag-out removal, and click-to-select fallback.
+- D12: Program C now exposes `createProgramCIntegration()` and the integrated app mounts `window.programAIntegrations.programC` with `audio.handleGameEvent(eventName)` and `contentDebug` handoff methods for Program A's adapter / daily-flow branch.
+- D13: Program B now exposes `window.programAIntegrations.programB` with visibleState projection plus runtime commands for workbench, package creation, emotion selection, daily challenge submission, and daily phase advancement; `npm run smoke:integration` verifies Day 1 -> Day 2.
+- D14: Root `npm run smoke:week1` now drives the same Program B runtime binding through Day 1 / 2 / 3 / 4 / 5 / 6 / 7, including public opinion, profile puzzle ordering, protocol scan scoring, evidence-chain upload, badges, and ending report availability.
 
 ## Current Data Scale
 
@@ -44,11 +47,11 @@ This checklist records the current Program C delivery state for content tools, a
 
 | Metric | Value |
 | --- | ---: |
-| Raw tracked bytes | 175727 |
-| Gzip tracked bytes | 44852 |
+| Raw tracked bytes | 184627 |
+| Gzip tracked bytes | 46927 |
 | Budget bytes | 8388608 |
-| Remaining raw bytes | 8212881 |
-| Remaining gzip bytes | 8343756 |
+| Remaining raw bytes | 8203981 |
+| Remaining gzip bytes | 8341681 |
 
 ## Generated Artifacts
 
@@ -71,10 +74,14 @@ This verifies TypeScript, JSON content references, generated manifests, offline 
 ## Handoff Notes
 
 - Program A can call `audio.handleGameEvent(eventName)` through the Program C audio manager.
+- Program A's latest adapter branch can read `window.programAIntegrations.programC`; the formal audio boundary is `audio.handleGameEvent(eventName)`.
+- Program A's latest adapter branch can read `window.programAIntegrations.programB`; B owns visibleState projection and command handling.
+- `contentDebug` is for integration debugging and B-side visible-state projection checks, not A-side gameplay state ownership.
 - Program B can call `findPackagePreviews(cardIds, { onlyReady: true })` to determine valid card-slot packages.
 - Program B can call `pickNewsForPackage(packageType)`, `findChallengeByDay(1/2/3/4/5/6/7)`, `pickPublicOpinionScript(packageType)`, `pickProfilePuzzleByDay(4)`, `pickBuyerNegotiationScript(packageType)`, `pickProtocolScanTemplate()`, `pickEvidenceChainTemplate()`, `pickEndingReportTemplate()`, and `findDailyMonologueByDay(day)`.
 - Latest Feishu text config is local content/reference data. Current playable rule coverage is Day 1 / 2 / 3 / 4 / 5 / 6 / 7.
 - Planning/content edits should happen in `program-c/data/*.json`, followed by `npm run check`.
+- Root A/B/C runtime edits should be followed by `npm run smoke:integration` and `npm run smoke:week1`.
 
 ## Remaining Work
 

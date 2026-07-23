@@ -9,10 +9,11 @@
     "build:offline": "node scripts/build-offline-manifest.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "validate:content": "node scripts/validate-content.mjs",
+    "validate:integration": "node scripts/validate-integration-contract.mjs",
     "verify:offline": "node scripts/verify-offline-readiness.mjs",
     "report:size": "node scripts/bundle-size-report.mjs",
     "report:gzip": "node scripts/gzip-size-report.mjs",
     "report:week1": "node scripts/week1-vertical-slice-report.mjs",
-    "check": "npm run typecheck && npm run validate:content && npm run build && npm run verify:offline && npm run report:size && npm run report:gzip && npm run report:week1"
+    "check": "npm run typecheck && npm run validate:content && npm run validate:integration && npm run build && npm run verify:offline && npm run report:size && npm run report:gzip && npm run report:week1"
   }
 }

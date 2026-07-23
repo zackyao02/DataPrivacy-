@@ -1,0 +1,86 @@
+import { mkdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { build } from "esbuild";
+
+const rootPath = fileURLToPath(new URL("..", import.meta.url));
+const outputPath = join(rootPath, "dist", "program-a-integration-smoke.mjs");
+
+mkdirSync(dirname(outputPath), { recursive: true });
+
+await build({
+  absWorkingDir: rootPath,
+  bundle: true,
+  format: "esm",
+  platform: "node",
+  target: "es2022",
+  write: true,
+  outfile: outputPath,
+  stdin: {
+    loader: "ts",
+    resolveDir: rootPath,
+    contents: `
+      import { createDefaultContentRepository } from "./program-c/src/content/index.ts";
+      import { ProgramBBridge } from "./src/game/ProgramBBridge.ts";
+      import { WeekOneSliceController } from "./src/game/WeekOneSliceController.ts";
+      import { createWeekOneProgramBAdapter } from "./src/game/WeekOneProgramBAdapter.ts";
+
+      function assert(condition, message) {
+        if (!condition) {
+          throw new Error(message);
+        }
+      }
+
+      const content = createDefaultContentRepository({ random: () => 0 });
+      const bridge = new ProgramBBridge("workbench");
+      const controller = new WeekOneSliceController(content, bridge);
+      const adapter = createWeekOneProgramBAdapter(controller, bridge);
+
+      const initialVisibleState = adapter.getVisibleState();
+      assert(initialVisibleState.workbench.slotCardIds.length === 3, "visible workbench must expose 3 slots");
+      assert(initialVisibleState.rawCards.length >= 6, "visible state must expose raw cards");
+      assert(adapter.runtimeBinding.getState().dailyFlow.phase === "processing", "initial daily phase should be processing");
+
+      const packageOutcome = adapter.runtimeBinding.createPackage(adapter.runtimeBinding.getState());
+      assert(packageOutcome.ok, "runtime createPackage should seal the current WeekOne package");
+      assert(adapter.runtimeBinding.getState().dailyNews, "package seal should produce visible daily news");
+
+      const emotionOutcome = adapter.runtimeBinding.selectEmotion(
+        adapter.runtimeBinding.getState(),
+        "empathy",
+      );
+      assert(emotionOutcome.ok, "runtime selectEmotion should be accepted");
+      assert(adapter.runtimeBinding.getState().dailyEmotion.resolved, "emotion should be marked resolved");
+
+      const phaseOutcome = adapter.runtimeBinding.advanceDailyPhase(adapter.runtimeBinding.getState());
+      assert(phaseOutcome.ok, "runtime advanceDailyPhase should enter the challenge");
+
+      const challengeState = adapter.runtimeBinding.getState();
+      const challenge = challengeState.dailyChallenge;
+      assert(challenge, "challenge should be visible after advancing from news");
+      assert(challenge.status === "active", "challenge should be active");
+      assert(challenge.tasks.length > 0, "challenge should expose tasks");
+
+      const challengeOutcome = adapter.runtimeBinding.submitDailyChallenge(
+        challengeState,
+        challenge.id,
+        {
+          kind: challenge.kind,
+          answers: challenge.tasks.map((task) => ({
+            taskId: task.id,
+            optionIds: task.options.map((option) => option.id),
+          })),
+        },
+      );
+      assert(challengeOutcome.ok, "runtime submitDailyChallenge should complete Day 1");
+      assert(adapter.runtimeBinding.getState().day === 2, "successful Day 1 should unlock Day 2");
+      assert(adapter.getVisibleState().dailyFlow.phase === "processing", "visible state should return to processing after Day 1");
+
+      adapter.destroy();
+      bridge.destroy();
+    `,
+  },
+});
+
+await import(`${pathToFileURL(outputPath).href}?t=${Date.now()}`);
+console.log("Program A/B/C integration smoke passed.");

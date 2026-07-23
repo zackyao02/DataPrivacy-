@@ -238,7 +238,7 @@ const report = {
     process.env.PROGRAM_C_REPORT_GENERATED_AT ??
     existingGeneratedAt ??
     new Date().toISOString(),
-  scope: "Program C D7 baseline plus D8/D9 playable mini-game readiness and D10 ending report/save readiness",
+  scope: "Program C D7 baseline plus D8/D9 playable mini-game readiness, D10 ending report/save readiness, D11 workbench drag-drop readiness, D12 C adapter readiness, D13 B runtime binding readiness, and D14 Week 1 rules smoke readiness",
   week1Coverage: {
     supportedChallengeDays: challengeDays,
     requiredWeek1Days,
@@ -290,7 +290,8 @@ const report = {
   },
   handoffNotes: [
     "Program B should run the playable Day 1/2/3/4/5/6/7 loop using findChallengeByDay, package news, emotion responses, public opinion choices, protocol scan state, evidence chain state, ending report state, save state, and daily monologues.",
-    "Program A should verify audio.handleGameEvent for package seal, transaction seal, challenge feedback, BGM, monologue typing, endingTriggered prototype events, and the ending report scene route.",
+    "Program A should verify audio.handleGameEvent through window.programAIntegrations.programC for package seal, transaction seal, challenge feedback, BGM, monologue typing, endingTriggered prototype events, and the ending report scene route.",
+    "Program A can verify Program B visibleState and runtime commands through window.programAIntegrations.programB; root npm run smoke:integration covers Day 1 -> Day 2, and root npm run smoke:week1 covers Day 1-7 runtime rules.",
     "Program C performance numbers here cover content/audio/build assets; integrated FPS belongs to the A/B vertical slice run.",
   ],
 };
@@ -305,7 +306,7 @@ Generated: ${report.generatedAt}
 
 ## Scope
 
-This report keeps the D7 Week 1 acceptance baseline and adds the D8/D9 playable mini-game plus D10 ending report / save-state readiness check.
+This report keeps the D7 Week 1 acceptance baseline and adds the D8/D9 playable mini-game, D10 ending report / save-state, D11 workbench drag-drop, D12 C adapter, D13 B runtime binding, and D14 Week 1 rules smoke readiness checks.
 
 ## Content Coverage
 
@@ -366,6 +367,7 @@ FPS risk proxy: low for Program C assets. Program C currently ships JSON presets
 
 - Program B: run Day 1/2/3/4/5/6/7 loop with \`findChallengeByDay\`, package news, emotion responses, public opinion choices, protocol scan state, evidence chain state, ending report state, save state, and daily monologues.
 - Program A: verify \`audio.handleGameEvent\` for package seal, transaction seal, challenge feedback, BGM, monologue typing, \`endingTriggered\` prototype events, and the ending report scene route.
+- Program A/B: run root \`npm run smoke:integration\` for the Day 1 -> Day 2 handoff and \`npm run smoke:week1\` for full Day 1-7 runtime rule coverage after adapter changes.
 - Program C: rerun \`npm run check\` before each content or audio handoff.
 `;
 

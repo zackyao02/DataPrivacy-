@@ -13,6 +13,11 @@ import {
   type ContentRepository,
 } from "../../program-c/src/content";
 import {
+  createProgramCIntegration,
+  type ProgramCContentDebugPort,
+  type ProgramCIntegration,
+} from "../../program-c/src/integration";
+import {
   RENDER_LAYERS,
   SCENE_IDS,
   type AppLifecycleState,
@@ -28,6 +33,12 @@ import {
   type ProgramBStateListener,
   type ProgramBStatePatch,
 } from "../game/ProgramBBridge";
+import type { VisibleGameState } from "../game/VisibleGameState";
+import {
+  createWeekOneProgramBAdapter,
+  type WeekOneProgramBAdapter,
+  type WeekOneProgramBRuntimeBinding,
+} from "../game/WeekOneProgramBAdapter";
 import { WeekOneSliceController } from "../game/WeekOneSliceController";
 import { LayerRenderer } from "../render/LayerRenderer";
 import { EndingReportScene } from "../scenes/EndingReportScene";
@@ -45,6 +56,7 @@ export interface ProgramADebugSnapshot {
   readonly layers: Readonly<Record<RenderLayer, boolean>>;
   readonly input: ReturnType<InputManager["getSnapshot"]>;
   readonly gameState: Readonly<ProgramBGameState>;
+  readonly visibleState: Readonly<VisibleGameState>;
   readonly programC: ProgramCDebugSnapshot;
 }
 
@@ -81,20 +93,28 @@ export interface ProgramADebugApi {
   destroy(): void;
   getSnapshot(): ProgramADebugSnapshot;
   readonly programB: {
+    readonly adapter: WeekOneProgramBAdapter;
+    readonly runtimeBinding: WeekOneProgramBRuntimeBinding;
     getState(): Readonly<ProgramBGameState>;
+    getVisibleState(): Readonly<VisibleGameState>;
     patchState(patch: ProgramBStatePatch): Readonly<ProgramBGameState>;
     emit(type: string, payload?: unknown): ProgramBEvent;
     onStateChange(listener: ProgramBStateListener): () => void;
+    onVisibleStateChange(
+      listener: (state: Readonly<VisibleGameState>) => void,
+    ): () => void;
     onEvent(listener: ProgramBEventListener): () => void;
   };
   readonly programC: {
     readonly content: ContentRepository;
+    readonly contentDebug: ProgramCContentDebugPort;
     readonly audio: {
       unlock(): Promise<void>;
       handleGameEvent(eventName: GameSoundEventName | string): boolean;
       setEnabled(enabled: boolean): void;
       setMasterVolume(volume: number): void;
     };
+    readonly integration: ProgramCIntegration;
     getSnapshot(): ProgramCDebugSnapshot;
   };
 }
@@ -110,8 +130,16 @@ export class ProgramACanvasApp {
   private readonly programB = new ProgramBBridge(INITIAL_SCENE);
   private readonly programCContent = createDefaultContentRepository();
   private readonly programCAudio = new AudioManager();
+  private readonly programCIntegration = createProgramCIntegration({
+    content: this.programCContent,
+    audio: this.programCAudio,
+  });
   private readonly weekOneSlice = new WeekOneSliceController(
     this.programCContent,
+    this.programB,
+  );
+  private readonly programBAdapter = createWeekOneProgramBAdapter(
+    this.weekOneSlice,
     this.programB,
   );
   private readonly sceneManager: SceneManager;
@@ -258,7 +286,9 @@ export class ProgramACanvasApp {
     this.surface.destroy();
     this.sceneManager.destroy(this.latestFrame);
     this.detachProgramBAudioBridge();
+    this.programBAdapter.destroy();
     this.programB.destroy();
+    this.programCIntegration.destroy();
     this.programCAudio.destroy();
     this.debugPanel.destroy();
     this.events.clear();
@@ -282,6 +312,7 @@ export class ProgramACanvasApp {
       layers: this.renderer.getVisibility(),
       input: this.input.getSnapshot(),
       gameState: this.programB.getState(),
+      visibleState: this.programBAdapter.getVisibleState(),
       programC: this.getProgramCSnapshot(),
     };
   }
@@ -391,18 +422,25 @@ export class ProgramACanvasApp {
       destroy: () => this.destroy(),
       getSnapshot: () => this.getSnapshot(),
       programB: Object.freeze({
+        adapter: this.programBAdapter,
+        runtimeBinding: this.programBAdapter.runtimeBinding,
         getState: () => this.programB.getState(),
+        getVisibleState: () => this.programBAdapter.getVisibleState(),
         patchState: (patch: ProgramBStatePatch) =>
           this.programB.patchState(patch),
         emit: (type: string, payload?: unknown) =>
           this.programB.emit(type, payload),
         onStateChange: (listener: ProgramBStateListener) =>
           this.programB.onStateChange(listener),
+        onVisibleStateChange: (
+          listener: (state: Readonly<VisibleGameState>) => void,
+        ) => this.programBAdapter.onVisibleStateChange(listener),
         onEvent: (listener: ProgramBEventListener) =>
           this.programB.onEvent(listener),
       }),
       programC: Object.freeze({
         content: this.programCContent,
+        contentDebug: this.programCIntegration.contentDebug,
         audio: Object.freeze({
           unlock: () => this.programCAudio.unlock(),
           handleGameEvent: (eventName: GameSoundEventName | string) =>
@@ -411,6 +449,7 @@ export class ProgramACanvasApp {
           setMasterVolume: (volume: number) =>
             this.programCAudio.setMasterVolume(volume),
         }),
+        integration: this.programCIntegration,
         getSnapshot: () => this.getProgramCSnapshot(),
       }),
     });

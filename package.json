@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "npm run typecheck && vite build",
     "preview": "vite preview",
+    "smoke:integration": "node scripts/program-a-integration-smoke.mjs",
+    "smoke:week1": "node scripts/week-one-rules-smoke.mjs",
     "typecheck": "tsc --noEmit && npm --prefix program-c run typecheck"
   },
   "devDependencies": {

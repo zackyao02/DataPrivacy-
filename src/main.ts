@@ -10,6 +10,11 @@ if (!canvas || !debugRoot) {
 
 const app = new ProgramACanvasApp(canvas, debugRoot);
 window.programA = app.debugApi;
+window.programAIntegrations = {
+  ...window.programAIntegrations,
+  programB: app.debugApi.programB.runtimeBinding,
+  programC: app.debugApi.programC.integration,
+};
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {

@@ -26,6 +26,8 @@ const manifest = {
   runtimeEntrypoints: [
     "src/content/index.ts",
     "src/audio/index.ts",
+    "src/integration/index.ts",
+    "src/index.ts",
   ],
   requiredFiles: [
     ...dataFiles,

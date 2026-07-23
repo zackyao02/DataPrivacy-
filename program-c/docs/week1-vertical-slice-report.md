@@ -4,7 +4,7 @@ Generated: 2026-07-19T15:15:15.549Z
 
 ## Scope
 
-This report keeps the D7 Week 1 acceptance baseline and adds the D8/D9 playable mini-game plus D10 ending report / save-state readiness check.
+This report keeps the D7 Week 1 acceptance baseline and adds the D8/D9 playable mini-game, D10 ending report / save-state, D11 workbench drag-drop, D12 C adapter, D13 B runtime binding, and D14 Week 1 rules smoke readiness checks.
 
 ## Content Coverage
 
@@ -51,11 +51,11 @@ Audio preview buttons matched: yes (28 buttons).
 
 | Metric | Value |
 | --- | ---: |
-| Raw tracked bytes | 175727 |
-| Gzip tracked bytes | 44852 |
+| Raw tracked bytes | 184627 |
+| Gzip tracked bytes | 46927 |
 | Budget bytes | 8388608 |
-| Remaining raw bytes | 8212881 |
-| Remaining gzip bytes | 8343756 |
+| Remaining raw bytes | 8203981 |
+| Remaining gzip bytes | 8341681 |
 | Data JSON files | 17 |
 | JSON parse average per full pass | 0.182 ms |
 
@@ -65,4 +65,5 @@ FPS risk proxy: low for Program C assets. Program C currently ships JSON presets
 
 - Program B: run Day 1/2/3/4/5/6/7 loop with `findChallengeByDay`, package news, emotion responses, public opinion choices, protocol scan state, evidence chain state, ending report state, save state, and daily monologues.
 - Program A: verify `audio.handleGameEvent` for package seal, transaction seal, challenge feedback, BGM, monologue typing, `endingTriggered` prototype events, and the ending report scene route.
+- Program A/B: run root `npm run smoke:integration` for the Day 1 -> Day 2 handoff and `npm run smoke:week1` for full Day 1-7 runtime rule coverage after adapter changes.
 - Program C: rerun `npm run check` before each content or audio handoff.

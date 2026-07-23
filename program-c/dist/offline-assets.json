@@ -5,7 +5,9 @@
   "externalNetworkRequired": false,
   "runtimeEntrypoints": [
     "src/content/index.ts",
-    "src/audio/index.ts"
+    "src/audio/index.ts",
+    "src/integration/index.ts",
+    "src/index.ts"
   ],
   "requiredFiles": [
     "data/black_box_lines.json",

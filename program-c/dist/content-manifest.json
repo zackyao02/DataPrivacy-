@@ -123,6 +123,29 @@
     "findNewsForPackage",
     "pickNewsForPackage"
   ],
+  "integrationCapabilities": {
+    "windowRegistry": "window.programAIntegrations.programC",
+    "audioBoundary": "audio.handleGameEvent(eventName)",
+    "contentDebugBoundary": "contentDebug.*",
+    "factories": [
+      "createProgramCIntegration",
+      "installProgramCIntegration"
+    ],
+    "contentDebugMethods": [
+      "findPackagePreviews",
+      "pickNewsForPackage",
+      "findChallengeByDay",
+      "findDataCleaningIcon",
+      "pickPublicOpinionScript",
+      "pickProfilePuzzleByDay",
+      "pickBuyerNegotiationScript",
+      "pickProtocolScanTemplate",
+      "pickEvidenceChainTemplate",
+      "pickEndingReportTemplate",
+      "findDailyMonologueByDay",
+      "pickBlackBoxLine"
+    ]
+  },
   "soundEvents": [
     "dataFlowIn",
     "cardGenerated",

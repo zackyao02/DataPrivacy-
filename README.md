@@ -17,6 +17,9 @@
 - D9：接入 Day 7 证据链重组原型，新增 18 件证据、3 条关键连接、低清醒值“最后的数据包”分支展示，以及同情/愤怒/麻木驱动的真实清醒值累计。
 - D10：接入结局报告与本地存档闭环，Day 7 成功后进入 `ending` 报告页，按清醒值生成“替罪羊 / 举报者”评级分支，支持分享文案复制、存档读取、自动保存和清除存档。
 - D11：工作台接入真实拖拽卡槽判定，支持从卡池拖入指定槽位、槽位替换、已选卡槽交换、拖出槽位移除，同时保留点击选卡兜底。
+- D12：新增 Program C 集成适配层，当前主应用同步挂载 `window.programAIntegrations.programC`，对齐 Program A 最新 adapter / daily flow 分支的联调入口。
+- D13：新增 Program B visibleState / runtime binding 适配层，当前主应用同步挂载 `window.programAIntegrations.programB`，并补充端到端 smoke 验证 Day 1 -> Day 2 主线推进。
+- D14：新增 Week 1 全日规则 smoke，基于 `window.programAIntegrations.programB` 的同一 runtime 命令覆盖 Day 1-7 封包、情绪、小关卡、证据链和结局报告通路。
 - D7 内容对齐补充：按最新飞书“文本配置”更新 Week 1 垂直切片验收前已有内容口径，升级为 20 张正式数据卡、15 个买家、18 个清洗图标、10 组舆论题、3 套画像拼图、5 套协议扫描模板、1 套证据链模板、1 套结局报告模板和 71 条黑盒台词；新增同步脚本并修正工作台起始卡池。最终图片导出、二维码视觉和完整 UI 文案仍作为后续开发依据。
 
 ## 接入重点
@@ -50,6 +53,22 @@ window.programA.programC.content.findPackagePreviews(selectedCardIds, {
 window.programA.programC.audio.handleGameEvent("newsBroadcast");
 window.programA.programB.emit("newsBroadcast");
 ```
+
+Program A 最新 adapter 入口也已同步挂载：
+
+```ts
+window.programAIntegrations.programB.getState();
+window.programAIntegrations.programB.createPackage(
+  window.programAIntegrations.programB.getState(),
+);
+window.programAIntegrations.programC.audio.handleGameEvent("newsBroadcast");
+window.programAIntegrations.programC.contentDebug.findPackagePreviews(
+  selectedCardIds,
+  { onlyReady: true },
+);
+```
+
+`programB` 是 A 最新分支可调用的 runtime binding，会从当前 WeekOne 控制器投影出 visibleState 并接收打包、情绪、小关卡和阶段推进命令。`audio.handleGameEvent(eventName)` 是正式音频边界；`contentDebug` 用于 B/C 联调和可见状态投影排查，正式玩法状态仍应由 B 侧写入 A 的可见状态。
 
 当前可玩联调路径：
 
@@ -95,6 +114,9 @@ audio.handleGameEvent(eventName);
 ```bash
 cd program-c
 npm run check
+cd ..
+npm run smoke:integration
+npm run smoke:week1
 ```
 
 当前验收通过：
@@ -115,10 +137,10 @@ npm run check
 - endingReportTemplates=1
 - dailyMonologues=7
 - blackBoxLines=71
-- raw=175727 bytes
-- gzip=44852 bytes
+- raw=184627 bytes
+- gzip=46927 bytes
 - 低于 8MB 预算
 
 完整交接说明见 `program-c/docs/program-c-integration.md`。
-Program C 交付索引见 `program-c/docs/program-c-delivery-index.md`，可按 D1-D11 快速核对对应交付物。
+Program C 交付索引见 `program-c/docs/program-c-delivery-index.md`，可按 D1-D14 快速核对对应交付物。
 D7 垂直切片报告见 `program-c/docs/week1-vertical-slice-report.md`，工具链说明见 `program-c/docs/program-c-toolchain.md`，验收清单见 `program-c/docs/program-c-acceptance-checklist.md`。
