@@ -20,11 +20,6 @@ export class DataClassifier {
     card.displayedType = selectedType;
     card.isCorrected = (selectedType === card.actualType);
     
-    // Satirical value adjustment: accurate data might have higher value to some,
-    // or AI-misclassified data had inflated values depending on corporate buyer.
-    // If corrected correctly, we might boost baseValue slightly, or keep it.
-    // Let's keep a flag for scoring.
-    
     return {
       ok: true,
       card: card,

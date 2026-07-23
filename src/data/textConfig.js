@@ -219,12 +219,7 @@ export const challengeConfigs = [
     type: "profile_puzzle",
     title: "用户画像拼图",
     entry: "assemble_profile",
-    badgeId: "persona_rebuilder",
-    scoring: [
-      { rank: "S", minAccuracy: 0.9, priceBonus: 0.1 },
-      { rank: "A", minAccuracy: 0.75, priceBonus: 0.05 },
-      { rank: "B", minAccuracy: 0, priceBonus: 0 }
-    ]
+    badgeId: "persona_rebuilder"
   },
   {
     day: 5,

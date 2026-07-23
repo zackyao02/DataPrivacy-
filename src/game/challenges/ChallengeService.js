@@ -98,9 +98,6 @@ export class ChallengeService {
     const placementMap = normalizeAnswerMap(placements, "slot");
     const fragments = puzzle.fragments;
     const correctCount = fragments.filter(fragment => placementMap.get(fragment.id) === fragment.slot).length;
-    const accuracy = fragments.length > 0 ? correctCount / fragments.length : 0;
-    const scoring = findChallenge(4).scoring;
-    const rank = scoring.find(item => accuracy >= item.minAccuracy) || scoring[scoring.length - 1];
     const passed = placementMap.size > 0;
 
     return finalizeAttempt(gameState, 4, {
@@ -110,10 +107,7 @@ export class ChallengeService {
       puzzleId: puzzle.id,
       userId: puzzle.userId,
       correctCount,
-      totalFragments: fragments.length,
-      accuracy,
-      rank: rank.rank,
-      priceBonus: rank.priceBonus
+      totalFragments: fragments.length
     });
   }
 
