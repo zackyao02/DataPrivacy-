@@ -312,7 +312,7 @@ export class MonitorRoomScene implements Scene {
   }
 
   getDebugState(frame: SceneFrame): DeskDebugState {
-    const news = frame.gameState.visibleState.yesterdayNews ?? EMPTY_NEWS;
+    const news = frame.visibleState.yesterdayNews ?? EMPTY_NEWS;
 
     return {
       view: "reality-desk",
@@ -407,7 +407,7 @@ export class MonitorRoomScene implements Scene {
       DESK_LAYOUT.pendingStack.imageRect,
     );
 
-    const cards = frame.gameState.visibleState.rawCards;
+    const cards = frame.visibleState.rawCards;
 
     const activeCardId = this.getActiveCardId();
 
@@ -890,7 +890,7 @@ export class MonitorRoomScene implements Scene {
     context: CanvasRenderingContext2D,
     frame: SceneFrame,
   ): void {
-    const news = frame.gameState.visibleState.yesterdayNews ?? EMPTY_NEWS;
+    const news = frame.visibleState.yesterdayNews ?? EMPTY_NEWS;
     const paper = DESK_LAYOUT.newsOverlay.panelRect;
     const close = DESK_LAYOUT.newsOverlay.closeRect;
     const title = news.title.trim() || EMPTY_NEWS.title;
@@ -955,7 +955,7 @@ export class MonitorRoomScene implements Scene {
     context.fillText(dateLabel, paper.x + 18, paper.y + 17);
     context.textAlign = "right";
     context.fillText(
-      `第 ${frame.gameState.visibleState.day} 日`,
+      `第 ${frame.visibleState.day} 日`,
       paper.x + paper.width - 48,
       paper.y + 17,
     );
@@ -1172,7 +1172,7 @@ export class MonitorRoomScene implements Scene {
 
     const panel = DESK_LAYOUT.cardDetailOverlay.panelRect;
     const close = DESK_LAYOUT.cardDetailOverlay.closeRect;
-    const card = frame.gameState.visibleState.rawCards.find(
+    const card = frame.visibleState.rawCards.find(
       (item) => item.id === this.selectedCardId,
     );
     const accent =
@@ -1338,7 +1338,7 @@ export class MonitorRoomScene implements Scene {
       },
     ];
 
-    const cardItems = frame.gameState.visibleState.rawCards.map(
+    const cardItems = frame.visibleState.rawCards.map(
       (card, index): InteractiveItem<DeskItemId> => {
         const position = this.cardPositions.get(card.id)?.current ??
           getCardOrigin(index);
@@ -1582,7 +1582,7 @@ export class MonitorRoomScene implements Scene {
       return null;
     }
 
-    const card = frame.gameState.visibleState.rawCards.find(
+    const card = frame.visibleState.rawCards.find(
       (item) => item.id === this.selectedCardId,
     );
     const textOrPlaceholder = (
@@ -1620,13 +1620,16 @@ export class MonitorRoomScene implements Scene {
       this.newsOpen = true;
       this.hoveredItemId = null;
       this.options.onCursorChange?.("default");
+      if (frame.visibleState.dailyFlow.phase === "news") {
+        this.options.commandPort.advanceDailyPhase();
+      }
       return;
     }
 
     if (item.id === "pending-file-stack") {
       this.feedback = {
         cardId: "",
-        message: `待处理文件 ${frame.gameState.visibleState.rawCards.length} 份`,
+        message: `待处理文件 ${frame.visibleState.rawCards.length} 份`,
         expiresAt:
           frame.elapsedTime + DESK_LAYOUT.feedback.durationSeconds,
       };
@@ -1635,9 +1638,9 @@ export class MonitorRoomScene implements Scene {
 
     if (item.id === "operation-tray") {
       this.feedback = {
-        cardId: frame.gameState.visibleState.operationPadCardId ?? "",
-        message: frame.gameState.visibleState.operationPadCardId
-          ? `托盘中：${frame.gameState.visibleState.operationPadCardId}`
+        cardId: frame.visibleState.operationPadCardId ?? "",
+        message: frame.visibleState.operationPadCardId
+          ? `托盘中：${frame.visibleState.operationPadCardId}`
           : "操作托盘当前为空",
         expiresAt:
           frame.elapsedTime + DESK_LAYOUT.feedback.durationSeconds,
@@ -1699,7 +1702,7 @@ export class MonitorRoomScene implements Scene {
   }
 
   private syncCardPositions(frame: SceneFrame): void {
-    const cards = frame.gameState.visibleState.rawCards;
+    const cards = frame.visibleState.rawCards;
     const ids = new Set(cards.map((card) => card.id));
 
     for (const cardId of this.cardPositions.keys()) {

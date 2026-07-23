@@ -8,8 +8,7 @@ import type {
   Point,
   RenderLayer,
 } from "../core/types";
-import type { GameCommandPort } from "../game/GamePorts";
-import type { ProgramBEvent } from "../game/ProgramBBridge";
+import type { GameCommandPort, GameEvent } from "../game/GamePorts";
 import {
   MOCK_VISIBLE_STATE,
   type VisibleGameState,
@@ -20,6 +19,13 @@ import {
   getCRTJitter,
   MONITOR_DESKTOP_CRT_CONFIG,
 } from "../render/CRTEffect";
+import {
+  getDailyFlowOverlayItems,
+  isDailyFlowOverlayVisible,
+  renderDailyFlowOverlay,
+  type DailyFlowItemId,
+} from "../views/monitor/DailyFlowOverlay";
+import { DailyChallengeSession } from "../views/monitor/DailyChallengeSession";
 import {
   renderMonitorAppContent,
   renderMonitorDraggedCard,
@@ -51,9 +57,11 @@ type MonitorDesktopItemId =
   | `data-raw-card:${string}`
   | `data-slot:${number}`
   | "data-create-package"
+  | `data-package-candidate:${string}`
   | `trade-package:${string}`
   | `trade-buyer:${string}`
-  | "trade-submit";
+  | "trade-submit"
+  | DailyFlowItemId;
 
 export interface MonitorDesktopDebugState {
   readonly view: "monitor-desktop" | "monitor-app";
@@ -64,6 +72,7 @@ export interface MonitorDesktopDebugState {
   readonly selectedPackageId: string | null;
   readonly selectedBuyerId: string | null;
   readonly slotCardIds: readonly (string | null)[];
+  readonly packageCandidateIds: readonly string[];
   readonly draggingItemId: MonitorDesktopItemId | null;
   readonly highlightedSlotIndex: number | null;
   readonly disabledRawCardIds: readonly string[];
@@ -113,13 +122,15 @@ export class MonitorDesktopScene implements Scene {
   private transactionFeedback: MonitorAppFeedback | null = null;
   private riskFeedback: MonitorAppFeedback | null = null;
   private hitAreasVisible = false;
+  private readonly dailyChallengeSession = new DailyChallengeSession();
 
   constructor(private readonly options: MonitorDesktopSceneOptions) {}
 
   enter(frame: SceneFrame): void {
     this.currentApp = null;
     this.hoveredItemId = null;
-    this.visibleState = frame.gameState.visibleState;
+    this.visibleState = frame.visibleState;
+    this.dailyChallengeSession.sync(frame.visibleState.dailyFlow.challenge);
     this.resetPointerState();
   }
 
@@ -131,7 +142,8 @@ export class MonitorDesktopScene implements Scene {
   }
 
   update(frame: SceneFrame): void {
-    this.visibleState = frame.gameState.visibleState;
+    this.visibleState = frame.visibleState;
+    this.dailyChallengeSession.sync(frame.visibleState.dailyFlow.challenge);
     const now = performance.now();
 
     if (this.packageFeedback?.expiresAt && this.packageFeedback.expiresAt <= now) {
@@ -149,7 +161,7 @@ export class MonitorDesktopScene implements Scene {
   }
 
   handleInput(event: NormalizedPointerEvent, frame: SceneFrame): void {
-    this.visibleState = frame.gameState.visibleState;
+    this.visibleState = frame.visibleState;
     const point = toDeskPoint(event.position, getDeskTransform(frame.viewport));
     const item = hitTestInteractiveItems(this.getInteractiveItems(), point);
 
@@ -218,19 +230,23 @@ export class MonitorDesktopScene implements Scene {
     }
   }
 
-  handleGameEvent(event: ProgramBEvent): void {
+  handleGameEvent(event: GameEvent): void {
     const message = this.getEventMessage(event.payload);
     const expiresAt = performance.now() + APP_EVENT_FEEDBACK_DURATION_MS;
 
     switch (event.type) {
       case "packageCreated":
+      case "wasteCreated":
       case "packageWasted":
+      case "packageChoiceRequired":
         this.packageFeedback = {
           type: event.type,
           message:
             message ||
             (event.type === "packageCreated"
               ? "数据包已生成。"
+              : event.type === "packageChoiceRequired"
+                ? "请选择一个配方继续封装。"
               : "本次封装未生成有效数据包。"),
           expiresAt,
         };
@@ -294,11 +310,19 @@ export class MonitorDesktopScene implements Scene {
         break;
       case "ui":
         if (this.currentApp) {
-          this.renderAppPage(context, this.currentApp, frame.gameState.visibleState);
+          this.renderAppPage(context, this.currentApp, frame.visibleState);
         } else {
           this.renderDesktopHome(context);
         }
         this.renderTaskbar(context);
+        renderDailyFlowOverlay(
+          context,
+          frame.visibleState,
+          this.currentApp,
+          this.hoveredItemId,
+          this.pressedItemId,
+          this.dailyChallengeSession,
+        );
         break;
       case "effects":
         this.renderEffects(context, frame);
@@ -354,6 +378,9 @@ export class MonitorDesktopScene implements Scene {
       selectedPackageId: this.visibleState.selectedPackageId,
       selectedBuyerId: this.visibleState.selectedBuyerId,
       slotCardIds: [...this.visibleState.workbench.slotCardIds.slice(0, 3)],
+      packageCandidateIds: this.visibleState.packageCandidates.map(
+        (candidate) => candidate.id,
+      ),
       draggingItemId: this.draggingItemId,
       highlightedSlotIndex: this.highlightedSlotIndex,
       disabledRawCardIds: this.visibleState.rawCards
@@ -381,6 +408,56 @@ export class MonitorDesktopScene implements Scene {
     if (!item?.clickable) {
       return;
     }
+    if (item.id === "daily-continue") {
+      this.options.commandPort.advanceDailyPhase();
+      return;
+    }
+    if (item.id === "daily-return-to-desk") {
+      this.closeMonitor();
+      return;
+    }
+    if (item.id.startsWith("daily-task-option:")) {
+      this.dailyChallengeSession.toggleOption(
+        item.id.slice("daily-task-option:".length),
+      );
+      return;
+    }
+    if (item.id === "daily-task-previous") {
+      this.dailyChallengeSession.movePrevious();
+      return;
+    }
+    if (item.id === "daily-task-next") {
+      this.dailyChallengeSession.moveNext();
+      return;
+    }
+    if (item.id === "daily-task-submit") {
+      const challenge = this.visibleState.dailyFlow.challenge;
+      const response = this.dailyChallengeSession.toResponse();
+      if (challenge && response) {
+        this.options.commandPort.submitDailyChallenge(challenge.id, response);
+      }
+      return;
+    }
+    if (item.id.startsWith("daily-choice:")) {
+      const choiceId = item.id.slice("daily-choice:".length);
+      if (
+        this.visibleState.dailyFlow.phase === "emotion" &&
+        (choiceId === "empathy" ||
+          choiceId === "anger" ||
+          choiceId === "numbness")
+      ) {
+        this.options.commandPort.selectEmotion(choiceId);
+        return;
+      }
+      const challenge = this.visibleState.dailyFlow.challenge;
+      if (challenge) {
+        this.options.commandPort.submitDailyChallengeChoice(
+          challenge.id,
+          choiceId,
+        );
+      }
+      return;
+    }
     if (item.id === "monitor-desktop-return") {
       this.closeMonitor();
       return;
@@ -405,6 +482,12 @@ export class MonitorDesktopScene implements Scene {
     }
     if (item.id === "data-create-package") {
       this.options.commandPort.createPackage();
+      return;
+    }
+    if (item.id.startsWith("data-package-candidate:")) {
+      this.options.commandPort.createPackage(
+        item.id.replace("data-package-candidate:", ""),
+      );
       return;
     }
     if (item.id.startsWith("trade-package:")) {
@@ -509,9 +592,12 @@ export class MonitorDesktopScene implements Scene {
   }
 
   private isCreatePackageDisabled(): boolean {
-    return !this.visibleState.workbench.slotCardIds
-      .slice(0, 3)
-      .some((cardId) => cardId !== null);
+    const slotCardIds = this.visibleState.workbench.slotCardIds.slice(0, 3);
+    return (
+      slotCardIds.length !== 3 ||
+      slotCardIds.some((cardId) => cardId === null) ||
+      new Set(slotCardIds).size !== 3
+    );
   }
 
   private isSubmitTransactionDisabled(): boolean {
@@ -534,6 +620,7 @@ export class MonitorDesktopScene implements Scene {
       transactionFeedback: this.transactionFeedback,
       riskFeedback: this.riskFeedback,
       riskFeedbackPulse: this.getRiskFeedbackPulse(),
+      packageCandidateCount: this.visibleState.packageCandidates.length,
     };
   }
 
@@ -836,6 +923,22 @@ export class MonitorDesktopScene implements Scene {
   }
 
   private getInteractiveItems(): readonly InteractiveItem<MonitorDesktopItemId>[] {
+    if (isDailyFlowOverlayVisible(this.visibleState, this.currentApp)) {
+      return getDailyFlowOverlayItems(
+        this.visibleState,
+        this.currentApp,
+        this.dailyChallengeSession,
+      ).map(
+        (item) => ({
+          id: item.id,
+          label: item.label,
+          hitArea: { type: "rect", rect: item.rect },
+          clickable: true,
+          draggable: false,
+          zIndex: 100,
+        }),
+      );
+    }
     const returnItem: InteractiveItem<MonitorDesktopItemId> = {
       id: "monitor-desktop-return",
       label: "关闭显示器并返回现实工位",
@@ -929,6 +1032,19 @@ export class MonitorDesktopScene implements Scene {
         clickable: !this.isCreatePackageDisabled(),
         draggable: false,
         zIndex: 35,
+      });
+      this.visibleState.packageCandidates.slice(0, 3).forEach((candidate, index) => {
+        appItems.push({
+          id: `data-package-candidate:${candidate.id}`,
+          label: `选择配方 ${candidate.label}`,
+          hitArea: {
+            type: "rect",
+            rect: MONITOR_APP_LAYOUT.dataProcessing.recipeChoiceRects[index],
+          },
+          clickable: true,
+          draggable: false,
+          zIndex: 90,
+        });
       });
     }
 

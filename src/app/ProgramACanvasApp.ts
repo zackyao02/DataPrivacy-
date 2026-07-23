@@ -13,19 +13,20 @@ import {
   type SceneId,
 } from "../core/types";
 import { DebugPanel, type DebugMetrics } from "../debug/DebugPanel";
+import {
+  CAdapter,
+  createMockCAdapter,
+  type BlackBoxLineStage,
+  type MockAudioPort,
+  type PackagePreviewOptions,
+} from "../adapters/CAdapter";
+import type { ProgramBAdapterPort } from "../adapters/BAdapter";
+import { MockBAdapter } from "../adapters/MockBAdapter";
 import type {
-  CreatePackageCommand,
-  GameCommand,
+  DailyChallengeResponse,
   GameCommandPort,
-  PlaceCardToSlotCommand,
-  RemoveCardFromSlotCommand,
-  SelectBuyerCommand,
-  SelectPackageCommand,
-  SubmitCardToOperationPadCommand,
-  SubmitTransactionCommand,
 } from "../game/GamePorts";
 import {
-  ProgramBBridge,
   type ProgramBEvent,
   type ProgramBEventListener,
   type ProgramBGameState,
@@ -33,8 +34,8 @@ import {
   type ProgramBStatePatch,
 } from "../game/ProgramBBridge";
 import type {
+  VisibleDailyPhase,
   VisibleGameState,
-  VisibleRiskStatus,
 } from "../game/VisibleGameState";
 import { LayerRenderer } from "../render/LayerRenderer";
 import { MonitorDesktopScene } from "../scenes/MonitorDesktopScene";
@@ -60,6 +61,11 @@ export interface ProgramADebugSnapshot {
   readonly monitorDesktop: ReturnType<MonitorDesktopScene["getDebugState"]>;
 }
 
+export interface ProgramAAdapterOptions {
+  readonly bAdapter?: ProgramBAdapterPort;
+  readonly cAdapter?: CAdapter;
+}
+
 export interface ProgramADebugApi {
   readonly scenes: readonly SceneId[];
   readonly layers: readonly RenderLayer[];
@@ -73,6 +79,13 @@ export interface ProgramADebugApi {
   selectPackage(packageId: string): void;
   selectBuyer(buyerId: string): void;
   submitTransaction(packageId: string, buyerId: string): void;
+  submitDailyChallengeChoice(challengeId: string, choiceId: string): void;
+  submitDailyChallenge(
+    challengeId: string,
+    response: DailyChallengeResponse,
+  ): void;
+  selectEmotion(emotion: "empathy" | "anger" | "numbness"): void;
+  advanceDailyPhase(): void;
   closeMonitor(): boolean;
   pause(): void;
   resume(): void;
@@ -81,10 +94,29 @@ export interface ProgramADebugApi {
   readonly programB: {
     getState(): Readonly<ProgramBGameState>;
     getVisibleState(): Readonly<VisibleGameState>;
+    setMockDay(day: number, phase?: VisibleDailyPhase): Readonly<ProgramBGameState>;
     patchState(patch: ProgramBStatePatch): Readonly<ProgramBGameState>;
     emit(type: string, payload?: unknown): ProgramBEvent;
     onStateChange(listener: ProgramBStateListener): () => void;
     onEvent(listener: ProgramBEventListener): () => void;
+  };
+  readonly programC: {
+    getHandledAudioEvents(): readonly string[];
+    findPackagePreviews(
+      cardIds: readonly string[],
+      options?: PackagePreviewOptions,
+    ): readonly unknown[];
+    pickNewsForPackage(packageType: string): unknown | null;
+    findChallengeByDay(day: number): unknown | null;
+    findDataCleaningIcon(iconHint: string): unknown | null;
+    pickPublicOpinionScript(packageType: string): unknown | null;
+    pickProfilePuzzleByDay(day: number): unknown | null;
+    pickBuyerNegotiationScript(packageType: string): unknown | null;
+    findDailyMonologueByDay(day: number): unknown | null;
+    pickBlackBoxLine(
+      stage: BlackBoxLineStage,
+      filters?: { readonly day?: number; readonly packageType?: string },
+    ): unknown | null;
   };
 }
 
@@ -96,7 +128,9 @@ export class ProgramACanvasApp {
   private readonly events = new TypedEventBus<ProgramAEventMap>();
   private readonly surface: CanvasSurface;
   private readonly input: InputManager;
-  private readonly programB = new ProgramBBridge(INITIAL_SCENE);
+  private readonly bAdapter: ProgramBAdapterPort;
+  private readonly cAdapter: CAdapter;
+  private readonly mockAudioPort: MockAudioPort | null;
   private readonly commandPort: GameCommandPort;
   private readonly monitorRoomScene: MonitorRoomScene;
   private readonly monitorDesktopScene: MonitorDesktopScene;
@@ -105,29 +139,23 @@ export class ProgramACanvasApp {
   private readonly loop: GameLoop;
   private readonly debugPanel: DebugPanel;
   private lifecycle: AppLifecycleState = "running";
+  private audioUnlocked = false;
   private latestFrame: SceneFrame;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
     debugRoot: HTMLElement,
+    adapterOptions: ProgramAAdapterOptions = {},
   ) {
+    const mockCAdapter = createMockCAdapter();
+    this.bAdapter =
+      adapterOptions.bAdapter ?? new MockBAdapter(INITIAL_SCENE);
+    this.cAdapter = adapterOptions.cAdapter ?? mockCAdapter.adapter;
+    this.mockAudioPort = adapterOptions.cAdapter ? null : mockCAdapter.audio;
+    this.commandPort = this.bAdapter;
     this.surface = new CanvasSurface(canvas);
     this.surface.resize();
 
-    this.commandPort = {
-      submitCardToOperationPad: (cardId) =>
-        this.submitCardToOperationPad(cardId),
-      placeCardToSlot: (cardId, slotIndex) =>
-        this.placeCardToSlot(cardId, slotIndex),
-      removeCardFromSlot: (slotIndex) =>
-        this.removeCardFromSlot(slotIndex),
-      createPackage: (preferredRecipeId) =>
-        this.createPackage(preferredRecipeId),
-      selectPackage: (packageId) => this.selectPackage(packageId),
-      selectBuyer: (buyerId) => this.selectBuyer(buyerId),
-      submitTransaction: (packageId, buyerId) =>
-        this.submitTransaction(packageId, buyerId),
-    };
     this.monitorRoomScene = new MonitorRoomScene({
       onEnterMonitorDesktop: () =>
         this.navigatePlayerScene("monitor-desktop"),
@@ -143,8 +171,9 @@ export class ProgramACanvasApp {
         this.canvas.style.cursor = cursor;
       },
     });
-    this.programB.onEvent((event) => {
+    this.bAdapter.onGameEvent((event) => {
       this.monitorDesktopScene.handleGameEvent(event);
+      this.cAdapter.handleGameEvent(event.type);
     });
 
     const scenes = SCENE_IDS.map((sceneId) => {
@@ -162,14 +191,21 @@ export class ProgramACanvasApp {
       scenes,
       INITIAL_SCENE,
       this.events,
-      this.programB,
+      (previousScene, currentScene) =>
+        this.bAdapter.setScene?.(previousScene, currentScene),
     );
     this.input = new InputManager(canvas, this.surface, (event) => {
+      if (!this.audioUnlocked && event.phase === "pointer-down") {
+        this.audioUnlocked = true;
+        void this.cAdapter.unlock().catch((error: unknown) => {
+          console.warn("[Program A] 程序 C 音频解锁失败。", error);
+        });
+      }
       this.events.emit("input:event", event);
       this.latestFrame = {
         ...this.latestFrame,
         input: this.input.getSnapshot(),
-        gameState: this.programB.getState(),
+        visibleState: this.bAdapter.getVisibleState(),
       };
       this.sceneManager.handleInput(event, this.latestFrame);
     });
@@ -249,7 +285,7 @@ export class ProgramACanvasApp {
     if (changed && this.lifecycle !== "running") {
       this.latestFrame = {
         ...this.latestFrame,
-        gameState: this.programB.getState(),
+        visibleState: this.bAdapter.getVisibleState(),
       };
       this.render();
     }
@@ -287,112 +323,28 @@ export class ProgramACanvasApp {
     if (this.lifecycle === "destroyed") {
       return;
     }
-
-    const command: SubmitCardToOperationPadCommand = {
-      type: "submitCardToOperationPad",
-      cardId,
-    };
-
-    this.logMockCommand(command, "submitCardToOperationPad(cardId)");
-    this.patchVisibleState({ operationPadCardId: cardId });
-    this.programB.emit("cardSubmittedToOperationPad", {
-      cardId,
-      message: "Mock Program B：数据文件已递交到操作托盘。",
-    });
+    this.commandPort.submitCardToOperationPad(cardId);
   }
 
   placeCardToSlot(cardId: string, slotIndex: number): void {
-    if (this.lifecycle === "destroyed" || slotIndex < 0 || slotIndex > 2) {
+    if (this.lifecycle === "destroyed") {
       return;
     }
-
-    const command: PlaceCardToSlotCommand = {
-      type: "placeCardToSlot",
-      cardId,
-      slotIndex,
-    };
-    this.logMockCommand(command, "placeCardToSlot(cardId, slotIndex)");
-
-    const visibleState = this.programB.getVisibleState();
-    const slotCardIds = Array.from(
-      { length: 3 },
-      (_, index) => visibleState.workbench.slotCardIds[index] ?? null,
-    );
-    slotCardIds[slotIndex] = cardId;
-    this.patchVisibleState({
-      workbench: { slotCardIds },
-    });
+    this.commandPort.placeCardToSlot(cardId, slotIndex);
   }
 
   removeCardFromSlot(slotIndex: number): void {
-    if (this.lifecycle === "destroyed" || slotIndex < 0 || slotIndex > 2) {
+    if (this.lifecycle === "destroyed") {
       return;
     }
-
-    const command: RemoveCardFromSlotCommand = {
-      type: "removeCardFromSlot",
-      slotIndex,
-    };
-    this.logMockCommand(command, "removeCardFromSlot(slotIndex)");
-
-    const visibleState = this.programB.getVisibleState();
-    const slotCardIds = Array.from(
-      { length: 3 },
-      (_, index) => visibleState.workbench.slotCardIds[index] ?? null,
-    );
-    slotCardIds[slotIndex] = null;
-    this.patchVisibleState({
-      workbench: { slotCardIds },
-    });
+    this.commandPort.removeCardFromSlot(slotIndex);
   }
 
   createPackage(preferredRecipeId?: string): void {
     if (this.lifecycle === "destroyed") {
       return;
     }
-
-    const command: CreatePackageCommand = {
-      type: "createPackage",
-      ...(preferredRecipeId ? { preferredRecipeId } : {}),
-    };
-    this.logMockCommand(command, "createPackage(preferredRecipeId?)");
-
-    const outcome =
-      this.programB.getState().data.mockPackageOutcome === "packageWasted"
-        ? "packageWasted"
-        : "packageCreated";
-
-    const packageId = `MOCK-PKG-${Math.floor(performance.now())}`;
-    const visibleState = this.programB.getVisibleState();
-    const hasVisiblePackageCapacity =
-      visibleState.processedPackages.length < 4;
-
-    if (outcome === "packageCreated" && hasVisiblePackageCapacity) {
-      this.patchVisibleState({
-        processedPackages: [
-          ...visibleState.processedPackages,
-          {
-            id: packageId,
-            label: preferredRecipeId
-              ? `Mock 封装 · ${preferredRecipeId}`
-              : "Mock 封装数据包",
-          },
-        ],
-      });
-    }
-
-    const payload =
-      outcome === "packageCreated"
-        ? {
-            packageId,
-            message: hasVisiblePackageCapacity
-              ? "Mock Program B：数据包已生成。"
-              : "Mock Program B：数据包已生成，可见区仅展示前 4 个。",
-          }
-        : {
-            message: "Mock Program B：本次封装未生成有效数据包。",
-          };
-    this.programB.emit(outcome, payload);
+    this.commandPort.createPackage(preferredRecipeId);
   }
 
   selectPackage(packageId: string): void {
@@ -400,12 +352,7 @@ export class ProgramACanvasApp {
       return;
     }
 
-    const command: SelectPackageCommand = {
-      type: "selectPackage",
-      packageId,
-    };
-    this.logMockCommand(command, "selectPackage(packageId)");
-    this.patchVisibleState({ selectedPackageId: packageId });
+    this.commandPort.selectPackage(packageId);
   }
 
   selectBuyer(buyerId: string): void {
@@ -413,12 +360,7 @@ export class ProgramACanvasApp {
       return;
     }
 
-    const command: SelectBuyerCommand = {
-      type: "selectBuyer",
-      buyerId,
-    };
-    this.logMockCommand(command, "selectBuyer(buyerId)");
-    this.patchVisibleState({ selectedBuyerId: buyerId });
+    this.commandPort.selectBuyer(buyerId);
   }
 
   submitTransaction(packageId: string, buyerId: string): void {
@@ -426,51 +368,42 @@ export class ProgramACanvasApp {
       return;
     }
 
-    const command: SubmitTransactionCommand = {
-      type: "submitTransaction",
-      packageId,
-      buyerId,
-    };
-    this.logMockCommand(command, "submitTransaction(packageId, buyerId)");
+    this.commandPort.submitTransaction(packageId, buyerId);
+  }
 
-    const gameState = this.programB.getState();
-    const succeeded =
-      gameState.data.mockTransactionOutcome !== "transactionFailed";
-    const eventType = succeeded
-      ? "transactionSuccess"
-      : "transactionFailed";
-    const summary = succeeded
-      ? "Mock Program B：交易请求已成功处理。"
-      : "Mock Program B：交易请求被拒绝。";
-    const requestedRiskStatus = gameState.data.mockRiskStatus;
-    const nextRiskStatus = this.isRiskStatus(requestedRiskStatus)
-      ? requestedRiskStatus
-      : gameState.visibleState.riskStatus;
-    const previousRiskStatus = gameState.visibleState.riskStatus;
-    const mockRiskLog = {
-      id: `MOCK-RISK-${Math.round(performance.now())}`,
-      status: nextRiskStatus,
-      message: succeeded
-        ? `Mock Program B：交易 ${packageId} → ${buyerId} 已完成。`
-        : `Mock Program B：交易 ${packageId} → ${buyerId} 未通过。`,
-    } as const;
+  submitDailyChallengeChoice(challengeId: string, choiceId: string): void {
+    if (this.lifecycle === "destroyed") {
+      return;
+    }
 
-    this.patchVisibleState({
-      lastTransactionResult: {
-        packageId,
-        buyerId,
-        status: succeeded ? "success" : "failed",
-        summary,
-      },
-      riskStatus: nextRiskStatus,
-      riskLogs: [mockRiskLog, ...gameState.visibleState.riskLogs].slice(0, 4),
-    });
-    this.programB.emit(eventType, { packageId, buyerId, message: summary });
-    this.programB.emit("riskChanged", {
-      previousStatus: previousRiskStatus,
-      riskStatus: nextRiskStatus,
-      message: `Mock Program B：风险状态更新为 ${nextRiskStatus}。`,
-    });
+    this.commandPort.submitDailyChallengeChoice(challengeId, choiceId);
+  }
+
+  submitDailyChallenge(
+    challengeId: string,
+    response: DailyChallengeResponse,
+  ): void {
+    if (this.lifecycle === "destroyed") {
+      return;
+    }
+
+    this.commandPort.submitDailyChallenge(challengeId, response);
+  }
+
+  selectEmotion(emotion: "empathy" | "anger" | "numbness"): void {
+    if (this.lifecycle === "destroyed") {
+      return;
+    }
+
+    this.commandPort.selectEmotion(emotion);
+  }
+
+  advanceDailyPhase(): void {
+    if (this.lifecycle === "destroyed") {
+      return;
+    }
+
+    this.commandPort.advanceDailyPhase();
   }
 
   closeMonitor(): boolean {
@@ -514,7 +447,7 @@ export class ProgramACanvasApp {
     this.input.destroy();
     this.surface.destroy();
     this.sceneManager.destroy(this.latestFrame);
-    this.programB.destroy();
+    this.bAdapter.destroy();
     this.debugPanel.destroy();
     this.events.clear();
 
@@ -531,7 +464,7 @@ export class ProgramACanvasApp {
     const snapshotFrame = {
       ...this.latestFrame,
       input: this.input.getSnapshot(),
-      gameState: this.programB.getState(),
+      visibleState: this.bAdapter.getVisibleState(),
     };
 
     return {
@@ -543,29 +476,10 @@ export class ProgramACanvasApp {
       viewport: this.getViewportSnapshot(),
       layers: this.renderer.getVisibility(),
       input: this.input.getSnapshot(),
-      gameState: this.programB.getState(),
+      gameState: this.getDebugGameState(),
       desk: this.monitorRoomScene.getDebugState(snapshotFrame),
       monitorDesktop: this.monitorDesktopScene.getDebugState(),
     };
-  }
-
-  private logMockCommand(command: GameCommand, signature: string): void {
-    console.info(`[Program A] ${signature}`, command);
-    this.programB.emit(`command:${command.type}`, command);
-  }
-
-  private patchVisibleState(patch: Partial<VisibleGameState>): void {
-    const visibleState = this.programB.getVisibleState();
-    this.programB.patchState({
-      visibleState: {
-        ...visibleState,
-        ...patch,
-      },
-    });
-  }
-
-  private isRiskStatus(value: unknown): value is VisibleRiskStatus {
-    return value === "normal" || value === "warning" || value === "critical";
   }
 
   private update(frame: LoopFrame): void {
@@ -577,7 +491,7 @@ export class ProgramACanvasApp {
     this.latestFrame = {
       ...this.latestFrame,
       input: this.input.getSnapshot(),
-      gameState: this.programB.getState(),
+      visibleState: this.bAdapter.getVisibleState(),
       viewport: this.surface.snapshot,
     };
     this.renderer.render(this.latestFrame);
@@ -600,7 +514,7 @@ export class ProgramACanvasApp {
       ...frame,
       viewport: this.surface.snapshot,
       input: this.input.getSnapshot(),
-      gameState: this.programB.getState(),
+      visibleState: this.bAdapter.getVisibleState(),
     };
   }
 
@@ -630,23 +544,101 @@ export class ProgramACanvasApp {
       selectBuyer: (buyerId: string) => this.selectBuyer(buyerId),
       submitTransaction: (packageId: string, buyerId: string) =>
         this.submitTransaction(packageId, buyerId),
+      submitDailyChallengeChoice: (challengeId: string, choiceId: string) =>
+        this.submitDailyChallengeChoice(challengeId, choiceId),
+      submitDailyChallenge: (
+        challengeId: string,
+        response: DailyChallengeResponse,
+      ) => this.submitDailyChallenge(challengeId, response),
+      selectEmotion: (emotion: "empathy" | "anger" | "numbness") =>
+        this.selectEmotion(emotion),
+      advanceDailyPhase: () => this.advanceDailyPhase(),
       closeMonitor: () => this.closeMonitor(),
       pause: () => this.pause(),
       resume: () => this.resume(),
       destroy: () => this.destroy(),
       getSnapshot: () => this.getSnapshot(),
       programB: Object.freeze({
-        getState: () => this.programB.getState(),
-        getVisibleState: () => this.programB.getVisibleState(),
-        patchState: (patch: ProgramBStatePatch) =>
-          this.programB.patchState(patch),
-        emit: (type: string, payload?: unknown) =>
-          this.programB.emit(type, payload),
-        onStateChange: (listener: ProgramBStateListener) =>
-          this.programB.onStateChange(listener),
+        getState: () => this.getDebugGameState(),
+        getVisibleState: () => this.bAdapter.getVisibleState(),
+        setMockDay: (day: number, phase?: VisibleDailyPhase) => {
+          const mockAdapter = this.getMockBAdapter();
+          return mockAdapter
+            ? mockAdapter.setDebugDay(day, phase)
+            : this.getDebugGameState();
+        },
+        patchState: (patch: ProgramBStatePatch) => {
+          const mockAdapter = this.getMockBAdapter();
+          return mockAdapter
+            ? mockAdapter.patchDebugState(patch)
+            : this.getDebugGameState();
+        },
+        emit: (type: string, payload?: unknown) => {
+          const mockAdapter = this.getMockBAdapter();
+          return mockAdapter
+            ? mockAdapter.emitDebugEvent(type, payload)
+            : Object.freeze({ type, payload, timestamp: performance.now() });
+        },
+        onStateChange: (listener: ProgramBStateListener) => {
+          const mockAdapter = this.getMockBAdapter();
+          return mockAdapter
+            ? mockAdapter.onDebugStateChange(listener)
+            : this.bAdapter.onVisibleStateChange(() =>
+                listener(this.getDebugGameState()),
+              );
+        },
         onEvent: (listener: ProgramBEventListener) =>
-          this.programB.onEvent(listener),
+          this.bAdapter.onGameEvent(listener),
       }),
+      programC: Object.freeze({
+        getHandledAudioEvents: () =>
+          this.mockAudioPort?.getHandledEvents() ?? [],
+        findPackagePreviews: (
+          cardIds: readonly string[],
+          options?: PackagePreviewOptions,
+        ) => this.cAdapter.findPackagePreviews(cardIds, options),
+        pickNewsForPackage: (packageType: string) =>
+          this.cAdapter.pickNewsForPackage(packageType),
+        findChallengeByDay: (day: number) =>
+          this.cAdapter.findChallengeByDay(day),
+        findDataCleaningIcon: (iconHint: string) =>
+          this.cAdapter.findDataCleaningIcon(iconHint),
+        pickPublicOpinionScript: (packageType: string) =>
+          this.cAdapter.pickPublicOpinionScript(packageType),
+        pickProfilePuzzleByDay: (day: number) =>
+          this.cAdapter.pickProfilePuzzleByDay(day),
+        pickBuyerNegotiationScript: (packageType: string) =>
+          this.cAdapter.pickBuyerNegotiationScript(packageType),
+        findDailyMonologueByDay: (day: number) =>
+          this.cAdapter.findDailyMonologueByDay(day),
+        pickBlackBoxLine: (
+          stage: BlackBoxLineStage,
+          filters?: { readonly day?: number; readonly packageType?: string },
+        ) => this.cAdapter.pickBlackBoxLine(stage, filters),
+      }),
+    });
+  }
+
+  private getMockBAdapter(): MockBAdapter | null {
+    return this.bAdapter instanceof MockBAdapter ? this.bAdapter : null;
+  }
+
+  private getDebugGameState(): Readonly<ProgramBGameState> {
+    const mockAdapter = this.getMockBAdapter();
+
+    if (mockAdapter) {
+      return mockAdapter.getDebugState();
+    }
+
+    return Object.freeze({
+      schemaVersion: 1,
+      currentScene: this.sceneManager.currentId,
+      previousScene: null,
+      phase: "real-adapter",
+      visibleState: this.bAdapter.getVisibleState(),
+      flags: Object.freeze({}),
+      counters: Object.freeze({}),
+      data: Object.freeze({}),
     });
   }
 

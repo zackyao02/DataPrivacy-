@@ -120,6 +120,13 @@ export const MONITOR_APP_LAYOUT = Object.freeze({
       height: 76,
     })) as readonly Rect[],
     createButton: { x: 115, y: 450, width: 160, height: 30 } satisfies Rect,
+    recipeChoicePanel: { x: 42, y: 330, width: 306, height: 232 } satisfies Rect,
+    recipeChoiceRects: Array.from({ length: 3 }, (_, index) => ({
+      x: 58,
+      y: 392 + index * 50,
+      width: 274,
+      height: 42,
+    })) as readonly Rect[],
   },
   buyerTrade: {
     packageRects: Array.from({ length: 4 }, (_, index) => ({

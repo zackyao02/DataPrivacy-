@@ -5,7 +5,7 @@ import type {
   SceneId,
   ViewportSnapshot,
 } from "../core/types";
-import type { ProgramBGameState } from "../game/ProgramBBridge";
+import type { VisibleGameState } from "../game/VisibleGameState";
 
 export interface SceneFrame {
   readonly deltaTime: number;
@@ -13,7 +13,7 @@ export interface SceneFrame {
   readonly frameNumber: number;
   readonly viewport: ViewportSnapshot;
   readonly input: InputSnapshot;
-  readonly gameState: Readonly<ProgramBGameState>;
+  readonly visibleState: Readonly<VisibleGameState>;
 }
 
 export interface Scene {

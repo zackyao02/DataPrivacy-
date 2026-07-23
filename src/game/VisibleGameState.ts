@@ -1,5 +1,74 @@
 export type VisibleRiskStatus = "normal" | "warning" | "critical";
 
+export interface VisibleRiskMetrics {
+  readonly regulatory: number | null;
+  readonly publicOpinion: number | null;
+  readonly internalSuspicion: number | null;
+}
+
+export type VisibleDailyPhase =
+  | "briefing"
+  | "challenge"
+  | "processing"
+  | "trading"
+  | "news"
+  | "emotion"
+  | "monologue"
+  | "ending";
+
+export type VisibleDailyChallengeKind =
+  | "protocol-match"
+  | "data-cleaning"
+  | "public-opinion"
+  | "profile-puzzle"
+  | "buyer-negotiation"
+  | "protocol-scan"
+  | "final-package";
+
+export interface VisibleDailyChoice {
+  readonly id: string;
+  readonly label: string;
+  readonly description?: string;
+}
+
+export interface VisibleDailyChallengeTask {
+  readonly id: string;
+  readonly prompt: string;
+  readonly selectionMode: "single" | "multiple";
+  readonly minSelections: number;
+  readonly maxSelections: number | null;
+  readonly options: readonly VisibleDailyChoice[];
+}
+
+export interface VisibleDailyChallenge {
+  readonly id: string;
+  readonly day: number;
+  readonly kind: VisibleDailyChallengeKind;
+  readonly title: string;
+  readonly briefing: string;
+  readonly objective: string;
+  readonly requiredApp: "data-processing" | "buyer-trade";
+  readonly choices: readonly VisibleDailyChoice[];
+  readonly tasks: readonly VisibleDailyChallengeTask[];
+  readonly status: "ready" | "active" | "success" | "failed";
+  readonly feedback: string | null;
+}
+
+export interface VisibleMonologue {
+  readonly title: string;
+  readonly speaker: string;
+  readonly textSegments: readonly string[];
+  readonly closingCue: string;
+}
+
+export interface VisibleDailyFlow {
+  readonly phase: VisibleDailyPhase;
+  readonly challenge: VisibleDailyChallenge | null;
+  readonly blackBoxLine: string | null;
+  readonly emotionPrompt: string | null;
+  readonly monologue: VisibleMonologue | null;
+}
+
 export interface VisibleDataCard {
   readonly id: string;
   readonly title: string;
@@ -11,6 +80,12 @@ export interface VisibleDataCard {
 export interface VisibleProcessedPackage {
   readonly id: string;
   readonly label: string;
+}
+
+export interface VisiblePackageCandidate {
+  readonly id: string;
+  readonly label: string;
+  readonly summary: string;
 }
 
 export interface VisibleBuyer {
@@ -37,11 +112,44 @@ export interface VisibleYesterdayNews {
   readonly dateLabel: string;
 }
 
+export interface VisibleArchiveEntry {
+  readonly id: string;
+  readonly title: string;
+  readonly summary: string;
+  readonly day?: number;
+  readonly status?: VisibleRiskStatus | "success" | "failed" | "pending";
+}
+
+export interface VisibleBadge {
+  readonly id: string;
+  readonly label: string;
+  readonly unlocked: boolean;
+}
+
+export interface VisibleEndingReport {
+  readonly title: string;
+  readonly endingTitle: string;
+  readonly endingBody: string;
+  readonly rating: string;
+  readonly literacyRating: string;
+  readonly playerNickname: string;
+  readonly days: number;
+  readonly totalEarnings: number | null;
+  readonly totalConscienceLost: number | null;
+  readonly totalTransactions: number | null;
+  readonly comment: string;
+  readonly advice: string;
+}
+
 export interface VisibleGameState {
   readonly day: number;
+  readonly clarityScore: number;
+  readonly conscience: number;
+  readonly dailyFlow: VisibleDailyFlow;
   readonly rawCards: readonly VisibleDataCard[];
   readonly operationPadCardId: string | null;
   readonly processedPackages: readonly VisibleProcessedPackage[];
+  readonly packageCandidates: readonly VisiblePackageCandidate[];
   readonly workbench: {
     readonly slotCardIds: readonly (string | null)[];
   };
@@ -52,70 +160,84 @@ export interface VisibleGameState {
   readonly riskLogs: readonly VisibleRiskLog[];
   readonly consequenceSummary: string | null;
   readonly yesterdayNews: VisibleYesterdayNews | null;
+  readonly operationLogs: readonly VisibleArchiveEntry[];
+  readonly newsArchive: readonly VisibleYesterdayNews[];
+  readonly blackBoxArchive: readonly VisibleArchiveEntry[];
+  readonly monologueArchive: readonly VisibleArchiveEntry[];
+  readonly badges: readonly VisibleBadge[];
   readonly riskStatus: VisibleRiskStatus;
+  readonly riskMetrics: VisibleRiskMetrics;
   readonly monitor: {
     readonly desktopAvailable: boolean;
   };
   readonly ending: {
     readonly available: boolean;
+    readonly report: VisibleEndingReport | null;
   };
 }
 
 export const MOCK_VISIBLE_STATE: Readonly<VisibleGameState> =
   freezeVisibleGameState({
     day: 1,
+    clarityScore: 0,
+    conscience: 0,
+    dailyFlow: {
+      phase: "processing",
+      challenge: null,
+      blackBoxLine: "Keep the line moving. Do not ask what the files become.",
+      emotionPrompt: null,
+      monologue: null,
+    },
     rawCards: [
       {
         id: "RAW-001",
-        title: "访客登记片段",
-        summary: "办公区访客时间与接待记录。",
-        sensitivity: "low",
+        title: "Commute Trail",
+        summary: "Location pings across home, office, and night routes.",
+        sensitivity: "high",
       },
       {
         id: "RAW-002",
-        title: "账户重置记录",
-        summary: "近期账户验证与重置请求摘要。",
+        title: "Late Payment Pattern",
+        summary: "Small credit failures and purchase timing fragments.",
         sensitivity: "medium",
       },
       {
         id: "RAW-003",
-        title: "配送轨迹样本",
-        summary: "多个收件地址与时间窗口。",
+        title: "Contact Graph",
+        summary: "Frequent calls and social links from one user cluster.",
         sensitivity: "high",
       },
       {
         id: "RAW-004",
-        title: "工位门禁摘要",
-        summary: "楼层门禁刷卡与异常重试片段。",
-        sensitivity: "low",
+        title: "Health Reminder Log",
+        summary: "Medication reminders, sleep time, and step-count hints.",
+        sensitivity: "high",
       },
       {
         id: "RAW-005",
-        title: "设备连接快照",
-        summary: "办公网络中的设备连接与活跃时段。",
+        title: "Device Login Trace",
+        summary: "Browser fingerprints and office network login windows.",
         sensitivity: "medium",
-      },
-      {
-        id: "RAW-006",
-        title: "紧急联系人索引",
-        summary: "账户资料中的联系人关系与更新记录。",
-        sensitivity: "high",
-        disabled: true,
       },
     ],
     operationPadCardId: null,
     processedPackages: [
-      { id: "PKG-001", label: "通勤轨迹组合" },
-      { id: "PKG-002", label: "账户行为摘要" },
-      { id: "PKG-003", label: "访客关系图" },
+      { id: "PKG-001", label: "Route Bundle" },
+      { id: "PKG-002", label: "Credit Profile" },
+      { id: "PKG-003", label: "Contact Graph Pack" },
+      { id: "PKG-004", label: "Health Signal Pack" },
+      { id: "PKG-005", label: "Preference Pack" },
     ],
+    packageCandidates: [],
     workbench: {
       slotCardIds: ["RAW-001", "RAW-002", null],
     },
     buyers: [
-      { id: "BUYER-ALPHA", displayName: "灰桥咨询" },
-      { id: "BUYER-BETA", displayName: "穹顶保险" },
-      { id: "BUYER-GAMMA", displayName: "西区物流" },
+      { id: "BUYER-ALPHA", displayName: "Greybridge Consulting" },
+      { id: "BUYER-BETA", displayName: "Rooftop Insurance" },
+      { id: "BUYER-GAMMA", displayName: "West District Logistics" },
+      { id: "BUYER-DELTA", displayName: "Signal Harvest Lab" },
+      { id: "BUYER-EPSILON", displayName: "Bright Market Group" },
     ],
     selectedPackageId: "PKG-002",
     selectedBuyerId: "BUYER-BETA",
@@ -123,39 +245,93 @@ export const MOCK_VISIBLE_STATE: Readonly<VisibleGameState> =
       packageId: "PKG-001",
       buyerId: "BUYER-ALPHA",
       status: "success",
-      summary: "上一笔交易已完成，风险记录已更新。",
+      summary: "Last transaction sealed; tomorrow's paper is now available.",
     },
     riskLogs: [
       {
         id: "RISK-001",
         status: "normal",
-        message: "基础审计记录已建立。",
+        message: "Audit trail initialized.",
       },
       {
         id: "RISK-002",
         status: "warning",
-        message: "轨迹类数据触发额外关注。",
+        message: "Location data increased public exposure risk.",
       },
       {
         id: "RISK-003",
         status: "warning",
-        message: "买家关联度高于日常均值。",
+        message: "Buyer overlap detected in recent transactions.",
+      },
+      {
+        id: "RISK-004",
+        status: "critical",
+        message: "High sensitivity package prepared for resale.",
       },
     ],
     consequenceSummary:
-      "昨日数据交易后，旧城区相关服务出现了新的异常审查记录。",
+      "A local service report changed after yesterday's sale. Program B owns the final wording.",
     yesterdayNews: {
-      title: "旧城区数据服务中心完成夜间维护",
+      title: "Old District Service Center Finishes Overnight Maintenance",
       summary:
-        "公司称维护期间未影响客户服务。附近居民则表示，凌晨仍能听见机房设备持续运转。",
-      dateLabel: "昨日晨报 · 占位数据",
+        "The article should be generated from the previous day's sold package and buyer.",
+      dateLabel: "Yesterday News",
     },
+    operationLogs: [
+      {
+        id: "LOG-001",
+        title: "Card moved",
+        summary: "RAW-001 placed into slot 01.",
+        day: 1,
+        status: "pending",
+      },
+      {
+        id: "LOG-002",
+        title: "Package sealed",
+        summary: "PKG-001 generated from three raw cards.",
+        day: 1,
+        status: "success",
+      },
+    ],
+    newsArchive: [
+      {
+        title: "Old District Service Center Finishes Overnight Maintenance",
+        summary: "Mock entry; Program C will provide final text.",
+        dateLabel: "Day 2 Morning",
+      },
+    ],
+    blackBoxArchive: [
+      {
+        id: "BB-001",
+        title: "Black Box",
+        summary: "Treat these as files, not people.",
+        day: 1,
+      },
+    ],
+    monologueArchive: [
+      {
+        id: "MONO-001",
+        title: "End of Day 1",
+        summary: "The player notices the work becoming easier to justify.",
+        day: 1,
+      },
+    ],
+    badges: [
+      { id: "badge-first-seal", label: "First Seal", unlocked: true },
+      { id: "badge-clear-signal", label: "Clear Signal", unlocked: false },
+    ],
     riskStatus: "warning",
+    riskMetrics: {
+      regulatory: 42,
+      publicOpinion: 55,
+      internalSuspicion: 36,
+    },
     monitor: {
       desktopAvailable: true,
     },
     ending: {
       available: false,
+      report: null,
     },
   });
 
@@ -164,11 +340,45 @@ export function freezeVisibleGameState(
 ): Readonly<VisibleGameState> {
   return Object.freeze({
     ...state,
+    dailyFlow: Object.freeze({
+      ...state.dailyFlow,
+      challenge: state.dailyFlow.challenge
+        ? Object.freeze({
+            ...state.dailyFlow.challenge,
+            choices: Object.freeze(
+              state.dailyFlow.challenge.choices.map((choice) =>
+                Object.freeze({ ...choice }),
+              ),
+            ),
+            tasks: Object.freeze(
+              state.dailyFlow.challenge.tasks.map((task) =>
+                Object.freeze({
+                  ...task,
+                  options: Object.freeze(
+                    task.options.map((option) => Object.freeze({ ...option })),
+                  ),
+                }),
+              ),
+            ),
+          })
+        : null,
+      monologue: state.dailyFlow.monologue
+        ? Object.freeze({
+            ...state.dailyFlow.monologue,
+            textSegments: Object.freeze([
+              ...state.dailyFlow.monologue.textSegments,
+            ]),
+          })
+        : null,
+    }),
     rawCards: Object.freeze(
       state.rawCards.map((card) => Object.freeze({ ...card })),
     ),
     processedPackages: Object.freeze(
       state.processedPackages.map((item) => Object.freeze({ ...item })),
+    ),
+    packageCandidates: Object.freeze(
+      state.packageCandidates.map((item) => Object.freeze({ ...item })),
     ),
     workbench: Object.freeze({
       slotCardIds: Object.freeze([...state.workbench.slotCardIds]),
@@ -185,7 +395,28 @@ export function freezeVisibleGameState(
     yesterdayNews: state.yesterdayNews
       ? Object.freeze({ ...state.yesterdayNews })
       : null,
+    operationLogs: Object.freeze(
+      state.operationLogs.map((log) => Object.freeze({ ...log })),
+    ),
+    newsArchive: Object.freeze(
+      state.newsArchive.map((news) => Object.freeze({ ...news })),
+    ),
+    blackBoxArchive: Object.freeze(
+      state.blackBoxArchive.map((entry) => Object.freeze({ ...entry })),
+    ),
+    monologueArchive: Object.freeze(
+      state.monologueArchive.map((entry) => Object.freeze({ ...entry })),
+    ),
+    badges: Object.freeze(
+      state.badges.map((badge) => Object.freeze({ ...badge })),
+    ),
+    riskMetrics: Object.freeze({ ...state.riskMetrics }),
     monitor: Object.freeze({ ...state.monitor }),
-    ending: Object.freeze({ ...state.ending }),
+    ending: Object.freeze({
+      ...state.ending,
+      report: state.ending.report
+        ? Object.freeze({ ...state.ending.report })
+        : null,
+    }),
   });
 }

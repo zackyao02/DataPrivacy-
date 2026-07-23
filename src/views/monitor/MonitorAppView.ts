@@ -1,5 +1,5 @@
 import type { Point } from "../../core/types";
-import type { GameEventType } from "../../game/GamePorts";
+import type { ProgramAFeedbackEventType } from "../../game/GamePorts";
 import type {
   VisibleDataCard,
   VisibleGameState,
@@ -12,7 +12,7 @@ import {
 import type { Rect } from "../../scenes/desk/InteractiveItem";
 
 export interface MonitorAppFeedback {
-  readonly type: GameEventType;
+  readonly type: ProgramAFeedbackEventType;
   readonly message: string;
   readonly expiresAt: number;
 }
@@ -29,6 +29,7 @@ export interface MonitorAppViewState {
   readonly transactionFeedback: MonitorAppFeedback | null;
   readonly riskFeedback: MonitorAppFeedback | null;
   readonly riskFeedbackPulse: number;
+  readonly packageCandidateCount: number;
 }
 
 interface ItemVisualState {
@@ -98,11 +99,12 @@ function renderDataProcessing(
   const rawCards = state.rawCards.slice(0, 6);
   const slotCardIds = state.workbench.slotCardIds.slice(0, 3);
   const packages = state.processedPackages.slice(0, 4);
+  const expectedRawCards = getExpectedRawCardCount(state.day);
 
   drawSectionPanel(
     context,
     { x: 26, y: 118, width: 338, height: 178 },
-    `原始数据卡 ${rawCards.length}/6`,
+    `原始数据卡 ${state.rawCards.length}/${expectedRawCards}`,
     accent,
   );
   MONITOR_APP_LAYOUT.dataProcessing.rawCardRects.forEach((rect, index) => {
@@ -170,7 +172,7 @@ function renderDataProcessing(
   drawSectionPanel(
     context,
     { x: 26, y: 490, width: 338, height: 266 },
-    `已生成数据包 ${packages.length}/4`,
+    `已生成数据包 ${state.processedPackages.length}/6`,
     accent,
   );
   for (let index = 0; index < 4; index += 1) {
@@ -188,6 +190,115 @@ function renderDataProcessing(
       drawEmptyRecord(context, rect, "空数据包位");
     }
   }
+
+  if (state.packageCandidates.length > 0) {
+    drawRecipeChoiceOverlay(context, state, viewState, accent);
+  }
+
+  drawOverflowNote(
+    context,
+    state.rawCards.length > rawCards.length
+      ? `+${state.rawCards.length - rawCards.length} raw cards queued`
+      : null,
+    334,
+    282,
+  );
+  drawOverflowNote(
+    context,
+    state.processedPackages.length > packages.length
+      ? `+${state.processedPackages.length - packages.length} packages in inventory`
+      : null,
+    334,
+    744,
+  );
+}
+
+function drawRecipeChoiceOverlay(
+  context: CanvasRenderingContext2D,
+  state: Readonly<VisibleGameState>,
+  viewState: MonitorAppViewState,
+  accent: string,
+): void {
+  const candidates = state.packageCandidates.slice(0, 3);
+  const panel = {
+    ...MONITOR_APP_LAYOUT.dataProcessing.recipeChoicePanel,
+    height: 82 + candidates.length * 50,
+  };
+  context.save();
+  context.fillStyle = "rgba(9, 20, 29, 0.66)";
+  context.fillRect(16, 106, 358, 650);
+  context.shadowColor = "rgba(0, 0, 0, 0.48)";
+  context.shadowBlur = 12;
+  context.shadowOffsetY = 5;
+  context.fillStyle = "#e2e6e2";
+  context.strokeStyle = "#233f58";
+  context.lineWidth = 2;
+  context.fillRect(panel.x, panel.y, panel.width, panel.height);
+  context.strokeRect(panel.x + 1, panel.y + 1, panel.width - 2, panel.height - 2);
+  context.shadowColor = "transparent";
+  context.fillStyle = "#173d82";
+  context.fillRect(panel.x + 2, panel.y + 2, panel.width - 4, 42);
+  context.fillStyle = "#f3f4e9";
+  context.font = "700 13px sans-serif";
+  context.textAlign = "left";
+  context.textBaseline = "middle";
+  context.fillText("选择封装配方", panel.x + 14, panel.y + 23);
+  context.fillStyle = "#33485b";
+  context.font = "600 8px sans-serif";
+  context.textBaseline = "top";
+  context.fillText("同一组数据可匹配多个结果，请选择一个继续。", panel.x + 14, panel.y + 52);
+
+  candidates.forEach((candidate, index) => {
+    const rect = MONITOR_APP_LAYOUT.dataProcessing.recipeChoiceRects[index];
+    const itemId = `data-package-candidate:${candidate.id}`;
+    drawRecipeCandidate(
+      context,
+      rect,
+      candidate.label,
+      candidate.summary,
+      accent,
+      {
+        hovered: viewState.hoveredItemId === itemId,
+        pressed: viewState.pressedItemId === itemId,
+      },
+    );
+  });
+  context.restore();
+}
+
+function drawRecipeCandidate(
+  context: CanvasRenderingContext2D,
+  rect: Rect,
+  label: string,
+  summary: string,
+  accent: string,
+  state: ItemVisualState,
+): void {
+  context.save();
+  if (state.pressed) {
+    context.translate(0, 1);
+  }
+  context.fillStyle = state.hovered ? "#f5f6ee" : "#cfd7d7";
+  context.strokeStyle = state.hovered ? accent : "#657780";
+  context.lineWidth = state.hovered ? 2 : 1;
+  context.fillRect(rect.x, rect.y, rect.width, rect.height);
+  context.strokeRect(rect.x + 0.5, rect.y + 0.5, rect.width - 1, rect.height - 1);
+  context.fillStyle = accent;
+  context.fillRect(rect.x + 7, rect.y + 7, 5, rect.height - 14);
+  context.fillStyle = "#243d54";
+  context.font = "700 9px sans-serif";
+  context.textAlign = "left";
+  context.textBaseline = "top";
+  context.fillText(fitText(context, label, rect.width - 34), rect.x + 19, rect.y + 7);
+  context.fillStyle = "#536873";
+  context.font = "600 7px sans-serif";
+  context.fillText(fitText(context, summary, rect.width - 34), rect.x + 19, rect.y + 23);
+  context.fillStyle = "#243d54";
+  context.font = "700 12px sans-serif";
+  context.textAlign = "right";
+  context.textBaseline = "middle";
+  context.fillText("›", rect.x + rect.width - 10, rect.y + rect.height / 2);
+  context.restore();
 }
 
 function renderBuyerTrade(
@@ -202,7 +313,7 @@ function renderBuyerTrade(
   drawSectionPanel(
     context,
     { x: 26, y: 118, width: 338, height: 200 },
-    `可出售数据包 ${packages.length}/4`,
+    `可出售数据包 ${state.processedPackages.length}/6`,
     accent,
   );
   MONITOR_APP_LAYOUT.buyerTrade.packageRects.forEach((rect, index) => {
@@ -223,7 +334,7 @@ function renderBuyerTrade(
   drawSectionPanel(
     context,
     { x: 26, y: 328, width: 338, height: 142 },
-    `今日买家 ${buyers.length}/3`,
+    `今日买家 ${state.buyers.length}/5`,
     accent,
   );
   MONITOR_APP_LAYOUT.buyerTrade.buyerRects.forEach((rect, index) => {
@@ -316,6 +427,23 @@ function renderBuyerTrade(
     );
   }
   context.restore();
+
+  drawOverflowNote(
+    context,
+    state.processedPackages.length > packages.length
+      ? `+${state.processedPackages.length - packages.length} packages queued`
+      : null,
+    334,
+    306,
+  );
+  drawOverflowNote(
+    context,
+    state.buyers.length > buyers.length
+      ? `+${state.buyers.length - buyers.length} buyers queued`
+      : null,
+    334,
+    458,
+  );
 }
 
 function renderRiskRecord(
@@ -331,6 +459,20 @@ function renderRiskRecord(
     state.consequenceSummary?.trim() ||
     state.yesterdayNews?.summary ||
     "暂无后果摘要。";
+  const archiveLines = [
+    state.operationLogs[0]
+      ? `操作记录 ${state.operationLogs.length} · ${state.operationLogs[0].title}`
+      : "操作记录 · 等待数据",
+    state.newsArchive[0]
+      ? `新闻归档 ${state.newsArchive.length} · ${state.newsArchive[0].title}`
+      : "新闻归档 · 等待数据",
+    state.blackBoxArchive[0]
+      ? `黑箱指令 ${state.blackBoxArchive.length} · ${state.blackBoxArchive[0].summary}`
+      : "黑箱指令 · 等待数据",
+    state.monologueArchive[0]
+      ? `每日独白 ${state.monologueArchive.length} · ${state.monologueArchive[0].title}`
+      : "每日独白 · 等待数据",
+  ];
 
   drawSectionPanel(
     context,
@@ -356,10 +498,19 @@ function renderRiskRecord(
     : 2;
   context.strokeRect(40.5, 154.5, 309, 53);
   context.fillStyle = riskColor;
-  context.font = "700 19px ui-monospace, Consolas, monospace";
+  context.font = "700 10px ui-monospace, Consolas, monospace";
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillText(getRiskLabel(state.riskStatus), 195, 181);
+  context.fillText(getRiskLabel(state.riskStatus), 195, 164);
+  drawRiskMetric(context, "监管", state.riskMetrics.regulatory, 178, riskColor);
+  drawRiskMetric(context, "舆情", state.riskMetrics.publicOpinion, 190, riskColor);
+  drawRiskMetric(
+    context,
+    "内部怀疑",
+    state.riskMetrics.internalSuspicion,
+    202,
+    riskColor,
+  );
   context.fillStyle = viewState.riskFeedback ? riskColor : "#677780";
   context.font = "600 7px ui-monospace, Consolas, monospace";
   context.textBaseline = "top";
@@ -450,7 +601,12 @@ function renderRiskRecord(
   context.save();
   context.fillStyle = "#3e4e5d";
   context.font = "500 10px sans-serif";
-  drawWrappedText(context, consequence, 40, 650, 308, 17, 5);
+  drawWrappedText(context, consequence, 40, 650, 308, 15, 3);
+  context.fillStyle = "#536873";
+  context.font = "600 7px ui-monospace, Consolas, monospace";
+  archiveLines.forEach((line, index) => {
+    context.fillText(fitText(context, line, 308), 40, 704 + index * 11);
+  });
   context.restore();
 }
 
@@ -776,8 +932,12 @@ function drawInlineFeedback(
 ): void {
   context.save();
   context.fillStyle = feedback
-    ? feedback.type === "packageWasted" || feedback.type === "transactionFailed"
+    ? feedback.type === "wasteCreated" ||
+      feedback.type === "packageWasted" ||
+      feedback.type === "transactionFailed"
       ? "#9d5552"
+      : feedback.type === "packageChoiceRequired"
+        ? "#9a6a24"
       : "#397458"
     : "#6f7c82";
   context.font = "700 7px ui-monospace, Consolas, monospace";
@@ -791,6 +951,34 @@ function drawInlineFeedback(
     y,
     320,
   );
+  context.restore();
+}
+
+function getExpectedRawCardCount(day: number): number {
+  if (day <= 1) {
+    return 5;
+  }
+  if (day >= 7) {
+    return 1;
+  }
+  return 8;
+}
+
+function drawOverflowNote(
+  context: CanvasRenderingContext2D,
+  message: string | null,
+  x: number,
+  y: number,
+): void {
+  if (!message) {
+    return;
+  }
+  context.save();
+  context.fillStyle = "#425867";
+  context.font = "700 7px ui-monospace, Consolas, monospace";
+  context.textAlign = "right";
+  context.textBaseline = "middle";
+  context.fillText(message, x, y);
   context.restore();
 }
 
@@ -814,6 +1002,29 @@ function getRiskLabel(status: VisibleRiskStatus): string {
     warning: "WARNING · 警告",
     critical: "CRITICAL · 严重",
   }[status];
+}
+
+function drawRiskMetric(
+  context: CanvasRenderingContext2D,
+  label: string,
+  value: number | null,
+  y: number,
+  color: string,
+): void {
+  const normalized = value === null ? 0 : Math.max(0, Math.min(100, value));
+  context.textAlign = "left";
+  context.textBaseline = "middle";
+  context.font = "600 7px ui-monospace, Consolas, monospace";
+  context.fillStyle = "#354650";
+  context.fillText(label, 50, y);
+  context.fillStyle = "#a7b4b7";
+  context.fillRect(104, y - 2, 190, 4);
+  context.fillStyle = color;
+  context.fillRect(104, y - 2, 1.9 * normalized, 4);
+  context.textAlign = "right";
+  context.fillStyle = "#354650";
+  context.fillText(value === null ? "-" : value.toFixed(1), 340, y);
+  context.textAlign = "center";
 }
 
 function fitText(

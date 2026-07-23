@@ -5,7 +5,6 @@ import type {
   RenderLayer,
   SceneId,
 } from "../core/types";
-import { ProgramBBridge } from "../game/ProgramBBridge";
 import type { Scene, SceneFrame } from "./Scene";
 
 export class SceneManager {
@@ -17,7 +16,10 @@ export class SceneManager {
     scenes: readonly Scene[],
     initialScene: SceneId,
     private readonly events: TypedEventBus<ProgramAEventMap>,
-    private readonly programB: ProgramBBridge,
+    private readonly onSceneTransition?: (
+      previousScene: SceneId,
+      currentScene: SceneId,
+    ) => void,
   ) {
     scenes.forEach((scene) => this.scenes.set(scene.id, scene));
 
@@ -59,10 +61,7 @@ export class SceneManager {
     this.currentScene = nextScene;
     this.currentScene.enter(frame);
 
-    this.programB.patchState({
-      previousScene: previousScene.id,
-      currentScene: nextScene.id,
-    });
+    this.onSceneTransition?.(previousScene.id, nextScene.id);
     this.events.emit("scene:changed", {
       previousScene: previousScene.id,
       currentScene: nextScene.id,
