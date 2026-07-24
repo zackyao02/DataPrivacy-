@@ -29,7 +29,7 @@ interface Layout {
   readonly actions: Rect;
 }
 
-type EndingAction = "copy-share" | "clear-save" | "workbench";
+type EndingAction = "copy-share" | "export-report" | "clear-save" | "workbench";
 
 interface HitZone {
   readonly rect: Rect;
@@ -117,6 +117,9 @@ export class EndingReportScene implements Scene {
       case "copy-share":
         this.controller.copyShareText();
         break;
+      case "export-report":
+        this.exportReportImage();
+        break;
       case "clear-save":
         this.controller.clearSave();
         break;
@@ -160,6 +163,7 @@ export class EndingReportScene implements Scene {
   ): void {
     const rect = layout.report;
     const gradeColor = report.grade === "B+" ? "#9fd6ca" : "#e0a166";
+    const compact = rect.height < 360;
 
     context.fillStyle = "#91c8bd";
     context.font = "800 11px ui-monospace, Consolas, monospace";
@@ -195,6 +199,32 @@ export class EndingReportScene implements Scene {
       `买家数量：${report.buyerCount}`,
       `影响用户：${report.affectedUserCount}`,
     ];
+
+    if (compact) {
+      context.fillStyle = "#91c8bd";
+      context.font = "800 10px ui-monospace, Consolas, monospace";
+      stats.forEach((item, index) => {
+        const x = rect.x + 18 + (index % 2) * Math.max(150, rect.width * 0.43);
+        const y = rect.y + 166 + Math.floor(index / 2) * 21;
+        context.fillText(item, x, y);
+      });
+
+      context.fillStyle = gradeColor;
+      context.font = "800 11px ui-monospace, Consolas, monospace";
+      context.fillText("评级评语", rect.x + 18, rect.y + 204);
+      context.fillStyle = "#d7e2dc";
+      context.font = "600 11px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(
+        context,
+        report.ratingComment,
+        rect.x + 18,
+        rect.y + 225,
+        rect.width - 36,
+        1,
+        15,
+      );
+      return;
+    }
 
     context.fillStyle = "#91c8bd";
     context.font = "800 10px ui-monospace, Consolas, monospace";
@@ -249,53 +279,84 @@ export class EndingReportScene implements Scene {
   ): void {
     const rect = layout.actions;
     const report = snapshot.endingReport;
+    const compact = rect.height < 360;
 
     context.fillStyle = "#91c8bd";
     context.font = "800 11px ui-monospace, Consolas, monospace";
     context.fillText("分享文案", rect.x + 14, rect.y + 24);
     context.fillStyle = "#d7e2dc";
     context.font = "600 11px ui-monospace, Consolas, monospace";
-    this.drawWrappedText(context, report.shareText, rect.x + 14, rect.y + 46, rect.width - 28, 5, 15);
-
-    context.fillStyle = "#91c8bd";
-    context.font = "800 10px ui-monospace, Consolas, monospace";
-    context.fillText("存档", rect.x + 14, rect.y + 132);
-    context.fillStyle = "#aebbb7";
-    context.font = "600 10px ui-monospace, Consolas, monospace";
-    const saveTime = snapshot.saveState?.last_save_time
-      ? snapshot.saveState.last_save_time.replace("T", " ").slice(0, 19)
-      : "无";
     this.drawWrappedText(
       context,
-      `${SAVE_STATUS_LABELS[snapshot.saveStatus]} · 最后保存：${saveTime}`,
+      report.shareText,
       rect.x + 14,
-      rect.y + 151,
+      rect.y + 46,
       rect.width - 28,
-      3,
-      14,
+      compact ? 2 : 5,
+      15,
     );
 
-    if (snapshot.shareMessage) {
-      context.fillStyle = "#e0a166";
-      context.font = "700 10px ui-monospace, Consolas, monospace";
+    if (compact) {
+      context.fillStyle = "#aebbb7";
+      context.font = "600 10px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, report.qrPrompt, rect.x + 14, rect.y + 84, rect.width - 28, 2, 14);
+    } else {
+      context.fillStyle = "#91c8bd";
+      context.font = "800 10px ui-monospace, Consolas, monospace";
+      context.fillText("扫码入口", rect.x + 14, rect.y + 126);
+      this.renderQrMark(
+        context,
+        { x: rect.x + 14, y: rect.y + 138, width: 72, height: 72 },
+        report.shareText,
+        "#d7e2dc",
+        "#172128",
+      );
+      context.fillStyle = "#aebbb7";
+      context.font = "600 10px ui-monospace, Consolas, monospace";
+      this.drawWrappedText(context, report.qrPrompt, rect.x + 96, rect.y + 146, rect.width - 110, 4, 14);
+
+      context.fillStyle = "#91c8bd";
+      context.font = "800 10px ui-monospace, Consolas, monospace";
+      context.fillText("存档", rect.x + 14, rect.y + 230);
+      context.fillStyle = "#aebbb7";
+      context.font = "600 10px ui-monospace, Consolas, monospace";
+      const saveTime = snapshot.saveState?.last_save_time
+        ? snapshot.saveState.last_save_time.replace("T", " ").slice(0, 19)
+        : "无";
       this.drawWrappedText(
         context,
-        snapshot.shareMessage,
+        `${SAVE_STATUS_LABELS[snapshot.saveStatus]} · 最后保存：${saveTime}`,
         rect.x + 14,
-        rect.y + 205,
+        rect.y + 249,
         rect.width - 28,
-        2,
+        3,
         14,
       );
+
+      if (snapshot.shareMessage) {
+        context.fillStyle = "#e0a166";
+        context.font = "700 10px ui-monospace, Consolas, monospace";
+        this.drawWrappedText(
+          context,
+          snapshot.shareMessage,
+          rect.x + 14,
+          rect.y + 303,
+          rect.width - 28,
+          2,
+          14,
+        );
+      }
     }
 
     for (const zone of this.getHitZones(layout)) {
       const label =
         zone.action === "copy-share"
           ? "复制分享文案"
-          : zone.action === "clear-save"
-            ? "清除本地存档"
-            : "回到工作台";
+          : zone.action === "export-report"
+            ? "导出报告图"
+            : zone.action === "clear-save"
+              ? "清除本地存档"
+              : "回到工作台";
       this.drawButton(context, zone.rect, label, zone.action === "copy-share");
     }
   }
@@ -319,6 +380,125 @@ export class EndingReportScene implements Scene {
     context.fillStyle = "#aebbb7";
     context.font = "600 10px ui-monospace, Consolas, monospace";
     this.drawWrappedText(context, report.qrPrompt, layout.margin, layout.footer.y + 18, layout.width - layout.margin * 2, 2, 14);
+  }
+
+  private exportReportImage(): void {
+    if (typeof document === "undefined") {
+      this.controller.setEndingReportMessage("当前环境无法导出报告图。");
+      return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 900;
+    canvas.height = 1200;
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      this.controller.setEndingReportMessage("当前环境无法生成报告图。");
+      return;
+    }
+
+    const report = this.controller.getEndingReport();
+    this.renderExportImage(context, report, canvas.width, canvas.height);
+
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        this.controller.setEndingReportMessage("报告图生成失败。");
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `personal-data-report-${report.grade}-${Date.now()}.png`;
+      link.click();
+      URL.revokeObjectURL(url);
+      this.controller.setEndingReportMessage("报告图已导出为 PNG。");
+    }, "image/png");
+
+    this.controller.setEndingReportMessage("正在生成报告图。");
+  }
+
+  private renderExportImage(
+    context: CanvasRenderingContext2D,
+    report: WeekOneEndingReport,
+    width: number,
+    height: number,
+  ): void {
+    const gradeColor = report.grade === "B+" ? "#67c9b5" : "#e0a166";
+
+    context.fillStyle = "#0b0d10";
+    context.fillRect(0, 0, width, height);
+    context.fillStyle = "#12191d";
+    context.fillRect(48, 48, width - 96, height - 96);
+    context.strokeStyle = "#425159";
+    context.lineWidth = 2;
+    context.strokeRect(48, 48, width - 96, height - 96);
+
+    context.fillStyle = "#91c8bd";
+    context.font = "800 24px ui-monospace, Consolas, monospace";
+    context.fillText(report.subtitle, 84, 112);
+    context.fillStyle = "#e7eee9";
+    context.font = "900 46px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(context, report.title, 84, 176, 520, 2, 54);
+
+    this.drawPanel(context, { x: 680, y: 116, width: 120, height: 120 }, report.grade === "B+" ? "#18352f" : "#35261c", gradeColor);
+    context.fillStyle = gradeColor;
+    context.font = "900 48px ui-monospace, Consolas, monospace";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(report.grade, 740, 176);
+    context.textAlign = "start";
+    context.textBaseline = "alphabetic";
+
+    context.fillStyle = "#d7e2dc";
+    context.font = "700 24px ui-monospace, Consolas, monospace";
+    context.fillText(`玩家昵称：${report.nickname}`, 84, 292);
+    context.fillText(report.durationText, 84, 334);
+    context.fillText(`结局：${report.endingTitle}`, 84, 376);
+
+    const stats = [
+      ["经手数据条数", String(report.soldDataCount)],
+      ["打包数据包", String(report.packageCount)],
+      ["买家数量", String(report.buyerCount)],
+      ["影响用户", String(report.affectedUserCount)],
+    ];
+    stats.forEach(([label, value], index) => {
+      const x = 84 + (index % 2) * 360;
+      const y = 462 + Math.floor(index / 2) * 104;
+      context.fillStyle = "#91c8bd";
+      context.font = "800 20px ui-monospace, Consolas, monospace";
+      context.fillText(label, x, y);
+      context.fillStyle = "#e7eee9";
+      context.font = "900 34px ui-monospace, Consolas, monospace";
+      context.fillText(value, x, y + 42);
+    });
+
+    this.renderExportSection(context, "泄露数据类型", report.dataTypes.join(" / "), 84, 682, 732);
+    this.renderExportSection(context, "数据用途", report.dataUses.join(" / "), 84, 794, 732);
+    this.renderExportSection(context, "评级评语", report.ratingComment, 84, 906, 520);
+    this.renderExportSection(context, "行动建议", report.adviceText, 84, 1012, 520);
+
+    this.renderQrMark(context, { x: 650, y: 910, width: 150, height: 150 }, report.shareText, "#e7eee9", "#12191d");
+    context.fillStyle = "#aebbb7";
+    context.font = "700 18px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(context, report.qrPrompt, 620, 1092, 220, 3, 24);
+  }
+
+  private renderExportSection(
+    context: CanvasRenderingContext2D,
+    title: string,
+    text: string,
+    x: number,
+    y: number,
+    width: number,
+  ): void {
+    context.fillStyle = "#91c8bd";
+    context.font = "800 20px ui-monospace, Consolas, monospace";
+    context.fillText(title, x, y);
+    context.fillStyle = "#d7e2dc";
+    context.font = "600 20px ui-monospace, Consolas, monospace";
+    this.drawWrappedText(context, text, x, y + 34, width, 3, 28);
   }
 
   private renderTagLine(
@@ -349,10 +529,10 @@ export class EndingReportScene implements Scene {
       width: width - margin * 2,
       height: height - headerHeight - footerHeight - margin * 2,
     };
-    const wide = body.width >= 760;
+    const wide = body.width >= 620 || body.height < 520;
 
     if (wide) {
-      const actionWidth = Math.min(300, body.width * 0.34);
+      const actionWidth = Math.min(300, Math.max(250, body.width * 0.34));
       return {
         width,
         height,
@@ -404,11 +584,11 @@ export class EndingReportScene implements Scene {
     const gap = 8;
     const buttonHeight = 34;
     const y = rect.y + rect.height - buttonHeight - 14;
-    const wideButtons = rect.width >= 280;
+    const wideButtons = rect.width >= 520;
 
     if (wideButtons) {
-      const buttonWidth = (rect.width - 28 - gap * 2) / 3;
-      const actions: readonly EndingAction[] = ["copy-share", "clear-save", "workbench"];
+      const buttonWidth = (rect.width - 28 - gap * 3) / 4;
+      const actions: readonly EndingAction[] = ["copy-share", "export-report", "clear-save", "workbench"];
 
       return actions.map((action, index) => ({
         rect: {
@@ -423,8 +603,12 @@ export class EndingReportScene implements Scene {
 
     return [
       {
-        rect: { x: rect.x + 14, y: y - 84, width: rect.width - 28, height: buttonHeight },
+        rect: { x: rect.x + 14, y: y - 126, width: rect.width - 28, height: buttonHeight },
         action: "copy-share",
+      },
+      {
+        rect: { x: rect.x + 14, y: y - 84, width: rect.width - 28, height: buttonHeight },
+        action: "export-report",
       },
       {
         rect: { x: rect.x + 14, y: y - 42, width: rect.width - 28, height: buttonHeight },
@@ -466,6 +650,49 @@ export class EndingReportScene implements Scene {
     context.fillText(label, rect.x + rect.width / 2, rect.y + rect.height / 2);
     context.textAlign = "start";
     context.textBaseline = "alphabetic";
+  }
+
+  private renderQrMark(
+    context: CanvasRenderingContext2D,
+    rect: Rect,
+    seed: string,
+    dark: string,
+    light: string,
+  ): void {
+    context.fillStyle = dark;
+    context.fillRect(rect.x, rect.y, rect.width, rect.height);
+    context.fillStyle = light;
+    context.fillRect(rect.x + 4, rect.y + 4, rect.width - 8, rect.height - 8);
+
+    const cells = 9;
+    const gap = 2;
+    const cell = (rect.width - 16 - gap * (cells - 1)) / cells;
+    let hash = 2166136261;
+
+    for (const char of seed) {
+      hash ^= char.charCodeAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+
+    context.fillStyle = dark;
+    for (let row = 0; row < cells; row += 1) {
+      for (let col = 0; col < cells; col += 1) {
+        const finder =
+          (row < 3 && col < 3) ||
+          (row < 3 && col > cells - 4) ||
+          (row > cells - 4 && col < 3);
+        const bit = ((hash >>> ((row * cells + col) % 24)) & 1) === 1;
+
+        if (finder || bit) {
+          context.fillRect(
+            rect.x + 8 + col * (cell + gap),
+            rect.y + 8 + row * (cell + gap),
+            cell,
+            cell,
+          );
+        }
+      }
+    }
   }
 
   private drawWrappedText(

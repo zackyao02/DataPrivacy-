@@ -322,6 +322,11 @@ export class WeekOneSliceController {
     return true;
   }
 
+  setEndingReportMessage(message: string): void {
+    this.shareMessage = message;
+    this.patchProgramB();
+  }
+
   clearSave(): void {
     const storage = this.getStorage();
 

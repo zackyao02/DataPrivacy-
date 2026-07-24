@@ -1,6 +1,6 @@
 # Program C Delivery Index
 
-Updated: 2026-07-23
+Updated: 2026-07-24
 
 This index lists the concrete delivery artifacts for Program C. It is meant to answer "where is the thing?" before teammates need to search the repo.
 
@@ -17,7 +17,7 @@ This index lists the concrete delivery artifacts for Program C. It is meant to a
 | D7 | Done | Week 1 vertical-slice report, initial performance check, toolchain handoff document, latest text-config content alignment |
 | D8 | Done | Content-driven mini-game interactions for Day 1 / 2 / 3 / 4 / 5 / 6 and ending-branch prototype |
 | D9 | Done | Day 7 evidence-chain prototype, emotion-driven awareness score, evidence-chain content data and validation |
-| D10 | Done | Ending report template, ending report scene, share-text action, save-state persistence, clear-save handling |
+| D10 | Done | Ending report template, ending report scene, share-text action, PNG report image export, QR visual treatment, save-state persistence, clear-save handling |
 | D11 | Done | Workbench drag-and-drop slot placement, replacement, selected-card swapping, drag-out removal, click fallback |
 | D12 | Done | Program C integration adapter, `window.programAIntegrations.programC`, integration contract validation |
 | D13 | Done | Program B visibleState runtime binding, `window.programAIntegrations.programB`, Day 1 -> Day 2 integration smoke |
@@ -94,7 +94,7 @@ npm run build
 
 ## Known Remaining Work
 
-- Latest Feishu text config is now local content/reference data; final report image export, QR visual treatment, and final UI/system copy polish are still follow-up presentation tasks.
+- Latest Feishu text config is now local content/reference data; final UI/system copy polish is still a follow-up presentation task.
 - Program A latest mainline has adapter and daily-flow shells; after branches are merged, verify B-owned visible-state projection, Program B runtime commands, and C `programAIntegrations.programC` mount order in the real integrated canvas.
 - D8/D9 mini-games have automated Day 1 / 2 / 3 / 4 / 5 / 6 / 7 runtime rule coverage through `npm run smoke:week1`, but still need human playtest tuning for spacing, copy density, and feel.
 - Real audio assets, if added later, must rerun `npm run check` to keep offline and size guarantees.

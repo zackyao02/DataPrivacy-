@@ -1,6 +1,6 @@
 # Program C Acceptance Checklist
 
-Updated: 2026-07-23
+Updated: 2026-07-24
 
 This checklist records the current Program C delivery state for content tools, audio, build, performance, the D7 Week 1 baseline, D8 playable mini-games, the D9 Day 7 evidence-chain prototype, the D10 ending report / save-state loop, the D11 workbench drag-and-drop loop, the D12 Program C adapter boundary, the D13 Program B visible-state runtime binding, and the D14 Week 1 rules smoke.
 
@@ -15,7 +15,7 @@ This checklist records the current Program C delivery state for content tools, a
 - D7: `report:week1` checks Week 1 content coverage, audio integration, package seal audio, preview-page consistency, package size, and JSON parse timing, then generates the handoff report; latest Feishu text config is synced into existing Program C content data as the D7 acceptance content baseline.
 - D8: integrated `mini-game` scene now uses content-driven Day 1 / 2 / 3 / 4 / 5 / 6 rules instead of generic success/fail buttons, including Day 3 public-opinion choice scoring, protocol-scan scoring, and an ending-branch prototype.
 - D9: Day 7 evidence-chain prototype is playable with 18 evidence fragments, 3 causal connections, a report upload action, low-awareness final-package branch display, and emotion-driven awareness scoring.
-- D10: Day 7 completion now routes to a playable ending report scene with grade-branch copy, share-text copy action, localStorage save/load state, Program B state patches, and clear-save handling.
+- D10: Day 7 completion now routes to a playable ending report scene with grade-branch copy, share-text copy action, PNG report image export, QR-style visual treatment, localStorage save/load state, Program B state patches, and clear-save handling.
 - D11: `workbench` now supports drag-and-drop slot placement with target highlighting, slot replacement, selected-card swapping, drag-out removal, and click-to-select fallback.
 - D12: Program C now exposes `createProgramCIntegration()` and the integrated app mounts `window.programAIntegrations.programC` with `audio.handleGameEvent(eventName)` and `contentDebug` handoff methods for Program A's adapter / daily-flow branch.
 - D13: Program B now exposes `window.programAIntegrations.programB` with visibleState projection plus runtime commands for workbench, package creation, emotion selection, daily challenge submission, and daily phase advancement; `npm run smoke:integration` verifies Day 1 -> Day 2.
@@ -85,6 +85,5 @@ This verifies TypeScript, JSON content references, generated manifests, offline 
 
 ## Remaining Work
 
-- Add final report image export / QR visual treatment when the final presentation flow is designed.
 - Run a human end-to-end playtest for Day 1 / 2 / 3 / 4 / 5 / 6 / 7 spacing, wording, and audio feel.
 - Later: rerun `npm run check` after real audio assets or final copy changes are added.
