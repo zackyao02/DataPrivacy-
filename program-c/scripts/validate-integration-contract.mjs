@@ -93,11 +93,15 @@ assertContains(mainSource, "programC: app.debugApi.programC.integration", "windo
 
 assertContains(gamePortsSource, "DailyChallengeResponse", "Program A game ports");
 assertContains(gamePortsSource, "GameCommandPort", "Program A game ports");
+assertContains(gamePortsSource, "preferredPackageType", "Program A game ports");
 assertContains(visibleStateSource, "VisibleGameState", "Program A visible state");
 assertContains(visibleStateSource, "VisibleDailyFlow", "Program A visible state");
 assertContains(weekOneBAdapterSource, "WeekOneProgramBAdapter", "Program B Week One adapter");
 assertContains(weekOneBAdapterSource, "runtimeBinding", "Program B Week One adapter");
 assertContains(weekOneBAdapterSource, "getVisibleState", "Program B Week One adapter");
+assertContains(weekOneBAdapterSource, "endingRoute", "Program B Week One adapter");
+assertContains(weekOneBAdapterSource, "isGameOver", "Program B Week One adapter");
+assertContains(weekOneBAdapterSource, "gameOverReason", "Program B Week One adapter");
 
 for (const command of programBCommands) {
   assertContains(weekOneBAdapterSource, command, "Program B runtime command contract");

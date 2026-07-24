@@ -126,6 +126,9 @@ export interface WeekOneProgramBStateContract {
   readonly endingAvailable: boolean;
   readonly endingTriggered: boolean;
   readonly ending_report: VisibleEndingReport | null;
+  readonly endingRoute: "final_package" | "evidence_chain" | null;
+  readonly isGameOver: boolean;
+  readonly gameOverReason: string | null;
   readonly operationPadCardId: string | null;
 }
 
@@ -167,7 +170,7 @@ export interface WeekOneProgramBRuntimeBinding {
   ): WeekOneProgramBOperationOutcome;
   createPackage(
     gameState: WeekOneProgramBStateContract,
-    preferredRecipeId?: string,
+    preferredPackageType?: string,
   ): WeekOneProgramBOperationOutcome;
   sellPackage(
     gameState: WeekOneProgramBStateContract,
@@ -224,8 +227,8 @@ export class WeekOneProgramBAdapter
         this.placeCardToSlotOutcome(cardId, slotIndex),
       removeCardFromSlot: (_state, slotIndex) =>
         this.removeCardFromSlotOutcome(slotIndex),
-      createPackage: (_state, preferredRecipeId) =>
-        this.createPackageOutcome(preferredRecipeId),
+      createPackage: (_state, preferredPackageType) =>
+        this.createPackageOutcome(preferredPackageType),
       sellPackage: (_state, packageId, buyerId) =>
         this.submitTransactionOutcome(packageId, buyerId),
       submitDailyChallengeChoice: (_state, challengeId, choiceId) =>
@@ -302,6 +305,11 @@ export class WeekOneProgramBAdapter
       endingAvailable: visibleState.ending.available,
       endingTriggered: visibleState.ending.available,
       ending_report: visibleState.ending.report,
+      endingRoute: snapshot.endingPrototype.unlockedPath,
+      isGameOver: visibleState.ending.available,
+      gameOverReason: visibleState.ending.available
+        ? snapshot.endingPrototype.unlockedPath
+        : null,
       operationPadCardId: visibleState.operationPadCardId,
     });
   }
@@ -336,8 +344,8 @@ export class WeekOneProgramBAdapter
     this.removeCardFromSlotOutcome(slotIndex);
   }
 
-  createPackage(preferredRecipeId?: string): void {
-    this.createPackageOutcome(preferredRecipeId);
+  createPackage(preferredPackageType?: string): void {
+    this.createPackageOutcome(preferredPackageType);
   }
 
   selectPackage(packageId: string): void {
@@ -420,9 +428,9 @@ export class WeekOneProgramBAdapter
   }
 
   private createPackageOutcome(
-    preferredRecipeId?: string,
+    preferredPackageType?: string,
   ): WeekOneProgramBOperationOutcome {
-    void preferredRecipeId;
+    void preferredPackageType;
     const ok = this.controller.sealPackage();
     const snapshot = this.controller.getSnapshot();
     const dataPackage = snapshot.activePackage

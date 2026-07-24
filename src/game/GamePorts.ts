@@ -18,7 +18,7 @@ export interface RemoveCardFromSlotCommand {
 
 export interface CreatePackageCommand {
   readonly type: "createPackage";
-  readonly preferredRecipeId?: string;
+  readonly preferredPackageType?: string;
 }
 
 export interface SelectPackageCommand {
@@ -139,7 +139,7 @@ export interface GameCommandPort {
   submitCardToOperationPad(cardId: string): void;
   placeCardToSlot(cardId: string, slotIndex: number): void;
   removeCardFromSlot(slotIndex: number): void;
-  createPackage(preferredRecipeId?: string): void;
+  createPackage(preferredPackageType?: string): void;
   selectPackage(packageId: string): void;
   selectBuyer(buyerId: string): void;
   submitTransaction(packageId: string, buyerId: string): void;
