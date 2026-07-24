@@ -4,7 +4,31 @@ export interface AudioManagerOptions {
   readonly masterVolume?: number;
   readonly enabled?: boolean;
   readonly warnOnUnknownEvent?: boolean;
+  readonly preferRealAssets?: boolean;
 }
+
+interface RealAudioAsset {
+  readonly src: string;
+  readonly volume: number;
+  readonly playbackRate?: number;
+  readonly loop?: boolean;
+}
+
+const REAL_AUDIO_BASE_PATH = "/assets/program-c/audio";
+
+const REAL_AUDIO_ASSETS: Partial<Record<SoundId, RealAudioAsset>> = {
+  "data-pulse": { src: `${REAL_AUDIO_BASE_PATH}/data-flow-in.mp3`, volume: 0.56 },
+  "slot-click": { src: `${REAL_AUDIO_BASE_PATH}/card-slot.mp3`, volume: 0.52 },
+  "package-seal": { src: `${REAL_AUDIO_BASE_PATH}/package-sealed.mp3`, volume: 0.62 },
+  "coin-burst": { src: `${REAL_AUDIO_BASE_PATH}/transaction-success.ogg`, volume: 0.56 },
+  "news-broadcast": { src: `${REAL_AUDIO_BASE_PATH}/news-broadcast.ogg`, volume: 0.5 },
+  "challenge-success": { src: `${REAL_AUDIO_BASE_PATH}/challenge-success.ogg`, volume: 0.58 },
+  "challenge-fail": { src: `${REAL_AUDIO_BASE_PATH}/challenge-fail.ogg`, volume: 0.56 },
+  "blackbox-voice": { src: `${REAL_AUDIO_BASE_PATH}/blackbox-line.ogg`, volume: 0.48, playbackRate: 0.72 },
+  "typewriter-key": { src: `${REAL_AUDIO_BASE_PATH}/monologue-type.wav`, volume: 0.4 },
+  "bgm-blackbox": { src: `${REAL_AUDIO_BASE_PATH}/bgm-blackbox.ogg`, volume: 0.22, loop: true },
+  "bgm-pressure": { src: `${REAL_AUDIO_BASE_PATH}/bgm-pressure.ogg`, volume: 0.26, loop: true },
+};
 
 export class AudioManager {
   private context: AudioContext | null = null;
@@ -12,15 +36,19 @@ export class AudioManager {
   private bgmOscillators: OscillatorNode[] = [];
   private bgmGain: GainNode | null = null;
   private bgmTimers: number[] = [];
+  private activeBgmAudio: HTMLAudioElement | null = null;
+  private readonly audioAssetCache = new Map<string, HTMLAudioElement>();
   private readonly warnedUnknownEvents = new Set<string>();
   private enabled: boolean;
   private masterVolume: number;
   private readonly warnOnUnknownEvent: boolean;
+  private readonly preferRealAssets: boolean;
 
   constructor(options: AudioManagerOptions = {}) {
     this.enabled = options.enabled ?? true;
     this.masterVolume = options.masterVolume ?? 0.72;
     this.warnOnUnknownEvent = options.warnOnUnknownEvent ?? true;
+    this.preferRealAssets = options.preferRealAssets ?? true;
   }
 
   setEnabled(enabled: boolean): void {
@@ -37,6 +65,13 @@ export class AudioManager {
     if (this.masterGain) {
       this.masterGain.gain.value = this.masterVolume;
     }
+
+    if (this.activeBgmAudio) {
+      const asset = [...Object.values(REAL_AUDIO_ASSETS)].find(
+        (item) => item?.src === this.activeBgmAudio?.src,
+      );
+      this.activeBgmAudio.volume = (asset?.volume ?? 0.22) * this.masterVolume;
+    }
   }
 
   async unlock(): Promise<void> {
@@ -44,6 +79,14 @@ export class AudioManager {
 
     if (context.state === "suspended") {
       await context.resume();
+    }
+
+    if (this.preferRealAssets) {
+      for (const asset of Object.values(REAL_AUDIO_ASSETS)) {
+        if (asset) {
+          this.preloadAsset(asset.src);
+        }
+      }
     }
   }
 
@@ -71,6 +114,14 @@ export class AudioManager {
       return;
     }
 
+    if (this.preferRealAssets && this.playRealAsset(soundId)) {
+      return;
+    }
+
+    this.playGenerated(soundId);
+  }
+
+  private playGenerated(soundId: SoundId): void {
     const context = this.ensureContext();
     const now = context.currentTime;
 
@@ -355,6 +406,12 @@ export class AudioManager {
   }
 
   private stopBgm(): void {
+    if (this.activeBgmAudio) {
+      this.activeBgmAudio.pause();
+      this.activeBgmAudio.currentTime = 0;
+      this.activeBgmAudio = null;
+    }
+
     const context = this.context;
     const now = context?.currentTime ?? 0;
 
@@ -378,6 +435,61 @@ export class AudioManager {
     this.bgmOscillators = [];
     this.bgmGain = null;
     this.bgmTimers = [];
+  }
+
+  private playRealAsset(soundId: SoundId): boolean {
+    const asset = REAL_AUDIO_ASSETS[soundId];
+
+    if (!asset) {
+      return false;
+    }
+
+    if (asset.loop) {
+      this.playLoopAsset(soundId, asset);
+      return true;
+    }
+
+    const source = this.preloadAsset(asset.src);
+    const audio = source.cloneNode(true) as HTMLAudioElement;
+    audio.volume = asset.volume * this.masterVolume;
+    audio.playbackRate = asset.playbackRate ?? 1;
+    audio.loop = false;
+
+    void audio.play().catch(() => {
+      this.playGenerated(soundId);
+    });
+    return true;
+  }
+
+  private playLoopAsset(soundId: SoundId, asset: RealAudioAsset): void {
+    this.stopBgm();
+
+    const audio = this.preloadAsset(asset.src);
+    audio.loop = true;
+    audio.volume = asset.volume * this.masterVolume;
+    audio.playbackRate = asset.playbackRate ?? 1;
+    audio.currentTime = 0;
+    this.activeBgmAudio = audio;
+
+    void audio.play().catch(() => {
+      if (this.activeBgmAudio === audio) {
+        this.activeBgmAudio = null;
+      }
+      this.playGenerated(soundId);
+    });
+  }
+
+  private preloadAsset(src: string): HTMLAudioElement {
+    const cached = this.audioAssetCache.get(src);
+
+    if (cached) {
+      return cached;
+    }
+
+    const audio = new Audio(src);
+    audio.preload = "auto";
+    this.audioAssetCache.set(src, audio);
+    return audio;
   }
 
   private ensureContext(): AudioContext {

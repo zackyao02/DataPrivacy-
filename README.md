@@ -22,6 +22,7 @@
 - D14：新增 Week 1 全日规则 smoke，基于 `window.programAIntegrations.programB` 的同一 runtime 命令覆盖 Day 1-7 封包、情绪、小关卡、证据链和结局报告通路。
 - A/B/C 最新分支兼容复查：对齐 A 最新 native 打包参数口径 `preferredPackageType`，Program B runtime state 补充 `endingRoute` / `isGameOver` / `gameOverReason`，并把这些字段加入集成合同验收。
 - A/B/C 内容接口补充：Program C `contentDebug` 新增 B 最新 contentBridge 同名入口 `findEmotionChoices` / `findBlackboxDialogueByDay` / `getKnownPackageTypes`，并补齐 Day6 / Day7 / ending 指定模板查询方法，smoke 会实际调用这些入口做集成验收。
+- 真实音频替换：新增 CC0 短音效和压迫氛围 BGM，覆盖 `dataFlowIn` / `cardMovedToSlot` / `packageSealed` / `transactionSuccess` / `newsBroadcast` / `challengeSuccess` / `challengeFail` / `blackBoxLine` / `monologueType` / `bgmPressure` / `bgmBlackBox`，并保留 Web Audio 合成音作为失败回退。
 - D7 内容对齐补充：按最新飞书“文本配置”更新 Week 1 垂直切片验收前已有内容口径，升级为 20 张正式数据卡、15 个买家、18 个清洗图标、10 组舆论题、3 套画像拼图、5 套协议扫描模板、1 套证据链模板、1 套结局报告模板和 71 条黑盒台词；新增同步脚本并修正工作台起始卡池。最终图片导出、二维码视觉和完整 UI 文案仍作为后续开发依据。
 
 ## 接入重点
