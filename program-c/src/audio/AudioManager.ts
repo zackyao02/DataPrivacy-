@@ -25,7 +25,7 @@ const REAL_AUDIO_ASSETS: Partial<Record<SoundId, RealAudioAsset>> = {
   "challenge-success": { src: `${REAL_AUDIO_BASE_PATH}/challenge-success.ogg`, volume: 0.58 },
   "challenge-fail": { src: `${REAL_AUDIO_BASE_PATH}/challenge-fail.ogg`, volume: 0.56 },
   "blackbox-voice": { src: `${REAL_AUDIO_BASE_PATH}/blackbox-line.ogg`, volume: 0.48, playbackRate: 0.72 },
-  "typewriter-key": { src: `${REAL_AUDIO_BASE_PATH}/monologue-type.wav`, volume: 0.4 },
+  "typewriter-key": { src: `${REAL_AUDIO_BASE_PATH}/monologue-type.mp3`, volume: 0.36 },
   "bgm-blackbox": { src: `${REAL_AUDIO_BASE_PATH}/bgm-blackbox.ogg`, volume: 0.22, loop: true },
   "bgm-pressure": { src: `${REAL_AUDIO_BASE_PATH}/bgm-pressure.ogg`, volume: 0.26, loop: true },
 };
