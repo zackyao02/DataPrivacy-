@@ -40,7 +40,7 @@ export class DebugPanel {
     private readonly callbacks: DebugPanelCallbacks,
   ) {
     root.innerHTML = `
-      <details class="debug-panel" open>
+      <details class="debug-panel">
         <summary>Week1 Debug</summary>
         <div class="debug-content">
           <label class="debug-field">
