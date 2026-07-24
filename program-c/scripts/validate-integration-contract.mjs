@@ -33,9 +33,17 @@ const contentDebugMethods = [
   "pickPublicOpinionScript",
   "pickProfilePuzzleByDay",
   "pickBuyerNegotiationScript",
+  "findProtocolScanTemplateById",
+  "findProtocolScanTemplatesByIds",
   "pickProtocolScanTemplate",
+  "findEvidenceChainTemplateById",
+  "findEvidenceChainTemplatesByIds",
   "pickEvidenceChainTemplate",
+  "findEndingReportTemplateById",
   "pickEndingReportTemplate",
+  "findEmotionChoices",
+  "findBlackboxDialogueByDay",
+  "getKnownPackageTypes",
   "findDailyMonologueByDay",
   "pickBlackBoxLine",
 ];
@@ -83,6 +91,9 @@ assertContains(
   "installProgramCIntegration",
   "Program C integration installer",
 );
+assertContains(integrationSource, "ProgramCEmotionChoice", "Program B content bridge compatibility");
+assertContains(integrationSource, "ProgramCTemplatePickOptions", "Program B content bridge compatibility");
+assertContains(integrationSource, "ProgramCBlackboxDialogue", "Program B content bridge compatibility");
 assertContains(integrationIndexSource, "./createProgramCIntegration", "integration index");
 assertContains(packageIndexSource, "./integration", "package root index");
 assertContains(appSource, "createProgramCIntegration", "integrated app bridge");

@@ -21,6 +21,7 @@ await build({
     resolveDir: rootPath,
     contents: `
       import { createDefaultContentRepository } from "./program-c/src/content/index.ts";
+      import { createProgramCIntegration } from "./program-c/src/integration/index.ts";
       import { ProgramBBridge } from "./src/game/ProgramBBridge.ts";
       import { WeekOneSliceController } from "./src/game/WeekOneSliceController.ts";
       import { createWeekOneProgramBAdapter } from "./src/game/WeekOneProgramBAdapter.ts";
@@ -32,6 +33,31 @@ await build({
       }
 
       const content = createDefaultContentRepository({ random: () => 0 });
+      const programCIntegration = createProgramCIntegration({ content });
+      const contentDebug = programCIntegration.contentDebug;
+      const protocolScanTemplate = contentDebug.pickProtocolScanTemplate({
+        templateIds: ["protocol-scan-social-xingliao"],
+      });
+      const evidenceChainTemplate = contentDebug.pickEvidenceChainTemplate({
+        templateIds: ["evidence-chain-week1-core"],
+      });
+      const endingReportTemplate = contentDebug.pickEndingReportTemplate(
+        "personal-data-leak-report",
+      );
+      const day7BlackboxDialogue = contentDebug.findBlackboxDialogueByDay(
+        7,
+        "evidence_chain",
+      );
+      const emotionChoices = contentDebug.findEmotionChoices();
+
+      assert(contentDebug.getKnownPackageTypes().length >= 5, "Program C should expose known package types");
+      assert(emotionChoices.map((choice) => choice.id).join(",") === "sympathy,anger,numb", "Program C should expose Program B text-rule emotion ids");
+      assert(emotionChoices.every((choice) => choice.programAChoiceId), "Program C emotion choices should expose Program A ids");
+      assert(protocolScanTemplate, "Program C should pick a protocol scan template by options.templateIds");
+      assert(evidenceChainTemplate, "Program C should pick an evidence chain template by options.templateIds");
+      assert(endingReportTemplate, "Program C should pick an ending report template by id");
+      assert(day7BlackboxDialogue?.highBriefing, "Program C should expose Day 7 high-awareness blackbox briefing");
+
       const bridge = new ProgramBBridge("workbench");
       const controller = new WeekOneSliceController(content, bridge);
       const adapter = createWeekOneProgramBAdapter(controller, bridge);
@@ -78,6 +104,7 @@ await build({
 
       adapter.destroy();
       bridge.destroy();
+      programCIntegration.destroy();
     `,
   },
 });
