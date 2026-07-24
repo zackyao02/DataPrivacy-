@@ -90,6 +90,7 @@ export interface ProgramADebugApi {
   setLayerVisible(layer: RenderLayer, visible: boolean): void;
   pause(): void;
   resume(): void;
+  resetWeekOne(): void;
   destroy(): void;
   getSnapshot(): ProgramADebugSnapshot;
   readonly programB: {
@@ -119,7 +120,7 @@ export interface ProgramADebugApi {
   };
 }
 
-const INITIAL_SCENE: SceneId = "monitor-room";
+const INITIAL_SCENE: SceneId = "workbench";
 
 export class ProgramACanvasApp {
   readonly debugApi: ProgramADebugApi;
@@ -148,6 +149,7 @@ export class ProgramACanvasApp {
   private readonly debugPanel: DebugPanel;
   private readonly detachProgramBAudioBridge: () => void;
   private lifecycle: AppLifecycleState = "running";
+  private audioUnlocked = false;
   private latestFrame: SceneFrame;
 
   constructor(
@@ -158,6 +160,10 @@ export class ProgramACanvasApp {
     this.surface.resize();
 
     this.input = new InputManager(canvas, this.surface, (event) => {
+      if (event.phase === "pointer-down") {
+        this.unlockAudioFromUserGesture();
+      }
+
       this.events.emit("input:event", event);
     });
 
@@ -188,6 +194,7 @@ export class ProgramACanvasApp {
       },
       onPause: () => this.pause(),
       onResume: () => this.resume(),
+      onResetWeekOne: () => this.resetWeekOne(),
       onDestroy: () => this.destroy(),
     });
 
@@ -271,6 +278,17 @@ export class ProgramACanvasApp {
     this.lifecycle = "running";
     this.events.emit("lifecycle:changed", { state: this.lifecycle });
     this.loop.resume();
+  }
+
+  resetWeekOne(): void {
+    if (this.lifecycle === "destroyed") {
+      return;
+    }
+
+    this.weekOneSlice.resetWeekOne();
+    this.programBAdapter.refresh();
+    this.switchScene("workbench");
+    this.render();
   }
 
   destroy(): void {
@@ -419,6 +437,7 @@ export class ProgramACanvasApp {
         this.setLayerVisible(layer, visible),
       pause: () => this.pause(),
       resume: () => this.resume(),
+      resetWeekOne: () => this.resetWeekOne(),
       destroy: () => this.destroy(),
       getSnapshot: () => this.getSnapshot(),
       programB: Object.freeze({
@@ -484,4 +503,15 @@ export class ProgramACanvasApp {
       }
     }
   };
+
+  private unlockAudioFromUserGesture(): void {
+    if (this.audioUnlocked) {
+      return;
+    }
+
+    this.audioUnlocked = true;
+    void this.programCAudio.unlock().catch(() => {
+      this.audioUnlocked = false;
+    });
+  }
 }

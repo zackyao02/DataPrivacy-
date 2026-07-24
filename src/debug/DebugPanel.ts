@@ -23,6 +23,7 @@ interface DebugPanelCallbacks {
   onLayerChange(layer: RenderLayer, visible: boolean): void;
   onPause(): void;
   onResume(): void;
+  onResetWeekOne(): void;
   onDestroy(): void;
 }
 
@@ -52,6 +53,7 @@ export class DebugPanel {
           </fieldset>
           <div class="debug-actions">
             <button type="button" data-debug="lifecycle">Pause</button>
+            <button type="button" data-debug="reset-week1">Reset Week1</button>
             <button type="button" data-debug="destroy">Destroy</button>
           </div>
           <pre data-debug="metrics"></pre>
@@ -82,6 +84,10 @@ export class DebugPanel {
     this.requireElement<HTMLButtonElement>('[data-debug="destroy"]').addEventListener(
       "click",
       this.callbacks.onDestroy,
+    );
+    this.requireElement<HTMLButtonElement>('[data-debug="reset-week1"]').addEventListener(
+      "click",
+      this.callbacks.onResetWeekOne,
     );
   }
 

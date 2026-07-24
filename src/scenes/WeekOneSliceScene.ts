@@ -730,9 +730,11 @@ export class WeekOneSliceScene implements Scene {
       context.fillStyle = "#d7e2dc";
       context.font = "700 10px ui-monospace, Consolas, monospace";
       this.drawWrappedText(context, `${term.riskyTerm} => ${term.disguisedTerm}`, rect.x + 9, rect.y + 33, rect.width - 18, 2, 13);
-      context.fillStyle = "#91a09b";
-      context.font = "500 9px ui-monospace, Consolas, monospace";
-      this.drawWrappedText(context, term.explanation, rect.x + 9, rect.y + 60, rect.width - 18, 2, 12);
+      if (rect.height >= 70) {
+        context.fillStyle = "#91a09b";
+        context.font = "500 9px ui-monospace, Consolas, monospace";
+        this.drawWrappedText(context, term.explanation, rect.x + 9, rect.y + 60, rect.width - 18, 2, 12);
+      }
     });
   }
 
@@ -1485,7 +1487,7 @@ export class WeekOneSliceScene implements Scene {
   }
 
   private getCardGridRect(layout: Layout): Rect {
-    const wide = layout.body.width >= 620;
+    const wide = layout.body.width >= 560;
 
     return {
       x: layout.body.x + 12,
@@ -1496,7 +1498,7 @@ export class WeekOneSliceScene implements Scene {
   }
 
   private getSidePanelRect(layout: Layout): Rect {
-    const wide = layout.body.width >= 620;
+    const wide = layout.body.width >= 560;
     const cardGrid = this.getCardGridRect(layout);
 
     if (wide) {
@@ -1580,9 +1582,9 @@ export class WeekOneSliceScene implements Scene {
 
   private getProtocolTermRects(layout: Layout, count: number): readonly Rect[] {
     const panel = this.getMiniGamePanelRect(layout);
-    const columns = panel.width >= 620 ? 2 : 1;
+    const columns = panel.width >= 560 ? Math.min(4, Math.max(count, 1)) : 1;
 
-    return this.getMiniGameItemRects(layout, count, 210, 74, columns);
+    return this.getMiniGameItemRects(layout, count, 190, 58, columns);
   }
 
   private getCleaningItemRects(layout: Layout, count: number): readonly Rect[] {
@@ -1594,21 +1596,21 @@ export class WeekOneSliceScene implements Scene {
 
   private getPublicOpinionTacticRects(layout: Layout, count: number): readonly Rect[] {
     const panel = this.getMiniGamePanelRect(layout);
-    const columns = panel.width >= 620 ? 3 : 1;
+    const columns = panel.width >= 560 ? 3 : 1;
 
     return this.getMiniGameItemRects(layout, count, 266, 74, columns);
   }
 
   private getPuzzleFragmentRects(layout: Layout, count: number): readonly Rect[] {
     const panel = this.getMiniGamePanelRect(layout);
-    const columns = panel.width >= 620 ? 3 : 2;
+    const columns = panel.width >= 560 ? 3 : 2;
 
     return this.getMiniGameItemRects(layout, count, 238, 64, columns);
   }
 
   private getNegotiationOptionRects(layout: Layout, count: number): readonly Rect[] {
     const panel = this.getMiniGamePanelRect(layout);
-    const columns = panel.width >= 620 ? 2 : 1;
+    const columns = panel.width >= 560 ? 2 : 1;
 
     return this.getMiniGameItemRects(layout, count, 254, 104, columns);
   }
@@ -1622,7 +1624,7 @@ export class WeekOneSliceScene implements Scene {
 
   private getProtocolScanFlowRects(layout: Layout, count: number): readonly Rect[] {
     const panel = this.getMiniGamePanelRect(layout);
-    const columns = panel.width >= 620 ? 3 : panel.width >= 420 ? 2 : 1;
+    const columns = panel.width >= 560 ? 3 : panel.width >= 420 ? 2 : 1;
     const startOffsetY =
       this.getRectsBottom(this.getProtocolScanClauseRects(layout, 4)) - panel.y + 8;
 

@@ -327,6 +327,44 @@ export class WeekOneSliceController {
     this.patchProgramB();
   }
 
+  resetWeekOne(): void {
+    const storage = this.getStorage();
+
+    try {
+      storage?.removeItem(SAVE_STORAGE_KEY);
+    } catch {
+      // Storage may be unavailable in restricted preview containers.
+    }
+
+    this.selectedCardIds = this.pickInitialCardIds();
+    this.dayIndex = 0;
+    this.phase = "workbench";
+    this.activePackage = null;
+    this.activeNews = null;
+    this.activeChallenge = null;
+    this.activeProfilePuzzle = null;
+    this.activeNegotiation = null;
+    this.activePublicOpinion = null;
+    this.activeProtocolScan = null;
+    this.activeEvidenceChain = null;
+    this.activeMonologue = null;
+    this.activeBlackBoxLine = null;
+    this.selectedEmotion = null;
+    this.emotionResponse = null;
+    this.awarenessValue = 0;
+    this.emotionHistory = [];
+    this.soldLog = [];
+    this.newsSeen = [];
+    this.saveStatus = "cleared";
+    this.lastSaveState = null;
+    this.endingReport = null;
+    this.shareMessage = null;
+    this.completedChallengeDays = [];
+    this.message = "Week 1 已重置。点击“封装数据包”开始 Day 1。";
+    this.resetChallengeState();
+    this.patchProgramB();
+  }
+
   clearSave(): void {
     const storage = this.getStorage();
 
