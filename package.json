@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "smoke:integration": "node scripts/program-a-integration-smoke.mjs",
     "smoke:week1": "node scripts/week-one-rules-smoke.mjs",
+    "test:b": "node test/run-tests.mjs",
     "typecheck": "tsc --noEmit && npm --prefix program-c run typecheck"
   },
   "devDependencies": {
